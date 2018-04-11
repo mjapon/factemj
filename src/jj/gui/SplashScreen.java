@@ -26,7 +26,7 @@ public class SplashScreen extends javax.swing.JFrame {
          
         BufferedImage img = null;
         try {            
-            URL resource = FarmaAppMain.class.getResource("MarcaVG.png");            
+            URL resource = SplashScreen.class.getResource("MarcaVG.png");            
             img = ImageIO.read(resource);            
             ImageIcon imageIcon = new ImageIcon(img);
             setContentPane(new JLabel(imageIcon));           

@@ -599,7 +599,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             .addGroup(jPanelNorthLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addContainerGap(350, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelNorthLayout.setVerticalGroup(
             jPanelNorthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1109,6 +1109,11 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     public void focusFiltro(){
         this.filtroTF.setText("");
         this.filtroTF.requestFocus();        
+        
+        if (jTableArts != null){
+            currentRow =-1;
+            jTableArts.clearSelection();
+        }
     }
     
     private void jTFCIKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFCIKeyPressed
@@ -1198,13 +1203,34 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         }    
         else if (evt.getKeyCode() == KeyEvent.VK_ENTER){
             
-            int row = this.jTableArts.getSelectedRow();            
-            if (row>-1){
-                System.out.println("Enter seleccion row-->");
-                doSelectionAction();
+            //Verificar si el filtro ingresado solo son numeros entonces se procede con busqueda por codigo de barra
+            //Caso contrario se filtra
+            String filtro = this.filtroTF.getText().trim();
+            boolean esBarcode = false;
+            if (filtro.length()>3){
+                esBarcode = filtro.chars().allMatch( Character::isDigit );
+            }            
+            if (esBarcode){
+                currentRow =-1;
+                List<Articulos> arts = this.articulosController.findByBarcode(filtro);        
+                if (arts != null && arts.size()>0){
+                    Articulos articulo =  arts.get(0);   
+                    addArticulo(articulo);            
+                    focusFiltro();
+                }
+                else{
+                    JOptionPane.showMessageDialog(this, "No se encontró el código de barra:"+filtro, "Facturado", JOptionPane.WARNING_MESSAGE);
+                }
             }
             else{
-                System.out.println("Enter barcode sel-->");
+                int row = this.jTableArts.getSelectedRow();            
+                if (row>-1){
+                    System.out.println("Enter seleccion row-->");
+                    doSelectionAction();
+                }
+                else{
+                    System.out.println("Enter barcode sel-->");
+                }
             }
         }
         else{
