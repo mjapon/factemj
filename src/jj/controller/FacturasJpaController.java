@@ -261,7 +261,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                 + " p.pgfSaldo as pgfSaldo,"
                 + " p.pgfObs as pgfObs, "
                 + " p.pgfId as pgfId "
-                + "  from Facturas f join Pagosfact p on p.factId.factId = f.factId ");
+                + "  from Facturas f join Pagosfact p on p.factId.factId = f.factId and f.traId.traId= "+params.getTra_codigo());
         
         List<String> paramsList = new ArrayList<String>();
         
@@ -386,11 +386,12 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                 baseQuery = baseQueryArts.toString();
             }
             
-            //Parametros
-            
-            List<String> paramsList = new ArrayList<String>();
+            //Parametros            
+            List<String> paramsList = new ArrayList<String>();                        
             
             paramsList.add(prefijo+".factValido=0 ");
+            
+            paramsList.add(prefijo+".traId.traId= "+params.getTraCodigo());
             
             if (params.getDesde() != null){
                 paramsList.add(prefijo+".factFecha >= :paramDesde ");
@@ -651,8 +652,18 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         try{
             em.getTransaction().begin();
             Facturas factura = findById(factId);
+            
+            ArticulosJpaController articulosController = new ArticulosJpaController(em);
+            
             if (factura != null){
                 factura.setFactValido(1);//1-->anulado
+                
+                //Se debe revertir los inventarios                
+                List<Detallesfact> detalles = getDetallesFact(factId);
+                for (Detallesfact det: detalles){                    
+                    articulosController.incrementInv(det.getArtId(), det.getDetfCant());                    
+                }                
+                
             }
             
             em.getTransaction().commit();
@@ -660,6 +671,20 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         catch(Throwable ex){
             System.out.println("Error al tratar de anular la factura");
         }
+    }
+    
+    public Integer getTraCodigo(Integer factId){
+        try{
+            //em.getTransaction().begin();
+            Facturas factura = findById(factId);
+            return factura.getTraId().getTraId();
+            
+            //em.getTransaction().commit();
+        }
+        catch(Throwable ex){
+            System.out.println("Error al tratar de anular la factura");
+        }
+        return null;
     }
     
     /**
@@ -715,6 +740,14 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         
         try{
             em.getTransaction().begin();
+            
+            boolean esFacturaCompra = datosCabecera.getTraCodigo() == 1;
+            boolean esFacturaVenta = datosCabecera.getTraCodigo() == 2;
+            
+            Integer tipoCliente = 1;//1-cliente, 2-proveedor
+            if (esFacturaCompra){
+                tipoCliente = 2;//Proveedor
+            }
         
             ClientesJpaController clientesController = new ClientesJpaController(em);        
             ArticulosJpaController articulosController = new ArticulosJpaController(em);
@@ -735,7 +768,8 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                     clienteFactura.setCliDir( datosCabecera.getDireccion() );
                     clienteFactura.setCliTelf( datosCabecera.getTelf());
                     clienteFactura.setCliEmail( datosCabecera.getEmail());
-                    clienteFactura.setCliMovil( "" );                    
+                    clienteFactura.setCliMovil( "" );    
+                    clienteFactura.setCliTipo(tipoCliente);
 
                     em.persist(clienteFactura);
                     em.flush();
@@ -801,8 +835,14 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                 detalle.setDetfDesc(fila.getDescuento());
                 detalle.setDetfPreciocm(fila.getPrecioCompra());
 
-                //Se debe actualizar el inventario del articulo
-                articulosController.decrementInv(fila.getCodigoArt(), new BigDecimal(fila.getCantidad()));
+                //Se debe actualizar el inventario del articulo                
+                if ( esFacturaVenta ){//factura de venta
+                    articulosController.decrementInv(fila.getCodigoArt(), new BigDecimal(fila.getCantidad()));
+                }
+                else if (esFacturaCompra){//factura de compra
+                    articulosController.incrementInv(fila.getCodigoArt(), new BigDecimal(fila.getCantidad()));
+                }
+                
                 em.persist(detalle);
             }            
             //Crear pagos

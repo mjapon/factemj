@@ -25,7 +25,7 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
     private final FacturasJpaController facturaController;
     private DetallesFactDataModel dataModel;
     private Facturas factura;
-    
+    private Integer tra_codigo;
     /**
      * Creates new form DetallesFacturaFrame
      */
@@ -35,7 +35,15 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
         em = EntityManagerUtil.createEntintyManagerFactory();        
         facturaController = new FacturasJpaController(em);
         
-        dataModel = new DetallesFactDataModel();      
+        try{
+            this.tra_codigo = facturaController.getTraCodigo(factId);
+            
+        }catch(Throwable ex){
+            System.out.println("Error:"+ex.getMessage());
+            ex.printStackTrace();
+        }
+        
+        dataModel = new DetallesFactDataModel(this.tra_codigo);
         
         List<Object[]> detalles = facturaController.listarDetalles(factId);
         factura = facturaController.buscar(factId);

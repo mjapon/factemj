@@ -47,9 +47,12 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     private MovtransaccJpaController movsController;
     
     private JFrame root;
+    private Integer tra_codigo;//3-cuentas x cobrar, 4-cuentas por pagar
     
-    public CuentasXCBPFrame() {
+    public CuentasXCBPFrame(Integer tra_codigo) {
         initComponents();
+        
+        this.tra_codigo = tra_codigo;
         
         desdeTF = new JFormattedTextField(createFormatter("##/##/####"));
         hastaTF = new JFormattedTextField(createFormatter("##/##/####"));
@@ -65,7 +68,9 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         jTable2.setModel(abonosDataModel);
         
         cPDataModel = new CuentaXCPDataModel();
-        cPDataModel.setController(facturaController);        
+        cPDataModel.setController(facturaController); 
+        
+        setupTransacc();
         
         jTable1.setModel(cPDataModel);
         try{
@@ -136,16 +141,14 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         });
         
         this.desdeTF.setText( FechasUtil.getFechaActual() );
-        this.hastaTF.setText( FechasUtil.getFechaActual() );     
-        
-        
+        this.hastaTF.setText( FechasUtil.getFechaActual() ); 
         
         jTable2.getTableHeader().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = jTable2.columnAtPoint(e.getPoint());
                 String name = jTable2.getColumnName(col);
-                System.out.println("TableHeader column index selected " + col + " " + name);                
+                System.out.println("TableHeader column index selected " + col + " " + name);
                 try{
                     for (int i=0; i<abonosDataModel.getColumnCount();i++){
                         jTable2.getColumnModel().getColumn(i).setHeaderValue( abonosDataModel.getColumnName(i) );
@@ -161,8 +164,16 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         });
         
         jTable2.updateUI();
-        abonosDataModel.fireTableDataChanged();
-        
+        abonosDataModel.fireTableDataChanged();        
+    }
+    
+    public void setupTransacc(){
+        if(this.tra_codigo == 3){
+            this.jLabelTitulo.setText("CUENTAS X COBRAR");
+        }
+        else if (this.tra_codigo == 4){
+            this.jLabelTitulo.setText("CUENTAS X PAGAR");
+        }
     }
     
     protected MaskFormatter createFormatter(String s) {
@@ -191,7 +202,23 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     }
     
     public void showDetallesFrame(){
-        System.out.println("show detalles--->");            
+        System.out.println("show detalles--->");
+        
+        int row = this.jTable1.getSelectedRow();
+        if (row>-1){
+            FilaCXCP filart = this.cPDataModel.getValueAt(row);            
+            DetallesFacturaFrame detallesFacturaFrame = new DetallesFacturaFrame(filart.getCodFactura());
+            
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            detallesFacturaFrame.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+            
+            detallesFacturaFrame.setSize(900, 800);
+
+            detallesFacturaFrame.setVisible(true);
+        }    
+        else{
+            JOptionPane.showMessageDialog(this, "Debe seleccionar la factura");
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -203,7 +230,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        jLabelTitulo = new javax.swing.JLabel();
         jPanel12 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -222,13 +249,14 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
+        jButtonVerFact = new javax.swing.JButton();
         jButtonAbonar = new javax.swing.JButton();
         jButtonClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel2.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        jLabel2.setText("CUENTAS X COBRAR");
+        jLabelTitulo.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabelTitulo.setText("CUENTAS X COBRAR");
 
         jPanel12.setLayout(new java.awt.GridLayout(2, 2));
 
@@ -261,7 +289,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
+                    .addComponent(jLabelTitulo)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -277,7 +305,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
+                .addComponent(jLabelTitulo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -369,6 +397,14 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         getContentPane().add(jPanel3, java.awt.BorderLayout.SOUTH);
 
         jPanel4.setLayout(new java.awt.GridLayout(5, 1));
+
+        jButtonVerFact.setText("Ver Factura");
+        jButtonVerFact.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonVerFactActionPerformed(evt);
+            }
+        });
+        jPanel4.add(jButtonVerFact);
 
         jButtonAbonar.setText("Abonar");
         jButtonAbonar.addActionListener(new java.awt.event.ActionListener() {
@@ -472,7 +508,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     private void jButtonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseActionPerformed
         
         FarmaAppMain farmaApp = (FarmaAppMain)this.root;        
-        farmaApp.logicaClosePane(this.getClass().getName());
+        farmaApp.logicaClosePane(this.getClass().getName()+this.tra_codigo);
         
         
     }//GEN-LAST:event_jButtonCloseActionPerformed
@@ -482,7 +518,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         int row = this.jTable1.getSelectedRow();
         if (row>-1){
             FilaCXCP fila = (FilaCXCP)this.cPDataModel.getValueAt(row);           
-            abonosFrame = new AbonosFrame(fila);
+            abonosFrame = new AbonosFrame(fila, this.tra_codigo);
             abonosFrame.setParentFrame(this);
             
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -494,12 +530,26 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_jButtonAbonarActionPerformed
+
+    private void jButtonVerFactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerFactActionPerformed
+        
+        showDetallesFrame();
+        
+    }//GEN-LAST:event_jButtonVerFactActionPerformed
     
+     
+     
     public void logicaBuscar(){
         ParamBusquedaCXCP paramsBusqueda = new ParamBusquedaCXCP();
         
         paramsBusqueda.setEstadoPago(2);
         paramsBusqueda.setCliId(0);
+        
+        Integer tra_codigo = 1;
+        if (this.tra_codigo == 4){
+            tra_codigo = 2;
+        }
+        paramsBusqueda.setTra_codigo(tra_codigo);
         
         try{
             paramsBusqueda.setDesde( FechasUtil.parse(this.desdeTF.getText()) );
@@ -551,13 +601,14 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton jButtonAbonar;
     private javax.swing.JButton jButtonClose;
+    private javax.swing.JButton jButtonVerFact;
     private javax.swing.JComboBox<String> jCmbEstado;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabelHeadAbon;
+    private javax.swing.JLabel jLabelTitulo;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;

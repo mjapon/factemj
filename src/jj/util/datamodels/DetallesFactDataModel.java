@@ -18,8 +18,8 @@ import jj.util.FilaFactura;
 public class DetallesFactDataModel extends FacturaDataModel{
     
     
-    public DetallesFactDataModel(){
-        super();
+    public DetallesFactDataModel(Integer tra_codigo){
+        super(tra_codigo);
     }
 
     @Override

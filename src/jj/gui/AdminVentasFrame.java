@@ -47,12 +47,15 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
      private JFormattedTextField desdeTF;
      private JFormattedTextField hastaTF;
      private Articulos articuloSel;
+     private Integer tra_codigo;
      
     /**
      * Creates new form AdminVentasFrame
      */
-    public AdminVentasFrame() {
+    public AdminVentasFrame(Integer tra_codigo) {
         initComponents();
+        
+        this.tra_codigo = tra_codigo;
         
         desdeTF = new JFormattedTextField(createFormatter("##/##/####"));
         hastaTF = new JFormattedTextField(createFormatter("##/##/####"));
@@ -408,7 +411,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         //this.setVisible(false);
         
         FarmaAppMain farmaApp = (FarmaAppMain)this.root;        
-        farmaApp.logicaClosePane(this.getClass().getName());
+        farmaApp.logicaClosePane(this.getClass().getName()+this.tra_codigo);
         
         
     }//GEN-LAST:event_btnCloseActionPerformed
@@ -422,12 +425,12 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
             ParamsBusquedaTransacc params = new ParamsBusquedaTransacc();
             params.setDesde(desde);
             params.setHasta(hasta);
+            params.setTraCodigo(tra_codigo);
             
             params.setArtId(0);
             if (this.articuloSel != null){
                 params.setArtId( this.articuloSel.getArtId() );
-            }
-            
+            }            
             
             params.setCliId(0);
             

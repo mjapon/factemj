@@ -65,6 +65,8 @@ public class Clientes implements Serializable {
     private String cliTelf;
     @Column(name = "cli_email")
     private String cliEmail;
+    @Column(name = "cli_tipo")
+    private Integer cliTipo;    
     @Column(name = "cli_movil")
     private String cliMovil;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cliId")
@@ -157,6 +159,14 @@ public class Clientes implements Serializable {
     public void setFacturasList(List<Facturas> facturasList) {
         this.facturasList = facturasList;
     }
+    
+    public Integer getCliTipo() {
+        return cliTipo;
+    }
+
+    public void setCliTipo(Integer cliTipo) {
+        this.cliTipo = cliTipo;
+    }    
 
     @Override
     public int hashCode() {

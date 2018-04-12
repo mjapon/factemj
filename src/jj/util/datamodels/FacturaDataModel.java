@@ -66,10 +66,12 @@ public class FacturaDataModel extends AbstractTableModel{
     protected List<FilaFactura> items = new ArrayList<>();
     protected TotalesFactura totalesFactura;
     protected JTable jtable;
+    protected Integer tra_codigo;
     
-    public FacturaDataModel(){
+    public FacturaDataModel(Integer tra_codigo){
         super();
         totalesFactura = new TotalesFactura();
+        this.tra_codigo = tra_codigo;
     }
     
     public void removeItem(int rowIndex){
@@ -79,12 +81,17 @@ public class FacturaDataModel extends AbstractTableModel{
     }
     
     public void addItem(Articulos articulo){
+        BigDecimal precio = articulo.getArtPrecio();
+        if (this.tra_codigo == 2){//Factura de compra
+            precio = articulo.getArtPrecioCompra();
+        }
+        
         FilaFactura filafactura = new FilaFactura(1,
                 articulo.getArtId(),
                 articulo.getArtCodbar(),
                 articulo.getArtNombre(),
                 new Double("1.0"),
-                articulo.getArtPrecio(),
+                precio,
                 articulo.getArtIva(),
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,

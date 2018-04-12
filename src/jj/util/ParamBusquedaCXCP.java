@@ -21,13 +21,14 @@ public class ParamBusquedaCXCP {
     
     private String sortColumn;
     private String sortOrder;
+    private Integer tra_codigo;
 
     public ParamBusquedaCXCP() {
         
     }
 
     public ParamBusquedaCXCP(Date desde, Date hasta, Integer cliId, Integer artId, 
-            String sortColumn, String sortOrder, Integer estadoPago) {
+            String sortColumn, String sortOrder, Integer estadoPago, Integer tra_codigo) {
         this.desde = desde;
         this.hasta = hasta;
         this.cliId = cliId;
@@ -35,6 +36,7 @@ public class ParamBusquedaCXCP {
         this.sortColumn = sortColumn;
         this.sortOrder = sortOrder;
         this.estadoPago = estadoPago;
+        this.tra_codigo= tra_codigo;
     }
     
 
@@ -93,4 +95,14 @@ public class ParamBusquedaCXCP {
     public void setEstadoPago(Integer estadoPago) {
         this.estadoPago = estadoPago;
     }
+
+    public Integer getTra_codigo() {
+        return tra_codigo;
+    }
+
+    public void setTra_codigo(Integer tra_codigo) {
+        this.tra_codigo = tra_codigo;
+    }
+    
+    
 }

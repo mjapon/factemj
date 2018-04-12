@@ -20,17 +20,20 @@ public class ParamsBusquedaTransacc {
     
     private String sortColumn;
     private String sortOrder;
+    private Integer traCodigo;
 
     public ParamsBusquedaTransacc() {
     }
 
-    public ParamsBusquedaTransacc(Date desde, Date hasta, Integer cliId, Integer artId, String sortColumn, String sortOrder) {
+    public ParamsBusquedaTransacc(Date desde, Date hasta, Integer cliId, Integer artId, String sortColumn, 
+            String sortOrder, Integer traCodigo) {
         this.desde = desde;
         this.hasta = hasta;
         this.cliId = cliId;
         this.artId = artId;
         this.sortColumn = sortColumn;
         this.sortOrder = sortOrder;
+        this.traCodigo = traCodigo;
     }
 
     public Date getDesde() {
@@ -80,4 +83,13 @@ public class ParamsBusquedaTransacc {
     public void setSortOrder(String sortOrder) {
         this.sortOrder = sortOrder;
     }
+
+    public Integer getTraCodigo() {
+        return traCodigo;
+    }
+
+    public void setTraCodigo(Integer traCodigo) {
+        this.traCodigo = traCodigo;
+    }
+    
 }

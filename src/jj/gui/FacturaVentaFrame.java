@@ -89,7 +89,26 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
 
     public void setRoot(JFrame root) {
          this.root = root;
-    }            
+    }         
+    
+    public void setupTransacc(){
+        if (this.tra_codigo == 1){//Factura de venta
+            this.jCBConsFinal.setEnabled(true);
+            this.jLabelRef.setText("Cliente");
+            this.jLabelTitulo.setText("Registrar Venta");
+        }
+        else if (this.tra_codigo == 2){//Factura de compra
+            this.jCBConsFinal.setSelected(false);
+            this.jCBConsFinal.setEnabled(false);
+            this.clearCliente();
+            this.jLabelRef.setText("Proveedor");
+            this.jLabelTitulo.setText("Registrar Compra");
+            
+            this.jTFCI.setEnabled(true);
+            this.jTFCI.setEditable(true);
+            
+        }        
+    }
 
     /**
      * Creates new form FacturaVentaFrame
@@ -97,22 +116,19 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     public FacturaVentaFrame(Integer tra_codigo) {
         initComponents();
         
-        //System.out.println("Se inicializa jtable-->");
+        this.tra_codigo = tra_codigo;        
         
-        facturaDataModel = new FacturaDataModel();        
-        facturaDataModel.setFrame(this);        
+        facturaDataModel = new FacturaDataModel(this.tra_codigo);
+        facturaDataModel.setFrame(this);
         facturaModelListener = new FacturaModelListener();
         facturaDataModel.addTableModelListener(facturaModelListener);        
         jTableFactura.setModel(facturaDataModel); 
-        facturaDataModel.setJtable(jTableFactura);
-        
-        this.tra_codigo = tra_codigo;
+        facturaDataModel.setJtable(jTableFactura);        
         
         String[] values = new String[] { "SI", "NO"};
         TableColumn colIva = jTableFactura.getColumnModel().getColumn( FacturaDataModel.ColumnaFacturaEnum.IVA.index );
         colIva.setCellEditor(new IVAComboBoxEditor(values));
-        colIva.setCellRenderer(new IVAComboBoxRenderer(values));
-        
+        colIva.setCellRenderer(new IVAComboBoxRenderer(values));        
         
         String[] valuesDesc = { "0.0", "0.1", "0.2" };
         TableColumn colDesc = this.jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.VDESC.index);
@@ -158,18 +174,26 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         pagosMap.put(1, new FilaPago(1, "EFECTIVO", BigDecimal.ZERO, ""));
         pagosMap.put(2, new FilaPago(2, "CRÉDITO", BigDecimal.ZERO, ""));
         
-        initNewFactura();        
+        initNewFactura();
         
         /*
         Configurar articulos
         */
-        articulosDataModel = new ArticulosDataModel(2);
+        
+        int modelType = 2;
+        if (this.tra_codigo == 2){//Factura de compra
+            modelType = 3;
+        }
+        
+        articulosDataModel = new ArticulosDataModel(modelType);
         articulosDataModel.setController(articulosController);
         
         articulosModelListener = new ArticulosModelListener();
         articulosDataModel.addTableModelListener(articulosModelListener);
         
         jTableArts.setModel(articulosDataModel);
+        
+        setupTransacc();
         
         jTableArts.getTableHeader().addMouseListener(new MouseAdapter() {
             @Override
@@ -206,8 +230,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
                     doSelectionAction();                    
                 }
             }
-        });
-        
+        });        
         
         jTableArts.updateUI();
         
@@ -432,7 +455,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jTFVuelto = new javax.swing.JTextField();
         jLabelVuelto = new javax.swing.JLabel();
         jPanelNorth = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelTitulo = new javax.swing.JLabel();
         jPanelCenter = new javax.swing.JPanel();
         jPanelDetallesFact = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
@@ -451,7 +474,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jTFCI = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        jLabelRef = new javax.swing.JLabel();
         jTFCliente = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
@@ -589,8 +612,8 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
 
         jPanel11.add(jPanelSouth, java.awt.BorderLayout.SOUTH);
 
-        jLabel1.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        jLabel1.setText("Registrar venta");
+        jLabelTitulo.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabelTitulo.setText("Registrar venta");
 
         javax.swing.GroupLayout jPanelNorthLayout = new javax.swing.GroupLayout(jPanelNorth);
         jPanelNorth.setLayout(jPanelNorthLayout);
@@ -598,14 +621,14 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             jPanelNorthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelNorthLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(jLabelTitulo)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelNorthLayout.setVerticalGroup(
             jPanelNorthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelNorthLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(jLabelTitulo)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -745,8 +768,8 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
 
         jPanel2.setLayout(new java.awt.GridLayout(2, 1));
 
-        jLabel5.setText("Cliente:");
-        jPanel2.add(jLabel5);
+        jLabelRef.setText("Cliente:");
+        jPanel2.add(jLabelRef);
         jPanel2.add(jTFCliente);
 
         jPanelDatosCli.add(jPanel2);
@@ -842,7 +865,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         //setVisible(false);
         
         FarmaAppMain farmaApp = (FarmaAppMain)this.root;        
-        farmaApp.logicaClosePane(this.getClass().getName());
+        farmaApp.logicaClosePane(this.getClass().getName()+this.tra_codigo);
         
         
     }//GEN-LAST:event_jButtonSalirActionPerformed
@@ -955,7 +978,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             
             //Verificar que se haya ingresado articulos
             if (detalles.size()==0){
-                JOptionPane.showMessageDialog(null, "Debe agregar artículos!");
+                JOptionPane.showMessageDialog(null, "Debe agregar items!");
                 return;
             }
             
@@ -968,9 +991,14 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             else{
                 //Verificar que haya ingresado datos para el cliente
                 if (this.cliCodigo == null|| this.cliCodigo == 0 ){
+                    String refName = "cliente";
+                    if (this.tra_codigo == 2){
+                        refName = "proveedor";
+                    }
+                    
                     //Es un nuevo cliente verificar que haya ingresado el nui y el nombre
                     if (!StringUtil.isNotEmpty(this.jTFCI.getText())){
-                        JOptionPane.showMessageDialog(null, "Debes ingresar el número de cédula o ruc del cliente!");
+                        JOptionPane.showMessageDialog(null, "Debes ingresar el número de cédula o ruc del "+refName+"!");
                         return;
                     }
                     else if (!StringUtil.isNotEmpty(this.jTFCliente.getText())){
@@ -999,7 +1027,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             
             facturaController.crearFactura(cabeceraFactura, totalesFactura, detalles, pagosMap);
             
-            int res = JOptionPane.showConfirmDialog(this, "Registrado Satisfactoriamente, Imprimir?", "Factura", JOptionPane.YES_NO_OPTION);
+            int res = JOptionPane.showConfirmDialog(this, "Registrado Satisfactoriamente, Imprimir?", "Comprobante", JOptionPane.YES_NO_OPTION);
             if (res == JOptionPane.YES_OPTION){
                 logicaImpresion(cabeceraFactura, totalesFactura, detalles);
             }
@@ -1008,7 +1036,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             
         }
         catch(Throwable ex){
-            JOptionPane.showMessageDialog(null, "Error al registrar factura:"+ ex.getMessage(), "NO SE PUDO REGISTRAR FACTURA", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error al registrar factura:"+ ex.getMessage(), "NO SE PUDO REGISTRAR", JOptionPane.ERROR_MESSAGE);
             System.out.println("Error al registrar factura:"+ ex.getMessage());
             ex.printStackTrace();
         }        
@@ -1181,24 +1209,19 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
 
     private void filtroTFKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filtroTFKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_DOWN){
-            System.out.println("Arrow down key pressed --->");            
+            System.out.println("Arrow down key pressed --->");
             if (currentRow< this.jTableArts.getModel().getRowCount()){
                 currentRow +=1;
             }
-            
-            System.out.println("Current row:" + currentRow);
-            
-            jTableArts.setRowSelectionInterval(currentRow, currentRow);
-            //jTableArts. getSelectionModel().addSelectionInterval(currentRow, currentRow);
-            
-            
+            System.out.println("Current row:" + currentRow);            
+            jTableArts.setRowSelectionInterval(currentRow, currentRow);            
         }        
         else if (evt.getKeyCode() == KeyEvent.VK_UP){
-            if (currentRow>0)
-            currentRow -=1;            
-            System.out.println("Current row:" + currentRow);
-            
-            System.out.println("Arrow up key pressed --->");            
+            if (currentRow>0){
+                currentRow -=1;
+                System.out.println("Current row:" + currentRow);
+            }            
+            System.out.println("Arrow up key pressed --->");
             jTableArts.setRowSelectionInterval(currentRow, currentRow);
         }    
         else if (evt.getKeyCode() == KeyEvent.VK_ENTER){
@@ -1257,16 +1280,10 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonPagosActionPerformed
 
     private void jTFCIFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTFCIFocusLost
-       findCliente();
-        
+       findCliente();        
     }//GEN-LAST:event_jTFCIFocusLost
     
-    
-    public void doFilter(){
-        //System.out.println("do filter--->");
-        
-        //System.out.println("Filtro key pressed--->");        
-        //Se debe filtrar todos los articulos del model                
+    public void doFilter(){                 
         String filtro = this.filtroTF.getText().trim();
         if (filtro.length()>=0){
             //System.out.println("Se aplica el filtro:"+filtro);
@@ -1284,8 +1301,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     }
     
     public void updateLabelsTotales(){
-        TotalesFactura totalesFactura = facturaDataModel.getTotalesFactura();
-        
+        TotalesFactura totalesFactura = facturaDataModel.getTotalesFactura();        
         if (pagosMap != null){            
             FilaPago pagoEfectivo =  pagosMap.get(1);
             FilaPago pagoCredito =  pagosMap.get(2);
@@ -1313,7 +1329,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonPagos;
     private javax.swing.JButton jButtonSalir;
     private javax.swing.JCheckBox jCBConsFinal;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -1322,7 +1337,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -1330,8 +1344,10 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelDescuento;
     private javax.swing.JLabel jLabelEstPtoEmi;
     private javax.swing.JLabel jLabelIVA;
+    private javax.swing.JLabel jLabelRef;
     private javax.swing.JLabel jLabelSubTotal;
     private javax.swing.JLabel jLabelTOTAL;
+    private javax.swing.JLabel jLabelTitulo;
     private javax.swing.JLabel jLabelVuelto;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;

@@ -26,14 +26,14 @@ public class AbonosFrame extends javax.swing.JFrame {
     private CuentasXCBPFrame parentFrame;
     private EntityManager em;
     private MovtransaccJpaController controller;
-    
+    private Integer tra_codigo;//3 cuentas x cobrar, 4-cuentas x pagar
     
     /**
      * Creates new form AbonosFrame
      */
-    public AbonosFrame(FilaCXCP fila) {
+    public AbonosFrame(FilaCXCP fila, Integer tra_codigo) {
         initComponents();
-        
+        this.tra_codigo = tra_codigo;
         this.fila = fila;        
         this.jTFValorPend.setText( NumbersUtil.round(fila.getDeuda(), 2).toPlainString() );
         this.jTFValorPend.setEditable(false);
@@ -161,7 +161,7 @@ public class AbonosFrame extends javax.swing.JFrame {
             BigDecimal monto = new BigDecimal(this.jTFValorAbono.getText());
             String observacion = this.jTextAreaObs.getText();
             Integer factId = this.fila.getCodFactura();
-            AbonoForm form = new AbonoForm(pagoId, monto, observacion, factId, fila.getCodPago());
+            AbonoForm form = new AbonoForm(pagoId, monto, observacion, factId, this.tra_codigo);
         
             controller.guardarAbono(form);
             this.parentFrame.logicaBuscar();

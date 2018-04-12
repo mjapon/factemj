@@ -49,9 +49,15 @@ public class ArticulosDataModel extends AbstractTableModel{
         "Inventario"//5    artInv
     };
     
-    private String[] columNamesForSearch={        
+    private String[] columNamesForSearchVenta={        
         "Articulo",//0  artNombre        
         "Prec. Venta",//1  artPrecio
+        "Inventario"//2   artInv
+    };
+    
+    private String[] columNamesForSearchCompra={        
+        "Articulo",//0  artNombre        
+        "Prec. Compra",//1  artPrecioCompra
         "Inventario"//2   artInv
     };
     
@@ -88,8 +94,16 @@ public class ArticulosDataModel extends AbstractTableModel{
         mapSort.put(5, 0);
     }
     
-    public void initForSeach(){
-        columNames = columNamesForSearch;
+    public void initForSeachVenta(){
+        columNames = columNamesForSearchVenta;
+        mapSort = new HashMap<>();
+        mapSort.put(0, 0);
+        mapSort.put(1, 1);
+        mapSort.put(2, 0);
+    }    
+    
+    public void initForSeachCompra(){
+        columNames = columNamesForSearchCompra;
         mapSort = new HashMap<>();
         mapSort.put(0, 0);
         mapSort.put(1, 1);
@@ -112,7 +126,11 @@ public class ArticulosDataModel extends AbstractTableModel{
                 break;
             }
             case 2:{//for seach
-                initForSeach();
+                initForSeachVenta();
+                break;
+            }
+            case 3:{//for search compra
+                initForSeachCompra();
                 break;
             }
         }        
@@ -258,7 +276,7 @@ public class ArticulosDataModel extends AbstractTableModel{
         return columnName;
     }
     
-    public String getSortColumnForSearch(Integer column){
+    public String getSortColumnForSearchVenta(Integer column){
         String columnName = "artNombre";       
         switch(column){
             case 0:{
@@ -276,13 +294,32 @@ public class ArticulosDataModel extends AbstractTableModel{
         }
         return columnName;
     }
+    public String getSortColumnForSearchCompra(Integer column){
+        String columnName = "artNombre";
+        switch(column){
+            case 0:{
+                columnName = "artNombre";
+                break;
+            }
+            case 1:{
+                columnName = "artPrecioCompra";
+                break;
+            }
+            case 2:{
+                columnName = "artInv";
+                break;
+            }
+        }
+        return columnName;
+    }
     
     
     public String getSortColumn(Integer column){           
         switch(type){
             case 0:{return getSortColumnForSelect(column);}
             case 1:{return getSortColumnForAdmin(column);}
-            case 2:{return getSortColumnForSearch(column);}
+            case 2:{return getSortColumnForSearchVenta(column);}
+            case 3:{return getSortColumnForSearchCompra(column);}
         }
         return "";  
     }
@@ -513,9 +550,16 @@ public class ArticulosDataModel extends AbstractTableModel{
                     return precioCompra;
                 }
                 case 3:{                    
+                    if (this.type == 3){//Compra
+                        BigDecimal precioCompra = filaArticulo.getPrecioCompra().setScale(4, RoundingMode.HALF_UP);
+                        return precioCompra;
+                    }
+                    else{
+                        BigDecimal precioVentaIva = filaArticulo.getPrecioVentaConIva().setScale(4, RoundingMode.HALF_UP);
+                        return precioVentaIva;
+                    }
                     //BigDecimal precioVenta = filaArticulo.getPrecioVenta().setScale(4, RoundingMode.HALF_UP);
-                    BigDecimal precioVentaIva = filaArticulo.getPrecioVentaConIva().setScale(4, RoundingMode.HALF_UP);
-                    return precioVentaIva;
+                    
                 }
                 case 4: {
                     //BigDecimal precioMin = filaArticulo.getPrecioMin().setScale(4, RoundingMode.HALF_UP);
@@ -537,9 +581,14 @@ public class ArticulosDataModel extends AbstractTableModel{
             switch (columnIndex){                
                 case 0: return filaArticulo.getNombre();                
                 case 1:{                    
-                    //BigDecimal precioVenta = filaArticulo.getPrecioVenta().setScale(4, RoundingMode.HALF_UP);
-                    BigDecimal precioVentaIva = filaArticulo.getPrecioVentaConIva().setScale(4, RoundingMode.HALF_UP);
-                    return precioVentaIva;
+                    if (this.type == 3){//Compra
+                        BigDecimal precioCompra = filaArticulo.getPrecioCompra().setScale(4, RoundingMode.HALF_UP);
+                        return precioCompra;
+                    }
+                    else{
+                        BigDecimal precioVentaIva = filaArticulo.getPrecioVentaConIva().setScale(4, RoundingMode.HALF_UP);
+                        return precioVentaIva;
+                    }
                 }
                 case 2: return filaArticulo.getInventario();
                 default: return "";
@@ -560,6 +609,9 @@ public class ArticulosDataModel extends AbstractTableModel{
                 return getValueAtForAdmin(rowIndex, columnIndex);
             }
             case 2:{
+                return getValueAtForSearch(rowIndex, columnIndex);
+            }
+            case 3:{
                 return getValueAtForSearch(rowIndex, columnIndex);
             }
         }
@@ -594,6 +646,9 @@ public class ArticulosDataModel extends AbstractTableModel{
                 return isCellEditableForAdmin(rowIndex, columnIndex);
             }
             case 2:{
+                return isCellEditableForAdmin(rowIndex, columnIndex);
+            }
+            case 3:{
                 return isCellEditableForAdmin(rowIndex, columnIndex);
             }
         }
@@ -647,6 +702,9 @@ public class ArticulosDataModel extends AbstractTableModel{
                 return getColumnClassForAdmin(columnIndex);
             }
             case 2:{
+                return getColumnClassForSearch(columnIndex);
+            }
+            case 3:{
                 return getColumnClassForSearch(columnIndex);
             }
         }

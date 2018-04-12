@@ -156,6 +156,21 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
         }
     }
     
+    public void incrementInv(Integer artCodigo, BigDecimal cant){
+        Articulos articulo = em.find(Articulos.class, artCodigo);        
+        if (articulo != null){
+            System.out.println("El articulo es distinto de null-->");            
+            BigDecimal artInv = articulo.getArtInv();
+            BigDecimal newInv = BigDecimal.ZERO;
+            if (artInv.compareTo(BigDecimal.ZERO)>0){
+                newInv = artInv.add(cant);
+            }            
+            
+            articulo.setArtInv(newInv);            
+            em.persist(articulo);
+        }
+    }
+    
     /*
     public Integer crearArticulo(FilaArticulo filaArt, boolean genCodBarra) throws Exception{
         if (genCodBarra){
@@ -274,6 +289,7 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
     
     public List<Articulos> listar(String sortBy, String sortOrder) throws Exception{
         try{
+            //artPrecioCompra
             String thequery = "from Articulos o order by o."+sortBy+" "+sortOrder;            
             Query query = this.newQuery(thequery);
             return query.getResultList();
@@ -303,7 +319,7 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
         }
     }
     
-    public boolean yaExisteBarcode(String barcode){        
+    public boolean yaExisteBarcode(String barcode){
         Query query = newQuery("from Articulos o where o.artCodbar = '"+barcode.trim().toUpperCase()+"'");
         List resultList = query.getResultList();        
         return resultList.size()>0;
