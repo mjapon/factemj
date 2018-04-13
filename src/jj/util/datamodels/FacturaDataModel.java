@@ -90,7 +90,7 @@ public class FacturaDataModel extends AbstractTableModel{
                 articulo.getArtId(),
                 articulo.getArtCodbar(),
                 articulo.getArtNombre(),
-                new Double("1.0"),
+                new Double("1"),
                 precio,
                 articulo.getArtIva(),
                 BigDecimal.ZERO,

@@ -6,6 +6,7 @@
 package jj.gui;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import jj.util.FilaPago;
@@ -63,8 +64,18 @@ public class PagosFrame extends javax.swing.JFrame {
         jLabel4.setText("OBSERVACIÓN:");
 
         creditoTF.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        creditoTF.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                creditoTFFocusLost(evt);
+            }
+        });
 
         efectivoTF.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        efectivoTF.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                efectivoTFFocusLost(evt);
+            }
+        });
 
         obsTextArea.setColumns(20);
         obsTextArea.setRows(5);
@@ -154,6 +165,40 @@ public class PagosFrame extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_jButtonAllCreditoActionPerformed
+
+    private void efectivoTFFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_efectivoTFFocusLost
+        
+        try{            
+            BigDecimal montoTotal = montoEfectivo.add(montoCredito);
+            BigDecimal montoEfectivo = new BigDecimal(efectivoTF.getText());            
+            if (montoEfectivo.compareTo(montoTotal)<=0){
+                BigDecimal montoCredito = NumbersUtil.round(montoTotal.subtract(montoEfectivo), 2);
+                this.creditoTF.setText(montoCredito.toPlainString());
+            }
+        }
+        catch(Throwable ex){
+            System.out.println("Error al calcular montos:"+ex.getMessage());
+            ex.printStackTrace();
+        }
+        
+    }//GEN-LAST:event_efectivoTFFocusLost
+
+    private void creditoTFFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_creditoTFFocusLost
+        try{            
+            BigDecimal montoTotal = montoEfectivo.add(montoCredito);
+            BigDecimal montoCredito = new BigDecimal(creditoTF.getText());            
+            if (montoCredito.compareTo(montoTotal)<=0){
+                BigDecimal montoEfectivo = NumbersUtil.round(montoTotal.subtract(montoCredito), 2);
+                this.efectivoTF.setText(montoEfectivo.toPlainString());
+            }
+        }
+        catch(Throwable ex){
+            System.out.println("Error al calcular montos:"+ex.getMessage());
+            ex.printStackTrace();
+        }
+        
+        
+    }//GEN-LAST:event_creditoTFFocusLost
 
     public void loadDatosPagos(BigDecimal efectivo, BigDecimal credito, String obs){        
         

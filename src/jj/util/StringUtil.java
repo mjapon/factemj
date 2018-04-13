@@ -13,10 +13,12 @@ import java.text.MessageFormat;
  */
 public class StringUtil {
     
-    public static String format(String template, Object... args){
-        
+    public static String format(String template, Object... args){        
         return new MessageFormat(template).format(args);
-        
+    }
+    
+    public static Boolean isEmpty(String cadena){        
+        return cadena == null || cadena.trim().length() == 0;        
     }
     
     public static Boolean isNotEmpty(String cadena){        

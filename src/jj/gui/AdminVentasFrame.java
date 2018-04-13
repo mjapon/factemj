@@ -56,6 +56,14 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         initComponents();
         
         this.tra_codigo = tra_codigo;
+        if (this.tra_codigo == 1){
+            this.jLabel1.setText("Administrar Ventas");
+            this.jLabelSumaUtilidades.setVisible(true);
+        }
+        else if(this.tra_codigo == 2){
+            this.jLabel1.setText("Administrar Compras");
+            this.jLabelSumaUtilidades.setVisible(false);
+        }
         
         desdeTF = new JFormattedTextField(createFormatter("##/##/####"));
         hastaTF = new JFormattedTextField(createFormatter("##/##/####"));

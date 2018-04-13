@@ -741,8 +741,8 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         try{
             em.getTransaction().begin();
             
-            boolean esFacturaCompra = datosCabecera.getTraCodigo() == 1;
-            boolean esFacturaVenta = datosCabecera.getTraCodigo() == 2;
+            boolean esFacturaCompra = datosCabecera.getTraCodigo() == 2;
+            boolean esFacturaVenta = datosCabecera.getTraCodigo() == 1;
             
             Integer tipoCliente = 1;//1-cliente, 2-proveedor
             if (esFacturaCompra){
@@ -796,10 +796,17 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
             Facturas factura = new Facturas();
             factura.setCliId(clienteFactura);
 
-            String secFactura = StringUtil.zfill(new Integer(datosCabecera.getNumFactura()), 9);        
-            String numeroFactura = StringUtil.format("{0}{1}", 
+            String numeroFactura = "";
+            if (esFacturaVenta){
+                String secFactura = StringUtil.zfill(new Integer(datosCabecera.getNumFactura()), 9);
+                numeroFactura = StringUtil.format("{0}{1}", 
                     datosCabecera.getNroEstFact(),
                     secFactura);
+            }            
+            else if (esFacturaCompra){
+                numeroFactura = datosCabecera.getNumFactura();
+            }
+            
 
             factura.setFactNum(numeroFactura);
             factura.setFactEstab(1);
@@ -841,6 +848,8 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                 }
                 else if (esFacturaCompra){//factura de compra
                     articulosController.incrementInv(fila.getCodigoArt(), new BigDecimal(fila.getCantidad()));
+                    //Actualizar el precio de compra
+                    articulosController.updatePrecioCompra(fila.getCodigoArt(), fila.getPrecioUnitario());
                 }
                 
                 em.persist(detalle);

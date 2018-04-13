@@ -71,6 +71,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
                     //facturaFrame.focusBarCode();  
                     facturaFrame.focusFiltro();
                     facturaFrame.restoreDefaultsDividerLocation();
+                    facturaFrame.updateArticulos();
                     System.out.println(" facturaFrame.focusBarCode();---------> ");
                 }
                 else if ("Factura de Compra".equalsIgnoreCase(title)){
@@ -79,12 +80,14 @@ public class FarmaAppMain extends javax.swing.JFrame {
                     //facturaFrame.focusBarCode();  
                     facturaFrame.focusFiltro();
                     facturaFrame.restoreDefaultsDividerLocation();
+                    facturaFrame.updateArticulos();
                     System.out.println(" facturaFrame.focusBarCode();---------> ");
                 }
                 else if ("Administrar Artículos".equalsIgnoreCase(title)){
                     EstadoAPP estadoApp = estadosApp.get(ArticulosFrame.class.getName());
-                    ArticulosFrame facturaFrame = (ArticulosFrame)estadoApp.getFrame();
-                    facturaFrame.filtroFocus();
+                    ArticulosFrame artsFrame = (ArticulosFrame)estadoApp.getFrame();
+                    artsFrame.filtroFocus();
+                    artsFrame.updateArticulos();
                     System.out.println(" Administrar Artículos focusBarCode();---------> ");
                 }
                 else if ("Cuentas X Cobrar".equalsIgnoreCase(title)){
@@ -108,16 +111,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
         
         
         splashScreen.setVisible(false);
-        
-    
     }
-    
-    public static void realoadArtsFactura(){
-        EstadoAPP facturaEstadoApp = estadosApp.get(FacturaVentaFrame.class.getName());        
-        FacturaVentaFrame facturaFrame = (FacturaVentaFrame)facturaEstadoApp.getFrame();
-        facturaFrame.reloadArts();
-    }
-    
     
     public EstadoAPP createEstado(String className, Integer tra_codigo){
         

@@ -120,6 +120,25 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
         });
         
         jTableArts.updateUI();
+        articulosDataModel.fireTableDataChanged();        
+        tfCodBarra.requestFocus();        
+    }
+    
+    public void updateLabelEstado(String label){
+        this.jLabelEstado.setText(label);
+    }
+    
+    public void clearForms(){
+        tfCodBarra.setText("");
+        tfNombre.setText("");
+        tfPrecioCompra.setText("");
+        tfPrecioVenta.setText("");
+        tfPrecioMin.setText("");
+        tfInventario.setText("");
+        tfIVAPC.setText("");
+    }
+    
+    public void updateArticulos(){
         
         try{
             articulosDataModel.loadFromDataBase();
@@ -138,21 +157,7 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
         }
         
         articulosDataModel.fireTableDataChanged();        
-        tfCodBarra.requestFocus();        
-    }
-    
-    public void updateLabelEstado(String label){
-        this.jLabelEstado.setText(label);
-    }
-    
-    public void clearForms(){
-        tfCodBarra.setText("");
-        tfNombre.setText("");
-        tfPrecioCompra.setText("");
-        tfPrecioVenta.setText("");
-        tfPrecioMin.setText("");
-        tfInventario.setText("");
-        tfIVAPC.setText("");
+        
     }
     
     public void logicaAdd(){
@@ -509,8 +514,7 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
     }
     
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        this.articulosDataModel.saveAllRecords();        
-        FarmaAppMain.realoadArtsFactura();
+        this.articulosDataModel.saveAllRecords();                
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void tfCodBarraKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfCodBarraKeyPressed

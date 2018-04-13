@@ -136,6 +136,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
                 if (mouseEvent.getClickCount() == 2) {
                     //showDetallesFrame();
                     System.out.println("dbl clic event-->");
+                    showDetallesFrame();
                 }
             }
         });

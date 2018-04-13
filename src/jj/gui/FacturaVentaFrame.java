@@ -6,7 +6,6 @@
 package jj.gui;
 
 import com.serviestudios.print.util.TextPrinterUtil;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -25,8 +24,6 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.text.MaskFormatter;
 import jj.controller.ArticulosJpaController;
@@ -57,7 +54,6 @@ import jj.util.StringUtil;
 import jj.util.TotalesFactura;
 import jj.util.datamodels.ArticulosDataModel;
 
-
 /**
  *
  * @author Usuario
@@ -83,48 +79,43 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     private Integer tra_codigo;
     
     private JFrame root;
-    public JFrame getRoot() {
-           return root;
-    }
-
-    public void setRoot(JFrame root) {
-         this.root = root;
-    }         
     
-    public void setupTransacc(){
-        if (this.tra_codigo == 1){//Factura de venta
-            this.jCBConsFinal.setEnabled(true);
-            this.jLabelRef.setText("Cliente");
-            this.jLabelTitulo.setText("Registrar Venta");
-        }
-        else if (this.tra_codigo == 2){//Factura de compra
-            this.jCBConsFinal.setSelected(false);
-            this.jCBConsFinal.setEnabled(false);
-            this.clearCliente();
-            this.jLabelRef.setText("Proveedor");
-            this.jLabelTitulo.setText("Registrar Compra");
-            
-            this.jTFCI.setEnabled(true);
-            this.jTFCI.setEditable(true);
-            
-        }        
-    }
-
     /**
      * Creates new form FacturaVentaFrame
      */
     public FacturaVentaFrame(Integer tra_codigo) {
         initComponents();
         
-        this.tra_codigo = tra_codigo;        
+        this.tra_codigo = tra_codigo;  
+        
+        if (this.tra_codigo == 1){
+            this.jLabelTitulo.setText("FACTURA DE VENTA");
+        }
+        else if (this.tra_codigo == 2){
+            this.jLabelTitulo.setText("FACTURA DE COMPRA");
+        }
         
         facturaDataModel = new FacturaDataModel(this.tra_codigo);
         facturaDataModel.setFrame(this);
         facturaModelListener = new FacturaModelListener();
         facturaDataModel.addTableModelListener(facturaModelListener);        
         jTableFactura.setModel(facturaDataModel); 
-        facturaDataModel.setJtable(jTableFactura);        
+        facturaDataModel.setJtable(jTableFactura);
+
+        this.em = EntityManagerUtil.createEntintyManagerFactory();
+       
+        articulosController = new ArticulosJpaController(em);
+        clientesController = new ClientesJpaController(em);
+        facturaController = new FacturasJpaController(em);
+        secuenciasController = new SecuenciasJpaController(em);
+        ctesController = new CtesJpaController(em);   
         
+        consFinal = clientesController.findById(-1); 
+        if (consFinal == null){
+            JOptionPane.showMessageDialog(null, "EL CONSUMIDOR FINAL NO HA SIDO REGISTRADO");
+        }
+        
+        //Configurar Tables
         String[] values = new String[] { "SI", "NO"};
         TableColumn colIva = jTableFactura.getColumnModel().getColumn( FacturaDataModel.ColumnaFacturaEnum.IVA.index );
         colIva.setCellEditor(new IVAComboBoxEditor(values));
@@ -140,46 +131,24 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         descuentoCmbRenderer.setEditable(true);
         colDesc.setCellRenderer(descuentoCmbRenderer);
         
-        updateLabelsTotales();
-        
-        jTableFactura.updateUI();        
-        facturaDataModel.fireTableDataChanged();
-        
-        this.em = EntityManagerUtil.createEntintyManagerFactory();
-       
-        articulosController = new ArticulosJpaController(em);
-        clientesController = new ClientesJpaController(em);
-        facturaController = new FacturasJpaController(em);
-        secuenciasController = new SecuenciasJpaController(em);
-        ctesController = new CtesJpaController(em);
-        
-        enableDisableCamposCli(!this.jCBConsFinal.isSelected());
-        
-        consFinal = clientesController.findById(-1);       
-        this.loadDatosConsFinal();
-        
-        if (consFinal == null){
-            JOptionPane.showMessageDialog(null, "EL CONSUMIDOR FINAL NO HA SIDO REGISTRADO");
-        }
-        
         //EStablecer los anchos de las columnas
-        jTableFactura.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        //jTableFactura.getColumnModel().getColumn(0).setPreferredWidth(10);
+        jTableFactura.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);        
         jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.CODBAR.index).setPreferredWidth(80);
-        jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.ARTICULO.index).setPreferredWidth(180);        
+        jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.ARTICULO.index).setPreferredWidth(200);
         jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.CANTIDAD.index).setPreferredWidth(40);        
         jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.IVA.index).setPreferredWidth(80);
+        
+        /*
+        jTableFactura.updateUI();        
+        facturaDataModel.fireTableDataChanged();
+        */
         
         pagosMap = new HashMap<Integer, FilaPago>();
         pagosMap.put(1, new FilaPago(1, "EFECTIVO", BigDecimal.ZERO, ""));
         pagosMap.put(2, new FilaPago(2, "CRÉDITO", BigDecimal.ZERO, ""));
-        
-        initNewFactura();
-        
-        /*
-        Configurar articulos
-        */
-        
+                
+        //DataModels
+        //Para el tipo de precio que se debe mostrar, columnas de articulos
         int modelType = 2;
         if (this.tra_codigo == 2){//Factura de compra
             modelType = 3;
@@ -192,9 +161,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         articulosDataModel.addTableModelListener(articulosModelListener);
         
         jTableArts.setModel(articulosDataModel);
-        
-        setupTransacc();
-        
         jTableArts.getTableHeader().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -231,40 +197,130 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
                 }
             }
         });        
-        
-        jTableArts.updateUI();
-        
+                
+        /*
         try{
             articulosDataModel.loadFromDataBase();
         }
         catch(Throwable ex){
             System.out.println("Error al traer de base de datos:"+ex.getMessage());
-            ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al traer de base de datos:"+ex.getMessage());
         }
-        
         articulosDataModel.fireTableDataChanged(); 
+        */
+        jTableArts.updateUI();
         
-        TableCellRenderer renderer = new DefaultTableCellRenderer(){
-            @Override
-            public Component getTableCellRendererComponent(JTable table, 
-                    Object value, 
-                    boolean isSelected,
-                    boolean hasFocus, 
-                    int row, 
-                    int column) {
-                Component rendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                return rendererComponent;
-            }
-        };
-        jTableArts.setDefaultRenderer(BigDecimal.class, renderer);        
+        
+        //Se establece el parent para el frame de pagos
         pagosFrame = new PagosFrame(this);
         
+        initNewFactura();              
+    }
+    
+    public void updateArticulos(){
+        //Cargar articulos en venta de factura
+        try{
+            articulosDataModel.loadFromDataBase();
+        }
+        catch(Throwable ex){
+            System.out.println("Error al traer de base de datos:"+ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al traer de base de datos:"+ex.getMessage());
+        }
+        articulosDataModel.fireTableDataChanged(); 
+        jTableArts.updateUI();
+        
+        System.out.println("Articulos updated----->");
+    }
+    
+    public void initNewFactura(){        
+        
+        this.em = EntityManagerUtil.createEntintyManagerFactory();        
+        
+        if (this.tra_codigo == 1)//Factura de venta:
+        {
+            String estabPtoEmi = "";
+            Ctes ctesStab = ctesController.findByClave("ESTAB");
+
+            if (ctesStab == null){
+                JOptionPane.showMessageDialog(this, "ERROR:No se ha registrado ESTAB en ctes", "ERROR CONFIG", JOptionPane.ERROR_MESSAGE);
+            }
+            else{
+                estabPtoEmi = ctesStab.getCtesValor();
+            }
+
+            Ctes ctesPtoEmi = ctesController.findByClave("PTOEMI");
+
+            if (ctesPtoEmi == null){
+                JOptionPane.showMessageDialog(this, "ERROR:No se ha registrado ESTAB en ctes", "ERROR CONFIG", JOptionPane.ERROR_MESSAGE);
+            }
+            else{
+                estabPtoEmi = estabPtoEmi+ctesStab.getCtesValor();        
+            }
+
+            this.jLabelEstPtoEmi.setText(estabPtoEmi);
+            
+            
+            Secuencias secuencia = secuenciasController.getSecuencia("EST001");
+            if (secuencia == null){
+                JOptionPane.showMessageDialog(this, "ERROR:No se ha registrado la secuencia de facturas:EST001, favor registrar", "ERROR SECUENCIAS", JOptionPane.ERROR_MESSAGE);
+            }
+            else{
+                jTFNumFact.setText( String.valueOf( secuencia.getSecValor() ) );
+            }
+        
+        }        
+        else if (this.tra_codigo == 2){
+            
+            this.jLabelEstPtoEmi.setText("");
+            this.jTFNumFact.setText("");
+            
+        }
+        
+        //fecha de emsion
+        String fechaActual = FechasUtil.getFechaActual();
+        //System.out.println("jTFFecha.setValue------>");
+        //jTFFecha.setValue(new Date());
+        this.jTFFecha.setText( fechaActual );            
+        this.cliCodigo = 0;
+        
+        //Limpiar items vendidos y encerear totales        
+        facturaDataModel.getItems().clear();
+        facturaDataModel.fireTableDataChanged();
+        facturaDataModel.encerarTotales();
+        jTableFactura.updateUI();
+        updateLabelsTotales();
+        
+        this.jTFCI.setText("");
+        this.jTFCliente.setText("");
+        this.jTFDireccion.setText("");
+        this.jTFTelf.setText("");
+        this.jTFEmail.setText("");
+        
+        if (this.tra_codigo ==1 ){
+            this.jCBConsFinal.setSelected(true);
+            this.loadDatosConsFinal();
+            enableDisableCamposCli(false);
+        }
+        else if (this.tra_codigo == 2){
+            this.jCBConsFinal.setSelected(false);  
+            this.jCBConsFinal.setEnabled(false);
+            this.clearCliente();
+            enableDisableCamposCli(true);
+        }        
+        
+        this.jTFVuelto.setText("");
+        this.jLabelVuelto.setText("");        
+        
+        filtroTF.setText("");
         filtroTF.requestFocus();
         
-        setResizable(true);
-        pack();
+        doFilter();
+        
+        pagosMap = new HashMap<Integer, FilaPago>();
+        pagosMap.put(1, new FilaPago(1, "EFECTIVO", BigDecimal.ZERO, ""));
+        pagosMap.put(2, new FilaPago(2, "CRÉDITO", BigDecimal.ZERO, ""));
     }
+
     
     public void syncPagos(Boolean isToPagos){
         if (isToPagos){
@@ -310,8 +366,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             List<Articulos> articulosList =  articulosController.findByBarcode(codBarra);
             if (articulosList != null && articulosList.size()>0){
                 addArticulo(articulosList.get(0));
-                focusFiltro();
-                //setVisible(false);
+                focusFiltro();                
             }
             else{
                 System.out.println("NO se pudo localizar el articulo:"+codBarra+", en la base de datos");
@@ -345,79 +400,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         else{
             System.out.println("Consfinal es null-->");
         }
-    }
-    
-    public void initNewFactura(){
-        
-        this.em = EntityManagerUtil.createEntintyManagerFactory();
-        
-        Secuencias secuencia = secuenciasController.getSecuencia("EST001");
-        if (secuencia == null){
-            JOptionPane.showMessageDialog(this, "ERROR:No se ha registrado la secuencia de facturas:EST001, favor registrar", "ERROR SECUENCIAS", JOptionPane.ERROR_MESSAGE);
-        }
-        else{
-            jTFNumFact.setText( String.valueOf( secuencia.getSecValor() ) );
-        }
-        
-        String estabPtoEmi = "";
-        Ctes ctesStab = ctesController.findByClave("ESTAB");
-        
-        if (ctesStab == null){
-            JOptionPane.showMessageDialog(this, "ERROR:No se ha registrado ESTAB en ctes", "ERROR CONFIG", JOptionPane.ERROR_MESSAGE);
-        }
-        else{
-            estabPtoEmi = ctesStab.getCtesValor();
-        }
-        
-        Ctes ctesPtoEmi = ctesController.findByClave("PTOEMI");
-        
-        if (ctesPtoEmi == null){
-            JOptionPane.showMessageDialog(this, "ERROR:No se ha registrado ESTAB en ctes", "ERROR CONFIG", JOptionPane.ERROR_MESSAGE);
-        }
-        else{
-            estabPtoEmi = estabPtoEmi+ctesStab.getCtesValor();        
-        }
-        
-        this.jLabelEstPtoEmi.setText(estabPtoEmi);
-        
-        //fecha de emsion
-        String fechaActual = FechasUtil.getFechaActual();
-        //System.out.println("jTFFecha.setValue------>");
-        //jTFFecha.setValue(new Date());
-        this.jTFFecha.setText( fechaActual );    
-        
-        this.cliCodigo = 0;
-        
-        jTableFactura.updateUI();
-        facturaDataModel.getItems().clear();
-        facturaDataModel.fireTableDataChanged();
-        
-        facturaDataModel.encerarTotales();
-        updateLabelsTotales();
-        
-        this.jTFCI.setText("");
-        this.jTFCliente.setText("");
-        this.jTFDireccion.setText("");
-        this.jTFTelf.setText("");
-        this.jTFEmail.setText("");
-        
-        this.jCBConsFinal.setSelected(true);
-        this.loadDatosConsFinal();
-        
-        this.jTFVuelto.setText("");
-        this.jLabelVuelto.setText("");        
-        
-        //barCodeInput.setText("");
-        
-        filtroTF.setText("");
-        doFilter();
-        filtroTF.requestFocus();
-        
-        //barCodeInput.requestFocus();    
-        
-        pagosMap = new HashMap<Integer, FilaPago>();
-        pagosMap.put(1, new FilaPago(1, "EFECTIVO", BigDecimal.ZERO, ""));
-        pagosMap.put(2, new FilaPago(2, "CRÉDITO", BigDecimal.ZERO, ""));
     }
 
     /**
@@ -496,11 +478,11 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1000, 566));
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                formWindowOpened(evt);
-            }
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 formWindowActivated(evt);
+            }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
             }
         });
 
@@ -686,13 +668,13 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(240, 240, 240)
+                .addGap(159, 159, 159)
                 .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabelEstPtoEmi)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTFNumFact, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(85, 85, 85)
+                .addComponent(jTFNumFact, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(77, 77, 77)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTFFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -862,39 +844,18 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
-        //setVisible(false);
-        
+        //setVisible(false);        
         FarmaAppMain farmaApp = (FarmaAppMain)this.root;        
         farmaApp.logicaClosePane(this.getClass().getName()+this.tra_codigo);
-        
-        
     }//GEN-LAST:event_jButtonSalirActionPerformed
     
     public void addArticulo(Articulos articulo){
         facturaDataModel.addItem(articulo);
-        //barCodeInput.setText("");
     }
-    
-    /*
-    private void findArticulo(){
-        String barcode = this.barCodeInput.getText();
-        List<Articulos> arts = this.articulosController.findByBarcode(barcode);
-        
-        if (arts != null && arts.size()>0){
-            Articulos articulo =  arts.get(0);   
-            addArticulo(articulo);            
-        }
-        else{
-            JOptionPane.showMessageDialog(this, "No se encontró el código de barra:"+barcode, "Farmacia", JOptionPane.WARNING_MESSAGE);
-        }
-        
-        barCodeInput.requestFocus();
-    }
-    */
     
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         
-        System.out.println("Window opened----->");        
+        //System.out.println("Window opened----->");        
         //barCodeInput.requestFocus();
         
     }//GEN-LAST:event_formWindowOpened
@@ -972,7 +933,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     }
     
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
-        
         try{
             List<FilaFactura> detalles = facturaDataModel.getItems();
             
@@ -985,30 +945,34 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             DatosCabeceraFactura cabeceraFactura = new DatosCabeceraFactura();
             cabeceraFactura.setNroEstFact(jLabelEstPtoEmi.getText());
             cabeceraFactura.setNumFactura(jTFNumFact.getText());
-            if (this.jCBConsFinal.isSelected()){
-                cabeceraFactura.setCliId(-1);
+            cabeceraFactura.setTraCodigo(this.tra_codigo);
+            
+            boolean permitConsFinal = this.tra_codigo == 1;
+            
+            //Verificar que haya ingresado datos para el cliente            
+            String refName = "cliente";
+            if (this.tra_codigo == 2){//Compras
+                refName = "proveedor";
             }
-            else{
-                //Verificar que haya ingresado datos para el cliente
-                if (this.cliCodigo == null|| this.cliCodigo == 0 ){
-                    String refName = "cliente";
-                    if (this.tra_codigo == 2){
-                        refName = "proveedor";
-                    }
-                    
-                    //Es un nuevo cliente verificar que haya ingresado el nui y el nombre
-                    if (!StringUtil.isNotEmpty(this.jTFCI.getText())){
-                        JOptionPane.showMessageDialog(null, "Debes ingresar el número de cédula o ruc del "+refName+"!");
-                        return;
-                    }
-                    else if (!StringUtil.isNotEmpty(this.jTFCliente.getText())){
-                        JOptionPane.showMessageDialog(null, "Debes ingresar el nombre del cliente!");
-                        return;
-                    }
+            
+            if (!permitConsFinal){                
+                //Validar el ingreso del cliente                
+                if (StringUtil.isEmpty(this.jTFCI.getText())){
+                    JOptionPane.showMessageDialog(null, "Debes ingresar el número de cédula o ruc del "+refName+"!");
+                    return;
                 }
+                else if (StringUtil.isEmpty(this.jTFCliente.getText())){
+                    JOptionPane.showMessageDialog(null, "Debes ingresar el nombre del "+refName+"!");
+                    return;
+                }
+            }
+            
+            if (StringUtil.isEmpty(jTFNumFact.getText())){
+                JOptionPane.showMessageDialog(null, "Debes ingresar el numero de la factura");
+                return;
+            }
                 
-                cabeceraFactura.setCliId(this.cliCodigo);
-            }            
+            cabeceraFactura.setCliId(this.cliCodigo);                     
             cabeceraFactura.setCi(this.jTFCI.getText());
             cabeceraFactura.setCliente(this.jTFCliente.getText());
             cabeceraFactura.setDireccion(this.jTFDireccion.getText());
@@ -1033,7 +997,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             }
             
             initNewFactura();            
-            
         }
         catch(Throwable ex){
             JOptionPane.showMessageDialog(null, "Error al registrar factura:"+ ex.getMessage(), "NO SE PUDO REGISTRAR", JOptionPane.ERROR_MESSAGE);
@@ -1055,22 +1018,12 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     }    
     
     private void jCBConsFinalPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jCBConsFinalPropertyChange
-        
-        //System.out.println("prop value changed-->"+ evt.getNewValue() );
-        
+       
+               
     }//GEN-LAST:event_jCBConsFinalPropertyChange
 
     private void jCBConsFinalStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jCBConsFinalStateChanged
-        //System.out.println("jCBConsFinalStateChanged value changed-->" );
-        /*
-        enableDisableCamposCli(!this.jCBConsFinal.isSelected());
-        if (this.jCBConsFinal.isSelected()){
-            loadDatosConsFinal();
-        }
-        else{
-            this.clearCliente();
-        }
-        */
+       
     }//GEN-LAST:event_jCBConsFinalStateChanged
 
     public void clearCliente(){        
@@ -1259,8 +1212,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         else{
             currentRow =-1;
             jTableArts.clearSelection();
-            //jTableArts.setRowSelectionInterval(currentRow, currentRow);
-            doFilter();            
+            doFilter();
         }
 
     }//GEN-LAST:event_filtroTFKeyReleased
@@ -1286,7 +1238,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     public void doFilter(){                 
         String filtro = this.filtroTF.getText().trim();
         if (filtro.length()>=0){
-            //System.out.println("Se aplica el filtro:"+filtro);
             try{
                 if (this.articulosDataModel != null){
                     this.articulosDataModel.loadFromDataBaseFilter(filtro);
@@ -1297,7 +1248,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
                 ex.printStackTrace();
             }
         }
-        
     }
     
     public void updateLabelsTotales(){
@@ -1320,6 +1270,14 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jLabelTOTAL.setText( totalesFactura.getTotal().toPlainString() );
         jLabelDescuento.setText( totalesFactura.getDescuento().toPlainString() );
     }
+    
+    public JFrame getRoot() {
+           return root;
+    }
+
+    public void setRoot(JFrame root) {
+         this.root = root;
+    }         
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

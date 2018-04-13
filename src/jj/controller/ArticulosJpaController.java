@@ -164,10 +164,20 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
             BigDecimal newInv = BigDecimal.ZERO;
             if (artInv.compareTo(BigDecimal.ZERO)>0){
                 newInv = artInv.add(cant);
-            }            
-            
+            }
             articulo.setArtInv(newInv);            
             em.persist(articulo);
+        }
+    }
+    
+    public void updatePrecioCompra(Integer artCodigo, BigDecimal newPrecioCompra){
+        Articulos articulo = em.find(Articulos.class, artCodigo);
+        if (articulo != null){
+            System.out.println("El articulo es distinto de null-->");
+            if (newPrecioCompra != null){
+                articulo.setArtPrecioCompra(newPrecioCompra);
+                em.persist(articulo);
+            }
         }
     }
     
@@ -283,8 +293,24 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
         }    
          finally{
              //em.getTransaction().rollback();
-         }
+         }        
+    }
+    
+    public List<Object[]> listarRaw(String sortBy, String sortOrder) throws Exception{        
+        String queryStr = "select "+
+                "o.artId,"+
+                "o.artNombre,"+
+                "o.artCodbar,"+
+                "o.artPrecioCompra,"+
+                "o.artPrecio,"+
+                "o.artPreciomin,"+
+                "o.artInv,"+
+                "o.provId,"+
+                "o.artIva,"+
+                "o.unidId from Articulos o order by o."+sortBy+" "+sortOrder;            
         
+        Query query = this.newQuery(queryStr);
+        return query.getResultList();
     }
     
     public List<Articulos> listar(String sortBy, String sortOrder) throws Exception{
@@ -299,6 +325,23 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
             ex.printStackTrace();
             throw  new Exception("Error al listar los articulos:"+ex.getMessage());
         }
+    }
+    
+    public List<Object[]> listarRaw(String sortBy, String sortOrder, String filtro) throws Exception{        
+        String queryStr = "select "+
+                "o.artId,"+
+                "o.artNombre,"+
+                "o.artCodbar,"+
+                "o.artPrecioCompra,"+
+                "o.artPrecio,"+
+                "o.artPreciomin,"+
+                "o.artInv,"+
+                "o.provId,"+
+                "o.artIva,"+
+                "o.unidId from Articulos o where o.artNombre like '%"+filtro.toUpperCase()+"%' or o.artCodbar like '%"+ filtro.toUpperCase() +"%' order by o."+sortBy+" "+sortOrder;
+        
+        Query query = this.newQuery(queryStr);
+        return query.getResultList();
     }
     
     
