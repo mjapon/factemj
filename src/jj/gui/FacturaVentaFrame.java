@@ -645,7 +645,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jLabel2.setText("SUBTOTAL:");
         jPanelSubT.add(jLabel2);
 
-        jLabelSubTotal.setFont(new java.awt.Font("Arial", 0, 36)); // NOI18N
+        jLabelSubTotal.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
         jPanelSubT.add(jLabelSubTotal);
 
         jPanelSouth.add(jPanelSubT);
@@ -656,7 +656,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jLabel12.setText("DESCUENTO:");
         jPanelTotal1.add(jLabel12);
 
-        jLabelDescuento.setFont(new java.awt.Font("Arial", 0, 36)); // NOI18N
+        jLabelDescuento.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
         jPanelTotal1.add(jLabelDescuento);
 
         jPanelSouth.add(jPanelTotal1);
@@ -667,7 +667,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jLabel4.setText("IVA:");
         jPanelTotal.add(jLabel4);
 
-        jLabelIVA.setFont(new java.awt.Font("Arial", 0, 36)); // NOI18N
+        jLabelIVA.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
         jPanelTotal.add(jLabelIVA);
 
         jPanelSouth.add(jPanelTotal);
@@ -678,7 +678,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jLabel6.setText("TOTAL:");
         jPanelIva.add(jLabel6);
 
-        jLabelTOTAL.setFont(new java.awt.Font("Arial", 1, 40)); // NOI18N
+        jLabelTOTAL.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
         jLabelTOTAL.setForeground(new java.awt.Color(0, 204, 51));
         jPanelIva.add(jLabelTOTAL);
 
@@ -698,7 +698,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         });
         jPanel10.add(jTFVuelto);
 
-        jLabelVuelto.setFont(new java.awt.Font("Lucida Grande", 0, 36)); // NOI18N
+        jLabelVuelto.setFont(new java.awt.Font("Lucida Grande", 0, 24)); // NOI18N
         jPanel10.add(jLabelVuelto);
 
         jPanelSouth.add(jPanel10);
