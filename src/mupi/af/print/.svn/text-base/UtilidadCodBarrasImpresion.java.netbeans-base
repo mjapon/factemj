@@ -1,0 +1,230 @@
+package mupi.af.print;
+
+import java.awt.print.Book;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.awt.print.PrinterJob;
+import java.util.List;
+
+import javax.print.Doc;
+import javax.print.DocPrintJob;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.attribute.AttributeSet;
+import javax.print.attribute.HashAttributeSet;
+import javax.print.attribute.standard.PrinterName;
+import javax.swing.JOptionPane;
+
+import sun.print.PageableDoc;
+
+/**
+ * <p>Esta clase permite imprimir una o varias etiquetas para el control de activos fijos.
+ * En caso de querer establecer el nombre de la empresa y el mensaje final que aparacen en las
+ * etiquetas, es necesario setear los campos nombreEmpresa, mensajeFinal, según se requiera.</p>
+ * 
+ * @author ManuelJ
+ * @version Viernes 18-feb-2011
+ */
+public class UtilidadCodBarrasImpresion {
+
+	private final int  margin = (int)(0.0394*25*72); 	  
+	private final double inchesPerMillimeter = 0.0394;
+	private int anchoEtiqueta;
+	private int altoEtiqueta;
+	private int A4_WIDTH;   
+	private int A4_HEIGHT; 	
+	private String nombreImpresora;	 
+	
+	private String nombreEmpresa;
+	private String mensajeFinal;	
+	
+	private Paper paper; 
+	private PageFormat pageFormat;
+	private PrintService printService;
+		
+	private void inicializar(){
+		
+		try{					
+			A4_WIDTH = (int)(anchoEtiqueta * inchesPerMillimeter * 72);
+			
+			A4_HEIGHT = (int)(altoEtiqueta * inchesPerMillimeter * 72);
+			
+			paper = new Paper();
+			
+			paper.setSize(A4_WIDTH,A4_HEIGHT);		
+			
+			//paper.setImageableArea(margin,margin,paper.getWidth() - 2*margin,paper.getHeight() - 2*margin);
+			paper.setImageableArea(0.5,0.5,A4_WIDTH,A4_HEIGHT-0.5);
+			
+			pageFormat = new PageFormat();			
+			pageFormat.setPaper(paper);
+			
+			AttributeSet aset = new HashAttributeSet();
+			aset.add(new PrinterName(nombreImpresora, null));
+			
+			PrintService[] services = PrintServiceLookup.lookupPrintServices(null, aset);
+			
+			if( ( services != null ) && (services.length > 0 ) ){
+				
+				for( PrintService ps: services ){
+					
+					if ( ps.getName().equalsIgnoreCase(nombreImpresora) ){
+						printService = ps;
+						break;
+					}
+				}
+			}
+			
+			/*
+			if( printService == null ){
+				
+				PrinterJob job = PrinterJob.getPrinterJob();
+				
+				if (job.printDialog()){				
+					printService = job.getPrintService();				
+				}				
+			}*/
+		}
+		catch(Throwable ex){
+			//
+		}				
+	}
+	
+	public void elegirImpresoraManualmente(){
+		
+		if( printService == null ){
+			
+			PrinterJob job = PrinterJob.getPrinterJob();
+			
+			if (job.printDialog()){				
+				printService = job.getPrintService();				
+			}				
+		}
+		
+	}
+	
+	public void imprimir(List<InfoAfActivo> listaActivos) throws Throwable{		
+		if( printService == null ){
+			
+			int confirmado = JOptionPane.showConfirmDialog(null,"La impresora " + nombreImpresora +" no se encuentra instalada en su equipo. ¿Desea elegir otra?");
+			
+			if (JOptionPane.OK_OPTION == confirmado){
+				elegirImpresoraManualmente();	
+				imprimir(listaActivos);
+			}
+			else{
+				throw new Exception("No se puede imprimir, verifique que la impresora: " + nombreImpresora +" se encuentre instalada en su equipo");			
+			}			
+		}
+		else{			
+			
+			if( listaActivos != null ){
+				for( InfoAfActivo activo: listaActivos ){
+					imprimir(activo);
+				}
+			}
+		}	
+	}	
+	public void imprimir(InfoAfActivo activo) throws Throwable{		
+		if( activo != null ){
+						
+			BarCodeMupi barCodeMupi = new BarCodeMupi(activo.getCodigo(),activo.getNombre(), nombreEmpresa, mensajeFinal, activo.getSerie(), activo.isSc());
+			
+			if( printService != null ){
+				
+				System.out.println("------>UtilidadCodBarrasImpresion:Imprimiendo nuevo activo en impresora: " + nombreImpresora);
+				
+				DocPrintJob job2 =  printService.createPrintJob();		    	
+			    
+				Book book = new Book();	
+				book.append(barCodeMupi, pageFormat);					
+			    
+				Doc doc = new PageableDoc(book);				    
+			    			    
+				job2.print(doc, null);						
+					
+				System.out.println("--------->UtilidadCodBarrasImpresion:Finalizo impresion de: " + activo.getCodigo() );
+										
+			}
+			else{
+				
+				int confirmado = JOptionPane.showConfirmDialog(null,"La impresora " + nombreImpresora +" no se encuentra instalada en su equipo. ¿Desea elegir otra?");
+				
+				if (JOptionPane.OK_OPTION == confirmado){
+					elegirImpresoraManualmente();
+					imprimir(activo);
+				}
+				else{
+					throw new Exception("No se pudo imprimir");
+				}
+				
+			}
+		}
+		else{
+			throw new Exception("La información del activo no ha sido especificada, no se puede imprimir");
+		}		
+						
+	}	 
+	
+	/**
+	 * Crea un nuevo objeto UtilidadCodBarrasImpresion con los datos especificados
+	 * @param anchoEtiqueta
+	 * @param altoEtiqueta
+	 * @param nomImpresora - El nombre de la impresora
+	 */
+	public UtilidadCodBarrasImpresion(int anchoEtiqueta, int altoEtiqueta, String nomImpresora){
+		
+		this.nombreImpresora = nomImpresora;
+		this.anchoEtiqueta = anchoEtiqueta;
+		this.altoEtiqueta = altoEtiqueta;
+		
+		inicializar();
+	}
+	
+	/**
+	 * <p>Crea un nuevo objeto UtilidadCodBarraImpresion con los siguientes valores</p>
+	 * <li>anchoEtiqueta = 50 mm</li>
+	 * <li>altoEtiqueta  = 25 mm </li>
+	 * @param nombreImpresora - El nombre de la impresora especificado
+	 */
+	public UtilidadCodBarrasImpresion(String nombreImpresora){
+		this.anchoEtiqueta = 50;
+		this.altoEtiqueta = 25;
+		this.nombreImpresora = nombreImpresora;
+		
+		inicializar();
+	}
+	
+	
+	/**
+	 * <p>Crea una nuevo objeto UtilidadCodBarrasImpresion con los siguientes valores</p>
+	 * <li>anchoEtiqueta = 50 mm</li>
+	 * <li>altoEtiqueta = 25 mm</li>
+	 * <li>nombreImpresora = 'Datamax E-4203'</li>
+	 */
+	public UtilidadCodBarrasImpresion(){
+		this.anchoEtiqueta = 50;
+		this.altoEtiqueta = 25;
+		this.nombreImpresora = "Datamax E-4203";
+		
+		inicializar();
+	}
+
+	public String getNombreEmpresa() {
+		return nombreEmpresa;
+	}
+
+	public void setNombreEmpresa(String nombreEmpresa) {
+		this.nombreEmpresa = nombreEmpresa;
+	}
+
+	public String getMensajeFinal() {
+		return mensajeFinal;
+	}
+
+	public void setMensajeFinal(String mensajeFinal) {
+		this.mensajeFinal = mensajeFinal;
+	}
+	
+	
+}

@@ -1,0 +1,114 @@
+package mupi.af.print;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.font.TextAttribute;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.text.AttributedString;
+
+import com.itextpdf.text.pdf.Barcode128;
+
+public class BarCodeMupi implements Printable{
+
+	private String codigoActivo;
+	private String nombreEmpresa;
+	private String nombreActivo;
+	private String serieActivo;
+	private String msgFin;
+	private boolean sc; 
+	
+	public BarCodeMupi(String codigoActivo, String nombreActivo, String serie, boolean sc){
+		this.codigoActivo = codigoActivo;
+		this.nombreEmpresa = "MUTUALISTA PICHINCHA";
+		this.nombreActivo = nombreActivo;
+		this.msgFin = "Cuida tus activos fijos, no desprendas este ticket";
+		this.serieActivo = serie != null ? serie : "";
+		this.sc  = sc;
+	}	
+	
+	public BarCodeMupi(String codigoActivo, String nombreActivo,
+			String nomEmpresa, String msgFinal, String serie, boolean sc) {
+		
+		this.codigoActivo = codigoActivo;
+		this.nombreEmpresa =  (nomEmpresa!= null ? nomEmpresa : "MUTUALISTA PICHINCHA" );
+		this.nombreActivo = nombreActivo;
+		this.msgFin = (msgFinal != null ? msgFinal : "Cuida tus activos fijos, no desprendas este ticket");
+		this.serieActivo = serie != null ? serie : "";
+		this.sc  = sc;
+	}
+
+
+	@Override
+	public int print(Graphics graphics, PageFormat pf, int pageIndex)
+			throws PrinterException {
+			
+		int xo = (int) pf.getImageableX();
+		int yo = (int) pf.getImageableY();
+		
+		
+		Font plainFont = new Font("Times New Roman", Font.PLAIN, 6);
+		
+		Font plainFont8 = new Font("Times New Roman", Font.PLAIN, 8);
+		
+		AttributedString codStrFt = new AttributedString(codigoActivo);		
+		codStrFt.addAttribute(TextAttribute.FONT, plainFont8);
+		
+		AttributedString nomEmpStrFt = new AttributedString(nombreEmpresa);		
+		nomEmpStrFt.addAttribute(TextAttribute.FONT, plainFont);
+		
+		AttributedString nomActStrFt = new AttributedString(nombreActivo);		
+		nomActStrFt.addAttribute(TextAttribute.FONT, plainFont);
+				
+		if( (serieActivo == null) || (serieActivo.length() == 0) ){
+			serieActivo = "---";
+		}
+		
+		AttributedString serieActStrFt = new AttributedString(serieActivo);		
+		serieActStrFt.addAttribute(TextAttribute.FONT, plainFont);
+		
+		AttributedString msgFinStrFt = new AttributedString(msgFin);		
+		msgFinStrFt.addAttribute(TextAttribute.FONT, plainFont);
+		
+		AttributedString msgFinSCStrFt = new AttributedString("SUJETO A CONTROL");		
+		msgFinSCStrFt.addAttribute(TextAttribute.FONT, plainFont);
+		
+		//as.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, 1, 11);
+		
+		graphics.drawString(nomEmpStrFt.getIterator(), xo+25, yo+12);
+		
+		java.awt.Image barcodeImage =getBarCodeImage();			
+		
+		int width= barcodeImage.getWidth(null) - (barcodeImage.getWidth(null) * 25)/100;
+		int height = barcodeImage.getHeight(null) - (barcodeImage.getHeight(null) * 19)/100;
+		
+		System.out.println(" Tamaño del codigo de barras, ancho: " + width + ", alto:" + height);
+		
+		graphics.drawImage(barcodeImage ,xo+17,yo+15, width, height, null);
+		
+		graphics.drawString(codStrFt.getIterator(), xo+25, yo+42);
+		
+		graphics.drawString(nomActStrFt.getIterator(), xo+10, yo+49);
+		graphics.drawString(serieActStrFt.getIterator(), xo+10, yo+55);
+		
+		if( sc ){
+			graphics.drawString(msgFinSCStrFt.getIterator(), xo+10, yo+60);
+		}
+		
+		graphics.drawString(msgFinStrFt.getIterator(), xo+10, yo+66);
+		
+		return Printable.PAGE_EXISTS;		
+	}
+	
+	private java.awt.Image getBarCodeImage(){
+		Barcode128 code128 = new Barcode128();		
+        code128.setCode(codigoActivo);
+        return code128.createAwtImage(Color.BLACK, Color.WHITE);
+        
+        //Image image128 = code128.createImageWithBarcode(cb, null, null);
+	}
+	
+
+}

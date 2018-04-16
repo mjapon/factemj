@@ -1,0 +1,45 @@
+package mupi.af.print;
+
+public class InfoAfActivo implements java.io.Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7119117245097806518L;
+	private String codigo;
+	private String nombre;
+	private String serie;
+	private boolean sc;
+	
+	public InfoAfActivo(String codigo, String nombre, String serie, boolean sc) {		
+		this.codigo = codigo;
+		this.nombre = nombre;
+		this.serie = serie;
+		this.sc = sc;
+	}
+	
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public String getSerie() {
+		return serie;
+	}
+	public void setSerie(String serie) {
+		this.serie = serie;
+	}
+	public boolean isSc() {
+		return sc;
+	}
+	public void setSc(boolean sc) {
+		this.sc = sc;
+	}	
+}
