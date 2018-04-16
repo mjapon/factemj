@@ -7,20 +7,16 @@ package jj.util.datamodels;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import jj.controller.FacturasJpaController;
 import jj.controller.MovtransaccJpaController;
 import jj.entity.Movtransacc;
 import jj.util.FechasUtil;
 import jj.util.FilaAbonos;
-import jj.util.FilaCXCP;
 import jj.util.NumbersUtil;
-import jj.util.ParamBusquedaCXCP;
 import jj.util.TotalesCuentasXPC;
 
 /**

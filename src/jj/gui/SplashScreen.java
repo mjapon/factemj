@@ -22,22 +22,20 @@ public class SplashScreen extends javax.swing.JFrame {
      */
     public SplashScreen() {
         initComponents();
-        
-         
-        BufferedImage img = null;
-        try {            
-            URL resource = SplashScreen.class.getResource("MarcaVG.png");            
-            img = ImageIO.read(resource);            
+        /*
+        BufferedImage img = null;        
+        try {
+            URL resource = FarmaAppMain.class.getResource("MarcaVG.png");
+            //URL resource = SplashScreen.class.getResource("MarcaVG.png");
+            img = ImageIO.read(resource);
             ImageIcon imageIcon = new ImageIcon(img);
-            setContentPane(new JLabel(imageIcon));           
-        
+            setContentPane(new JLabel(imageIcon));
+            System.out.println("Se cargo la imagen-->");
         } catch (Throwable e) {
             System.out.println("Error al cargar la image-->");
             e.printStackTrace();
-        }
-        
-         
-        //setUndecorated(true);
+        } 
+        */
     }
 
     /**
@@ -54,9 +52,10 @@ public class SplashScreen extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
         setResizable(false);
+        getContentPane().setLayout(new java.awt.FlowLayout());
 
-        jLabel1.setText("Loading...");
-        getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
+        jLabel1.setText("Iniciando el Sistema....");
+        getContentPane().add(jLabel1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

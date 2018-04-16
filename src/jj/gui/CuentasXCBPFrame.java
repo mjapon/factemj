@@ -11,7 +11,6 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -23,9 +22,7 @@ import jj.controller.FacturasJpaController;
 import jj.controller.MovtransaccJpaController;
 import jj.util.EntityManagerUtil;
 import jj.util.FechasUtil;
-import jj.util.FilaAbonos;
 import jj.util.FilaCXCP;
-import jj.util.FilaVenta;
 import jj.util.ParamBusquedaCXCP;
 import jj.util.datamodels.AbonosDataModel;
 import jj.util.datamodels.CuentaXCPDataModel;
@@ -88,9 +85,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         jTable1.getTableHeader().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int col = jTable1.columnAtPoint(e.getPoint());
-                String name = jTable1.getColumnName(col);
-                System.out.println("TableHeader column index selected " + col + " " + name);                
+                int col = jTable1.columnAtPoint(e.getPoint());                
                 try{
                     for (int i=0; i<cPDataModel.getColumnCount();i++){
                         jTable1.getColumnModel().getColumn(i).setHeaderValue( cPDataModel.getColumnName(i) );
@@ -148,8 +143,6 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = jTable2.columnAtPoint(e.getPoint());
-                String name = jTable2.getColumnName(col);
-                System.out.println("TableHeader column index selected " + col + " " + name);
                 try{
                     for (int i=0; i<abonosDataModel.getColumnCount();i++){
                         jTable2.getColumnModel().getColumn(i).setHeaderValue( abonosDataModel.getColumnName(i) );
@@ -189,17 +182,8 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     }
     
     
-    public void updateLabelTotales(){
-        
-        /*
-        TotalesVentasModel totalesVentasModel =  this.ventasDataModel.getTotalesVentasModel();
-        if (totalesVentasModel != null){
-            this.jLabelSumaDesc.setText("SUMA DESC="+totalesVentasModel.getSumaDesc().setScale(2, RoundingMode.HALF_UP).toPlainString());
-            this.jLabelSumaIva.setText("SUMA IVA="+totalesVentasModel.getSumaIva().setScale(2, RoundingMode.HALF_UP).toPlainString());
-            this.jLabelSumaTot.setText("SUMA TOTAL="+totalesVentasModel.getSumaTotal().setScale(2, RoundingMode.HALF_UP).toPlainString());
-            this.jLabelSumaUtilidades.setText("SUMA UTILIDADES="+totalesVentasModel.getUtilidades().setScale(2, RoundingMode.HALF_UP).toPlainString());
-        }
-        */
+    public void updateLabelTotales(){        
+       
     }
     
     public void showDetallesFrame(){
@@ -211,10 +195,8 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
             DetallesFacturaFrame detallesFacturaFrame = new DetallesFacturaFrame(filart.getCodFactura());
             
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-            detallesFacturaFrame.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-            
-            detallesFacturaFrame.setSize(900, 800);
-
+            detallesFacturaFrame.setSize(900, 500);
+            detallesFacturaFrame.setLocation(dim.width/2-detallesFacturaFrame.getSize().width/2, dim.height/2-detallesFacturaFrame.getSize().height/2);
             detallesFacturaFrame.setVisible(true);
         }    
         else{
@@ -282,6 +264,11 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         });
 
         jCmbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pendiente de Pago", "Cancelado", "Todos" }));
+        jCmbEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCmbEstadoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -399,6 +386,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
 
         jPanel4.setLayout(new java.awt.GridLayout(5, 1));
 
+        jButtonVerFact.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonVerFact.setText("Ver Factura");
         jButtonVerFact.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -407,6 +395,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         });
         jPanel4.add(jButtonVerFact);
 
+        jButtonAbonar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonAbonar.setText("Abonar");
         jButtonAbonar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -415,6 +404,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         });
         jPanel4.add(jButtonAbonar);
 
+        jButtonClose.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonClose.setText("Cerrar");
         jButtonClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -515,20 +505,17 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCloseActionPerformed
 
     private void jButtonAbonarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAbonarActionPerformed
-        
         int row = this.jTable1.getSelectedRow();
         if (row>-1){
-            FilaCXCP fila = (FilaCXCP)this.cPDataModel.getValueAt(row);           
+            FilaCXCP fila = (FilaCXCP)this.cPDataModel.getValueAt(row);
             abonosFrame = new AbonosFrame(fila, this.tra_codigo);
             abonosFrame.setParentFrame(this);
             
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-            abonosFrame.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+            abonosFrame.setLocation(dim.width/2-abonosFrame.getSize().width/2, dim.height/2-abonosFrame.getSize().height/2);
             
             abonosFrame.setVisible(true);
         }
-        
-        
         
     }//GEN-LAST:event_jButtonAbonarActionPerformed
 
@@ -537,6 +524,13 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         showDetallesFrame();
         
     }//GEN-LAST:event_jButtonVerFactActionPerformed
+
+    private void jCmbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCmbEstadoActionPerformed
+        
+        
+        logicaBuscar();
+        
+    }//GEN-LAST:event_jCmbEstadoActionPerformed
     
      
      

@@ -16,14 +16,18 @@ public class FilaCXCP {
     private Integer codFactura;
     private String fechaFactura;
     private String numFactura;
+    private BigDecimal montoFactura;
     private BigDecimal monto;
     private BigDecimal deuda;
     private String referente;
     private String observacion;
     private String fecha;
     private Integer codPago;
+    private String estadoDesc;
 
-    public FilaCXCP(Integer codFactura, String numFactura, BigDecimal monto, BigDecimal deuda, String referente, String obs, String fecha, Integer codPago) {
+    public FilaCXCP(Integer codFactura, String numFactura, BigDecimal monto, 
+            BigDecimal deuda, String referente, String obs, String fecha, 
+            Integer codPago, String estadoDesc, BigDecimal montoFactura) {
         this.codFactura = codFactura;
         this.numFactura = numFactura;
         this.monto = monto;
@@ -32,6 +36,8 @@ public class FilaCXCP {
         this.observacion = obs;
         this.fecha = fecha;
         this.codPago = codPago;
+        this.estadoDesc = estadoDesc;
+        this.montoFactura = montoFactura;
     }   
     
 
@@ -106,6 +112,20 @@ public class FilaCXCP {
     public void setCodPago(Integer codPago) {
         this.codPago = codPago;
     }
-    
-     
+
+    public String getEstadoDesc() {
+        return estadoDesc;
+    }
+
+    public void setEstadoDesc(String estadoDesc) {
+        this.estadoDesc = estadoDesc;
+    }
+
+    public BigDecimal getMontoFactura() {
+        return montoFactura;
+    }
+
+    public void setMontoFactura(BigDecimal montoFactura) {
+        this.montoFactura = montoFactura;
+    }    
 }

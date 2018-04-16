@@ -448,6 +448,7 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
 
         jPanelSouth.setLayout(new java.awt.GridLayout(6, 1));
 
+        btnAdd.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnAdd.setText("Agregar");
         btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -456,6 +457,7 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
         });
         jPanelSouth.add(btnAdd);
 
+        btnSave.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnSave.setText("Guardar");
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -464,6 +466,7 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
         });
         jPanelSouth.add(btnSave);
 
+        btnBorrar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnBorrar.setText("Borrar");
         btnBorrar.setEnabled(false);
         btnBorrar.addActionListener(new java.awt.event.ActionListener() {
@@ -473,6 +476,7 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
         });
         jPanelSouth.add(btnBorrar);
 
+        btnClose.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnClose.setText("Cerrar");
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

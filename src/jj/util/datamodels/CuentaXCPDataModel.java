@@ -29,9 +29,9 @@ public class CuentaXCPDataModel extends AbstractTableModel{
     protected TotalesCuentasXPC totales;
     protected JTable jtable;
     
-    private Map<Integer, Integer> mapSort;     
-    private FacturasJpaController controller;    
-    private ParamBusquedaCXCP params;
+    protected Map<Integer, Integer> mapSort;     
+    protected FacturasJpaController controller;    
+    protected ParamBusquedaCXCP params;
     
     //pgfFecreg
     
@@ -39,9 +39,10 @@ public class CuentaXCPDataModel extends AbstractTableModel{
         FECHAFACT(0, "Fecha Factura", String.class, "pgfFecreg"),
         NROFACT(1, "Nro Factura", String.class, "factNum"),
         MONTO(2, "Monto", BigDecimal.class, "pgfMonto"),
-        VALORPEND(3, "Valor Pendiente", BigDecimal.class, "pgfSaldo"),
-        REFERENTE(4, "Referente", String.class, "cliNombres"),
-        OBSERVACION(5, "Observación", String.class, "pgfObs");
+        ESTADO(3, "Estado", String.class, "estadoDesc"),
+        VALORPEND(4, "Valor Pendiente", BigDecimal.class, "pgfSaldo"),
+        REFERENTE(5, "Referente", String.class, "cliNombres"),
+        OBSERVACION(6, "Observación", String.class, "pgfObs");
         
         public final int index;
         public String desc;
@@ -93,6 +94,7 @@ public class CuentaXCPDataModel extends AbstractTableModel{
         mapSort.put(2, 0);
         mapSort.put(3, 0);
         mapSort.put(4, 0);        
+        mapSort.put(5, 0);        
     }
     
     public void removeItem(int rowIndex){
@@ -171,6 +173,9 @@ public class CuentaXCPDataModel extends AbstractTableModel{
             else if (columnIndex==ColumnaCXCPEnum.OBSERVACION.index){
                 return fila.getObservacion();
             }
+            else if (columnIndex==ColumnaCXCPEnum.ESTADO.index){
+                return fila.getEstadoDesc();
+            }
             else{
                 return "";
             }
@@ -190,7 +195,9 @@ public class CuentaXCPDataModel extends AbstractTableModel{
             String referente = (String)item[4];
             String obs = (String)item[9];   
             Integer codPago = (Integer)item[0]; 
-            FilaCXCP fila = new FilaCXCP(facturaId, numFactura, monto, deuda, referente, obs, FechasUtil.format(fechafactura), codPago);
+            String estadoDesc = (String)item[11];
+            FilaCXCP fila = new FilaCXCP(facturaId, numFactura, monto, deuda, referente, 
+                    obs, FechasUtil.format(fechafactura), codPago, estadoDesc, BigDecimal.ZERO);
             addItem(fila);
         }
         
@@ -269,16 +276,32 @@ public class CuentaXCPDataModel extends AbstractTableModel{
             String referente = (String)item[4];
             String obs = (String)item[9];      
             Integer codPago = (Integer)item[10];
-            FilaCXCP fila = new FilaCXCP(facturaId, numFactura, monto, deuda, referente, obs, FechasUtil.format(fechafactura), codPago);
+            
+            String estadoDesc = (String)item[11];
+            
+            FilaCXCP fila = new FilaCXCP(facturaId, numFactura, monto, deuda, 
+                    referente, obs, FechasUtil.format(fechafactura), codPago, 
+                    estadoDesc, BigDecimal.ZERO);
+            
             items.add(fila);
         }
         
-        totalizar();                
+        totalizar();
         fireTableDataChanged();
-    }
-    
+    }    
     
     public void totalizar(){
+        BigDecimal sumaAbonos = BigDecimal.ZERO;        
+        for (FilaCXCP fila: this.items){
+            sumaAbonos = sumaAbonos.add( fila.getMonto() );
+        }
+        
+        if (this.getTotalesFactura() == null){
+            this.setTotalesFactura(new TotalesCuentasXPC());
+        }
+        
+        TotalesCuentasXPC totales = this.getTotalesFactura();
+        totales.setSumaMonto(sumaAbonos);
         
     }
 

@@ -33,17 +33,13 @@ public class FarmaAppMain extends javax.swing.JFrame {
      * Creates new form FarmaAppMain
      */
     public FarmaAppMain() {
-        
         splashScreen = new SplashScreen();
-        
+        splashScreen.setSize(500, 450);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        splashScreen.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-        
+        splashScreen.setLocation(dim.width/2-splashScreen.getSize().width/2, dim.height/2-splashScreen.getSize().height/2);                
+        initComponents();
         splashScreen.setVisible(true);
-        
-        initComponents();        
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
-        
         initEstados();
         /*
         BufferedImage img = null;
@@ -165,8 +161,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
                 return adminComprasEstadoAPP;
             }
         }
-        else if (CuentasXCBPFrame.class.getName().equalsIgnoreCase(className)){
-            
+        else if (CuentasXCBPFrame.class.getName().equalsIgnoreCase(className)){            
             if (tra_codigo == 3){                
                 CuentasXCBPFrame cBPFrame = new CuentasXCBPFrame(3);
                 cBPFrame.setRoot(this);
@@ -182,8 +177,12 @@ public class FarmaAppMain extends javax.swing.JFrame {
 
                 return adminCXCPAPP;           
             }
-            
-            
+        }
+        else if (MovsCajaFrame.class.getName().equalsIgnoreCase(className)){
+            MovsCajaFrame movsCajaFrame = new MovsCajaFrame();
+            movsCajaFrame.setRoot(this);
+            EstadoAPP cajasAPP = new EstadoAPP(movsCajaFrame.getContentPane(), icon, "Movimientos Caja", movsCajaFrame);
+            return cajasAPP;
         }
         
         return null;
@@ -203,6 +202,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
         estadosApp.put(AdminVentasFrame.class.getName()+"2", createEstado(AdminVentasFrame.class.getName(), 2));
         estadosApp.put(CuentasXCBPFrame.class.getName()+"4", createEstado(CuentasXCBPFrame.class.getName(), 4));
         
+        estadosApp.put(MovsCajaFrame.class.getName(), createEstado(MovsCajaFrame.class.getName(),0));        
     }
 
     /**
@@ -228,6 +228,8 @@ public class FarmaAppMain extends javax.swing.JFrame {
         facturarMenuItem2 = new javax.swing.JMenuItem();
         adminArtsMenu = new javax.swing.JMenu();
         cutMenuItem = new javax.swing.JMenuItem();
+        cajasMenu = new javax.swing.JMenu();
+        movsCajaMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -348,6 +350,22 @@ public class FarmaAppMain extends javax.swing.JFrame {
         adminArtsMenu.add(cutMenuItem);
 
         menuBar.add(adminArtsMenu);
+
+        cajasMenu.setMnemonic('e');
+        cajasMenu.setText("Cajas");
+        cajasMenu.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        movsCajaMenuItem.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        movsCajaMenuItem.setMnemonic('t');
+        movsCajaMenuItem.setText("Movimientos");
+        movsCajaMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                movsCajaMenuItemActionPerformed(evt);
+            }
+        });
+        cajasMenu.add(movsCajaMenuItem);
+
+        menuBar.add(cajasMenu);
 
         helpMenu.setMnemonic('h');
         helpMenu.setText("Ayuda");
@@ -530,6 +548,15 @@ public class FarmaAppMain extends javax.swing.JFrame {
         
     }//GEN-LAST:event_exitMenuItem1ActionPerformed
 
+    private void movsCajaMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_movsCajaMenuItemActionPerformed
+        EstadoAPP estadoApp = estadosApp.get(MovsCajaFrame.class.getName());
+        if (estadoApp == null){
+            estadoApp = createEstado(MovsCajaFrame.class.getName(), 0);
+            estadosApp.put(MovsCajaFrame.class.getName(), estadoApp);
+        }
+        logicaOpenPane(estadoApp);        
+    }//GEN-LAST:event_movsCajaMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -587,6 +614,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
     private javax.swing.JMenu adminArtsMenu;
     private javax.swing.JMenuItem adminComprasMenuItem;
     private javax.swing.JMenuItem adminMenuItem;
+    private javax.swing.JMenu cajasMenu;
     private javax.swing.JMenuItem contentMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
     private javax.swing.JMenuItem exitMenuItem1;
@@ -597,6 +625,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu3;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem movsCajaMenuItem;
     private javax.swing.JMenuItem regFacturaComprarMI;
     private javax.swing.JMenu salirMI;
     private javax.swing.JTabbedPane tabbedPaneMain;

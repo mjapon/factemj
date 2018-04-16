@@ -24,8 +24,13 @@ public class BaseJpaController<T> {
     public EntityManager getEntityManager() {
         return this.em;
     }
+    
+    public Query newNativeQuery(String queryStr) {        
+        Query query = em.createNativeQuery(queryStr);
+        return query;
+    }
 
-    public Query newQuery(String queryStr) {
+    public Query newQuery(String queryStr) {        
         Query query = em.createQuery(queryStr);
         return query;
     }

@@ -57,11 +57,11 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         
         this.tra_codigo = tra_codigo;
         if (this.tra_codigo == 1){
-            this.jLabel1.setText("Administrar Ventas");
+            this.jLabel1.setText("ADMINISTRAR VENTAS");
             this.jLabelSumaUtilidades.setVisible(true);
         }
         else if(this.tra_codigo == 2){
-            this.jLabel1.setText("Administrar Compras");
+            this.jLabel1.setText("ADMINISTRAR COMPRAS");
             this.jLabelSumaUtilidades.setVisible(false);
         }
         
@@ -72,7 +72,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
          
         this.em = EntityManagerUtil.createEntintyManagerFactory();
         
-        ventasDataModel = new VentasDataModel(new Date());
+        ventasDataModel = new VentasDataModel();
         facturasJpaController = new FacturasJpaController(em);
         articulosJpaController = new ArticulosJpaController(em);
         ventasDataModel.setController(facturasJpaController);
@@ -209,8 +209,8 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
-        jLabel1.setText("Administrar Ventas");
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabel1.setText("ADMINISTRAR VENTAS");
         jPanel1.add(jLabel1, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
@@ -227,6 +227,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
             }
         });
 
+        btnBuscar.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         btnBuscar.setText("Buscar");
         btnBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -244,6 +245,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jLabel3.setText("Hasta:");
         jPanel12.add(jLabel3);
 
+        jComboBox1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hoy", "Ayer", "Esta Semana", "Este Mes", "Mes Anterior", "Este Año" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -324,6 +326,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
 
         jPanel11.setLayout(new java.awt.GridLayout(7, 1));
 
+        btnAnular.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnAnular.setText("Anular");
         btnAnular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -332,6 +335,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         });
         jPanel11.add(btnAnular);
 
+        btnDetalles.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnDetalles.setText("Detalles");
         btnDetalles.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -340,6 +344,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         });
         jPanel11.add(btnDetalles);
 
+        btnClose.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnClose.setText("Cerrar");
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -585,10 +590,8 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
             DetallesFacturaFrame detallesFacturaFrame = new DetallesFacturaFrame(filart.getVentaId());
             
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-            detallesFacturaFrame.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-            
-            detallesFacturaFrame.setSize(900, 800);
-
+            detallesFacturaFrame.setSize(900, 500);
+            detallesFacturaFrame.setLocation((dim.width/2)-(detallesFacturaFrame.getSize().width/2), (dim.height/2)-(detallesFacturaFrame.getSize().height/2));            
             detallesFacturaFrame.setVisible(true);
         }    
         else{

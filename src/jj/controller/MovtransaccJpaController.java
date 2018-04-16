@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,6 +20,7 @@ import jj.entity.Facturas;
 import jj.entity.Movtransacc;
 import jj.entity.Pagosfact;
 import jj.entity.Transacciones;
+import jj.util.ParamBusquedaCXCP;
 import jj.util.form.AbonoForm;
 
 /**

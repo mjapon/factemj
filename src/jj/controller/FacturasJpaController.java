@@ -247,6 +247,140 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         }
     }
     
+    public List<Object[]> listarMovsAbonos(ParamBusquedaCXCP params){
+        
+        /*
+        StringBuilder builder = new StringBuilder("select " +
+                        " m.movFechareg as movFechareg, " +
+                        " m.factIdRel.factNum as factNum, " +
+                        " m.factIdRel.factTotal as factTotal, " +
+                        " m.movMonto as movMonto, " +
+                        " p.pgfSaldo as pgfSaldo, " +                        
+                        " m.factIdRel.factId as factId " +                
+                        " from Movtransacc m " +
+                        " join Pagosfact p on m.pgfId = p.pgfId ");
+        
+        List<String> paramsList = new ArrayList<String>();
+        
+        paramsList.add("m.factIdRel.factValido = 0");
+        paramsList.add("m.movValido = 0");        
+        
+        if (params.getDesde() != null){
+            paramsList.add("year(m.movFechareg) >= year(:paramDesde) ");
+            paramsList.add("month(m.movFechareg) >= month(:paramDesde) ");
+            paramsList.add("day(m.movFechareg) >= day(:paramDesde) ");
+        }
+        if (params.getHasta() != null){
+            //paramsList.add("DATE(m.movFechareg) <= :paramHasta ");
+            
+            paramsList.add("year(m.movFechareg) <= year(:paramHasta) ");
+            paramsList.add("month(m.movFechareg) <= month(:paramHasta) ");
+            paramsList.add("day(m.movFechareg) <= day(:paramHasta) ");
+        }
+        
+        paramsList.add("m.traId.traId = "+params.getTra_codigo());
+        
+        String delimiter = " and ";
+        String where = "";
+            
+        if (paramsList.size()>0){
+            StringJoiner joiner = new StringJoiner(delimiter);
+            for(String param: paramsList){
+                joiner.add(param);
+            }
+
+            where = " where " + joiner.toString();
+        }
+        
+        String baseQuery = builder.toString();
+        StringBuilder orderSB = new StringBuilder("order by ");
+        orderSB.append(params.getSortColumn());
+        orderSB.append(" ");
+        orderSB.append(params.getSortOrder());
+
+        String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
+        
+        System.out.println("Query movs:");
+        System.out.println(queryStr);
+
+        Query query = this.newQuery(queryStr.toString());        
+            
+        if (params.getDesde() != null){
+            query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
+        }
+
+        if (params.getHasta() != null){
+            query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
+        }        
+        
+        return query.getResultList();
+        */
+        
+        
+        StringBuilder builder = new StringBuilder("select\n" +
+        " date(m.mov_fechareg) as movFechareg,\n" +
+        " f.fact_num as factNum,\n" +
+        " f.fact_total as factTotal,\n" +
+        " m.mov_monto as movMonto,\n" +
+        " p.pgf_saldo as pgfSaldo,\n" +
+        " f.fact_id as factId\n" +
+        " from movtransacc m\n" +
+        " join facturas f on f.fact_id = m.fact_id_rel\n" +
+        " join pagosfact p on m.pgf_id = p.pgf_id");
+        
+        List<String> paramsList = new ArrayList<String>();
+        
+        paramsList.add("f.fact_valido = 0");
+        paramsList.add("m.mov_valido = 0");        
+        
+        if (params.getDesde() != null){
+            paramsList.add("date(m.mov_fechareg) >= date(?paramDesde) ");            
+        }
+        if (params.getHasta() != null){
+            paramsList.add("date(m.mov_fechareg) <= date(?paramHasta) ");
+        }
+        
+        paramsList.add("m.tra_id = "+params.getTra_codigo());
+        
+        String delimiter = " and ";
+        String where = "";
+            
+        if (paramsList.size()>0){
+            StringJoiner joiner = new StringJoiner(delimiter);
+            for(String param: paramsList){
+                joiner.add(param);
+            }
+
+            where = " where " + joiner.toString();
+        }
+        
+        String baseQuery = builder.toString();
+        StringBuilder orderSB = new StringBuilder("order by ");
+        orderSB.append(params.getSortColumn());
+        orderSB.append(" ");
+        orderSB.append(params.getSortOrder());
+
+        String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
+        
+        System.out.println("Query movs:");
+        System.out.println(queryStr);
+
+        Query query = this.newNativeQuery(queryStr.toString());        
+            
+        if (params.getDesde() != null){
+            query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
+        }
+
+        if (params.getHasta() != null){
+            query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
+        }        
+        
+        return query.getResultList();
+        
+        
+    }
+    
+    
     public List<Object[]> listarCuentasXCP(ParamBusquedaCXCP params){
         
         StringBuilder baseQuery = new StringBuilder(" select "
@@ -260,7 +394,8 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                 + " p.pgfMonto as pgfMonto,"
                 + " p.pgfSaldo as pgfSaldo,"
                 + " p.pgfObs as pgfObs, "
-                + " p.pgfId as pgfId "
+                + " p.pgfId as pgfId, "
+                + " case when p.pgfSaldo > 0.0 then 'PENDIENTE DE PAGO' else 'FACTURA CANCELADA' end as estadoDesc "
                 + "  from Facturas f join Pagosfact p on p.factId.factId = f.factId and f.traId.traId= "+params.getTra_codigo());
         
         List<String> paramsList = new ArrayList<String>();
@@ -268,7 +403,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         paramsList.add("f.factValido = 0");
         
         if (params.getEstadoPago() == 1){//Cancelado
-            paramsList.add("p.pgfSaldo = 0.0");
+            paramsList.add("p.pgfSaldo = 0.0 and p.pgfMonto>0 and p.fpId.fpId = 2");
         }        
         else if (params.getEstadoPago() == 2){//Pendiente de pago
             paramsList.add("p.pgfSaldo > 0.0");
@@ -427,6 +562,8 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
             orderSB.append(params.getSortOrder());
             
             String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
+            
+            System.out.println("query--->listar:"+queryStr);
             
             Query query = this.newQuery(queryStr.toString());
             

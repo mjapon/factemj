@@ -67,6 +67,11 @@ public class AbonosFrame extends javax.swing.JFrame {
         jButtonCerrar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         jLabel1.setText("REGISTRAR ABONO");
@@ -105,7 +110,7 @@ public class AbonosFrame extends javax.swing.JFrame {
                             .addGap(31, 31, 31)
                             .addComponent(jTFValorPend, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -129,6 +134,7 @@ public class AbonosFrame extends javax.swing.JFrame {
 
         jPanel3.setLayout(new java.awt.GridLayout(4, 1));
 
+        jButtonGuardar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonGuardar.setText("Guardar");
         jButtonGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -137,6 +143,7 @@ public class AbonosFrame extends javax.swing.JFrame {
         });
         jPanel3.add(jButtonGuardar);
 
+        jButtonCerrar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonCerrar.setText("Cerrar");
         jButtonCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -184,6 +191,11 @@ public class AbonosFrame extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_jButtonGuardarActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        jTFValorAbono.requestFocus();
+        
+    }//GEN-LAST:event_formWindowOpened
 
     public CuentasXCBPFrame getParentFrame() {
         return parentFrame;

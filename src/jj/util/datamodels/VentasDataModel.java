@@ -24,7 +24,7 @@ import jj.util.ParamsBusquedaTransacc;
  */
 public class VentasDataModel extends AbstractTableModel{
     
-    private TotalesVentasModel totalesVentasModel;
+    protected TotalesVentasModel totalesVentasModel;
     
     public enum ColVentasEnum{        
         NROFACT(0, "Nro", String.class, "factNum"),
@@ -77,11 +77,15 @@ public class VentasDataModel extends AbstractTableModel{
         }
     };
     
-    private Date fecha;
-    private Map<Integer, Integer> mapSort;
-    private List<FilaVenta> items = new ArrayList<>();
-    private FacturasJpaController controller;    
-    private ParamsBusquedaTransacc params;
+    //private Date fecha;
+    protected Map<Integer, Integer> mapSort;
+    protected List<FilaVenta> items = new ArrayList<>();
+    protected FacturasJpaController controller;    
+    protected ParamsBusquedaTransacc params;
+    
+    public void initForCajas(){
+        
+    }
     
     public void initForAdmin(){
          mapSort = new HashMap<>();
@@ -131,11 +135,10 @@ public class VentasDataModel extends AbstractTableModel{
         totalesVentasModel.setSumaCredito(sumaCredito);
     }
     
-    public VentasDataModel(Date fecha){
+    public VentasDataModel(){
         super();
         initForAdmin();
         totalesVentasModel  = new TotalesVentasModel();
-        this.fecha = fecha;
     }
     
 
@@ -357,14 +360,6 @@ public class VentasDataModel extends AbstractTableModel{
 
     public void setController(FacturasJpaController controller) {
         this.controller = controller;
-    }
-
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
     }
 
     public TotalesVentasModel getTotalesVentasModel() {

@@ -46,10 +46,12 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
         dataModel = new DetallesFactDataModel(this.tra_codigo);
         
         List<Object[]> detalles = facturaController.listarDetalles(factId);
-        factura = facturaController.buscar(factId);
+        factura = facturaController.buscar(factId);        
+        
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("NUM ARTÍCULOS:"+detalles.size()));
         
         
-        this.jLabel1.setText(" Detalles del Comprobante de venta Nro: "+ factura.getFactNum());
+        this.jLabel1.setText(" Detalles del Comprobante Nro: "+ factura.getFactNum());
         this.labelFecha.setText(FechasUtil.format(factura.getFactFecha()));
         this.labelNro.setText( factura.getFactNum() );
         this.labelSubtotal.setText( factura.getFactSubt().toPlainString() );
@@ -166,19 +168,22 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setLayout(new java.awt.GridLayout(1, 1));
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
-        jLabel1.setText("Detalles del Comprobante de venta Nro:");
+        jLabel1.setText("Detalles del Comprobante Nro:");
         jPanel1.add(jLabel1);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
         jPanel2.setLayout(new java.awt.GridLayout(6, 1));
 
+        jButtonPrint.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonPrint.setText("Imprimir");
         jPanel2.add(jButtonPrint);
 
+        jButtonSalir.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonSalir.setText("Cerrar");
         jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -191,6 +196,7 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
 
         jPanel3.setLayout(new java.awt.BorderLayout());
 
+        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
         jPanel4.setLayout(new java.awt.GridLayout(1, 3));
 
         jPanel6.setLayout(new java.awt.GridLayout(6, 2));
@@ -318,6 +324,8 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
         jPanel3.add(jPanel4, java.awt.BorderLayout.NORTH);
 
         jPanel5.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2), "NumElements", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
 
         jTable1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
