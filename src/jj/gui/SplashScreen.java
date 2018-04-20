@@ -5,6 +5,10 @@
  */
 package jj.gui;
 
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import javax.imageio.ImageIO;
@@ -22,20 +26,32 @@ public class SplashScreen extends javax.swing.JFrame {
      */
     public SplashScreen() {
         initComponents();
-        /*
-        BufferedImage img = null;        
+        
+        Image img = null;        
         try {
-            URL resource = FarmaAppMain.class.getResource("MarcaVG.png");
-            //URL resource = SplashScreen.class.getResource("MarcaVG.png");
+            //URL resource = FarmaAppMain.class.getResource("MarcaVG.png");
+            URL resource = FarmaAppMain.class.getResource("MarcaFinal.png");            
+            //Dimension dim = jPanel2.getSize();
             img = ImageIO.read(resource);
             ImageIcon imageIcon = new ImageIcon(img);
-            setContentPane(new JLabel(imageIcon));
+            jLabel1.setIcon(imageIcon);
+            
             System.out.println("Se cargo la imagen-->");
         } catch (Throwable e) {
             System.out.println("Error al cargar la image-->");
             e.printStackTrace();
-        } 
-        */
+        }
+    }
+    
+    private Image getScaledImage(BufferedImage srcImg, int w, int h){
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = resizedImg.createGraphics();
+
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+
+        return resizedImg;
     }
 
     /**
@@ -47,15 +63,24 @@ public class SplashScreen extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
         setResizable(false);
-        getContentPane().setLayout(new java.awt.FlowLayout());
 
-        jLabel1.setText("Iniciando el Sistema....");
-        getContentPane().add(jLabel1);
+        jLabel2.setText("Iniciando el Sistema....");
+        jPanel1.add(jLabel2);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
+
+        jPanel2.setLayout(new java.awt.BorderLayout());
+        jPanel2.add(jLabel1, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -64,5 +89,8 @@ public class SplashScreen extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
 }

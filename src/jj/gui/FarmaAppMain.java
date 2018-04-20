@@ -24,21 +24,16 @@ import jj.util.EstadoAPP;
  */
 public class FarmaAppMain extends javax.swing.JFrame {
     
-    private SplashScreen splashScreen;
-    
+    private SplashScreen splashScreen;    
     public static Map<String, EstadoAPP> estadosApp;
-    
 
     /**
      * Creates new form FarmaAppMain
      */
     public FarmaAppMain() {
-        splashScreen = new SplashScreen();
-        splashScreen.setSize(500, 450);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        splashScreen.setLocation(dim.width/2-splashScreen.getSize().width/2, dim.height/2-splashScreen.getSize().height/2);                
+        
         initComponents();
-        splashScreen.setVisible(true);
+        
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         initEstados();
         /*
@@ -104,10 +99,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
           };
         
         this.tabbedPaneMain.addChangeListener(changeListener);
-        
-        
-        splashScreen.setVisible(false);
-    }
+    }    
     
     public EstadoAPP createEstado(String className, Integer tra_codigo){
         
@@ -556,7 +548,19 @@ public class FarmaAppMain extends javax.swing.JFrame {
         }
         logicaOpenPane(estadoApp);        
     }//GEN-LAST:event_movsCajaMenuItemActionPerformed
+    
+    public SplashScreen getSplashScreen() {
+        return splashScreen;
+    }
 
+    public void setSplashScreen(SplashScreen splashScreen) {
+        this.splashScreen = splashScreen;
+    }
+    
+    public void hideSplashScreen(){
+        this.splashScreen.setVisible(false);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -583,10 +587,23 @@ public class FarmaAppMain extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(FarmaAppMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+          SplashScreen splashScreen = new SplashScreen();
+                splashScreen.setSize(500, 450);
+                Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+                splashScreen.setLocation(dim.width/2-splashScreen.getSize().width/2, dim.height/2-splashScreen.getSize().height/2);                
+                splashScreen.setVisible(true);
+                
+                /*
+                URL resourceIco = FarmaAppMain.class.getResource("Icono_Farmaplus.png"); 
+                ImageIcon imgIco = new ImageIcon(resourceIco);
+                //app.setIconImage(imgIco.getImage());
+                
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                
                 try{
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 }
@@ -596,13 +613,10 @@ public class FarmaAppMain extends javax.swing.JFrame {
                 }
                  
                 FarmaAppMain app = new FarmaAppMain();
+                app.setSplashScreen(splashScreen);
                 
-                /*
-                URL resourceIco = FarmaAppMain.class.getResource("Icono_Farmaplus.png"); 
-                ImageIcon imgIco = new ImageIcon(resourceIco);
-                app.setIconImage(imgIco.getImage());
-                */
                 
+                app.hideSplashScreen();
                 app.setVisible(true);
             
             }
