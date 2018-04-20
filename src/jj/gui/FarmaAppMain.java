@@ -565,60 +565,26 @@ public class FarmaAppMain extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FarmaAppMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FarmaAppMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FarmaAppMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FarmaAppMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        
-          SplashScreen splashScreen = new SplashScreen();
-                splashScreen.setSize(500, 450);
-                Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-                splashScreen.setLocation(dim.width/2-splashScreen.getSize().width/2, dim.height/2-splashScreen.getSize().height/2);                
-                splashScreen.setVisible(true);
-                
-                /*
-                URL resourceIco = FarmaAppMain.class.getResource("Icono_Farmaplus.png"); 
-                ImageIcon imgIco = new ImageIcon(resourceIco);
-                //app.setIconImage(imgIco.getImage());
-                
+        SplashScreen splashScreen = new SplashScreen();
+        splashScreen.setSize(500, 450);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        splashScreen.setLocation(dim.width/2-splashScreen.getSize().width/2, dim.height/2-splashScreen.getSize().height/2);
+        splashScreen.setVisible(true);                
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                
+            public void run() {                
                 try{
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 }
                 catch(Throwable ex){
                     System.out.println("Error al establecer look and fell:"+ ex.getMessage());
                     ex.printStackTrace();
-                }
-                 
+                }                
                 FarmaAppMain app = new FarmaAppMain();
                 app.setSplashScreen(splashScreen);
-                
-                
                 app.hideSplashScreen();
                 app.setVisible(true);
-            
             }
         });
     }
