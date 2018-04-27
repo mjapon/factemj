@@ -23,6 +23,7 @@ public class FilaVenta {
     
     private BigDecimal efectivo;
     private BigDecimal credito;
+    private BigDecimal saldo;
     
     private String fechaReg;
 
@@ -129,7 +130,13 @@ public class FilaVenta {
     public void setCredito(BigDecimal credito) {
         this.credito = credito;
     }
-    
-    
+
+    public BigDecimal getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(BigDecimal saldo) {
+        this.saldo = saldo;
+    }
     
 }

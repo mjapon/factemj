@@ -22,6 +22,8 @@ public class ParamBusquedaCXCP {
     private String sortColumn;
     private String sortOrder;
     private Integer tra_codigo;
+    
+    private String filtro;
 
     public ParamBusquedaCXCP() {
         
@@ -102,6 +104,14 @@ public class ParamBusquedaCXCP {
 
     public void setTra_codigo(Integer tra_codigo) {
         this.tra_codigo = tra_codigo;
+    }
+
+    public String getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(String filtro) {
+        this.filtro = filtro;
     }
     
     

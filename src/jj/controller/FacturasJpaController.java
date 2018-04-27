@@ -29,6 +29,8 @@ import jj.entity.Facturas;
 import jj.entity.Pagosfact;
 import jj.entity.Transacciones;
 import jj.util.DatosCabeceraFactura;
+import jj.util.ErrorValidException;
+import jj.util.FechasUtil;
 import jj.util.FilaFactura;
 import jj.util.FilaPago;
 import jj.util.ParamBusquedaCXCP;
@@ -247,6 +249,64 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         }
     }
     
+    public Map<String, Object> getDetallesFactura(Integer factId){
+        Facturas factura = buscar(factId);
+        
+        if (factura == null){
+            throw new ErrorValidException("No existe la factura con el id:"+factId);
+        }
+        
+        DatosCabeceraFactura cabecera = new DatosCabeceraFactura();
+        cabecera.setNumFactura( factura.getFactNum() );
+        cabecera.setNroEstFact("");
+        cabecera.setCliId(factura.getCliId().getCliId());
+        cabecera.setCliente(factura.getCliId().getCliNombres());
+        cabecera.setDireccion(factura.getCliId().getCliDir());
+        cabecera.setTelf(factura.getCliId().getCliTelf());
+        cabecera.setEmail(factura.getCliId().getCliEmail());
+        cabecera.setFechaFactura( FechasUtil.format(factura.getFactFecha()));
+        cabecera.setTraCodigo(factura.getTraId().getTraId());
+                
+        TotalesFactura totalesFactura = new TotalesFactura();
+        totalesFactura.setSubtotal(factura.getFactSubt()  );
+        totalesFactura.setIva(factura.getFactIva());
+        totalesFactura.setTotal(factura.getFactTotal());
+        totalesFactura.setDescuento(factura.getFactDesc());
+        
+        
+        List<Object[]> detalles = listarDetalles(factId);
+        
+        List<FilaFactura> detallesList = new ArrayList<>();
+
+        for (Object[] item: detalles){
+            
+            FilaFactura filafactura = new FilaFactura(1,
+                (Integer)item[1],
+                (String)item[7],
+                (String)item[6],
+                ((BigDecimal)item[3]).doubleValue(),
+                (BigDecimal)item[2],
+                    (Boolean)item[4],
+                (BigDecimal)item[8],
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO
+            );
+        
+            filafactura.updateTotales();
+            detallesList.add(filafactura);            
+        }         
+        
+        
+        Map<String, Object> datosFactura = new HashMap<String, Object>();
+        datosFactura.put("cabecera", cabecera);
+        datosFactura.put("totales", totalesFactura);
+        datosFactura.put("detalles", detallesList);
+        
+        return datosFactura;
+        
+    }
+    
     public List<Object[]> listarMovsAbonos(ParamBusquedaCXCP params){
         
         /*
@@ -409,18 +469,29 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
             paramsList.add("p.pgfSaldo > 0.0");
         }
         
-        if (params.getDesde() != null){
-            paramsList.add("f.factFecha >= :paramDesde ");
+        boolean searchByDate = true;
+        
+        if (params.getFiltro()!= null && params.getFiltro().trim().length()>4){
+            searchByDate = false;
         }
-        if (params.getHasta() != null){
-            paramsList.add("f.factFecha <= :paramHasta ");
+        
+        if (searchByDate){
+            if (params.getDesde() != null){
+                paramsList.add("f.factFecha >= :paramDesde ");
+            }
+            if (params.getHasta() != null){
+                paramsList.add("f.factFecha <= :paramHasta ");
+            }
+        }
+        else{
+            paramsList.add(" (f.cliId.cliNombres like '%"+params.getFiltro().toUpperCase().trim()+"%' or f.cliId.cliCi like '%"+params.getFiltro().toUpperCase().trim()+"%') ");
         }
         
         if (params.getCliId() == 0){
             
         }
         else{
-            paramsList.add("f.cliId.cliId = "+params.getCliId());
+            
         }        
         
         String delimiter = " and ";
@@ -443,13 +514,15 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
 
         Query query = this.newQuery(queryStr.toString());
-            
-        if (params.getDesde() != null){
-            query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
-        }
+        
+        if (searchByDate){
+            if (params.getDesde() != null){
+                query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
+            }
 
-        if (params.getHasta() != null){
-            query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
+            if (params.getHasta() != null){
+                query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
+            }
         }
 
         return query.getResultList();
@@ -463,6 +536,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         
         BigDecimal montoEfectivo = BigDecimal.ZERO;
         BigDecimal montoCredito = BigDecimal.ZERO;
+        BigDecimal montoSaldo = BigDecimal.ZERO;
         
         if (pagos != null){
             
@@ -472,6 +546,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                 }
                 else if (pago.getFpId().getFpId() == 2){
                     montoCredito = pago.getPgfMonto();
+                    montoSaldo = pago.getPgfSaldo();
                 }
             }
         }
@@ -480,6 +555,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         
         mapResult.put(1, montoEfectivo);
         mapResult.put(2, montoCredito);
+        mapResult.put(3, montoSaldo);
         
         return mapResult;
         
@@ -500,7 +576,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                                                             "f.factId.cliId.cliNombres,\n" +
                                                             "f.factId.cliId.cliCi,"+
                                                             "f.detfPreciocm,"+
-                                                            "0.0 as efectivo, 0.0 as credito from Detallesfact f");
+                                                            "0.0 as efectivo, 0.0 as credito, 0.0 as saldo from Detallesfact f");
 
             //Columnas de la consulta
             StringBuilder baseQueryFact = new StringBuilder("select f.factId, \n" +
@@ -512,7 +588,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                                                         "f.factFecreg,\n" +
                                                         "f.cliId.cliNombres,\n" +
                                                         "f.cliId.cliCi,"+
-                                                        "0.0 as pc, 0.0 as efectivo, 0.0 as credito from Facturas f ");     
+                                                        "0.0 as pc, 0.0 as efectivo, 0.0 as credito, 0.0 as saldo from Facturas f ");     
             
             String baseQuery = baseQueryFact.toString();
             String prefijo = "f";
@@ -590,6 +666,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                 
                 fila[10] = efeccredmap.get(1);
                 fila[11] = efeccredmap.get(2);
+                fila[12] = efeccredmap.get(3);
             }
             
             return resultList;
@@ -792,15 +869,27 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
             
             ArticulosJpaController articulosController = new ArticulosJpaController(em);
             
+            boolean esFacturaVenta = false;
+            boolean esFacturaCompra = false;
+            
             if (factura != null){
                 factura.setFactValido(1);//1-->anulado
                 
-                //Se debe revertir los inventarios                
-                List<Detallesfact> detalles = getDetallesFact(factId);
-                for (Detallesfact det: detalles){                    
-                    articulosController.incrementInv(det.getArtId(), det.getDetfCant());                    
-                }                
-                
+                esFacturaVenta = factura.getTraId().getTraId() == 1;
+                esFacturaCompra = factura.getTraId().getTraId() == 2;
+
+                if (esFacturaCompra || esFacturaVenta){
+                    //Se debe revertir los inventarios                
+                    List<Detallesfact> detalles = getDetallesFact(factId);
+                    for (Detallesfact det: detalles){
+                        if (esFacturaVenta){
+                            articulosController.incrementInv(det.getArtId(), det.getDetfCant());
+                        }
+                        else if (esFacturaCompra){
+                            articulosController.decrementInv(det.getArtId(), det.getDetfCant());
+                        }
+                    }
+                }
             }
             
             em.getTransaction().commit();
@@ -886,10 +975,10 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                 tipoCliente = 2;//Proveedor
             }
         
-            ClientesJpaController clientesController = new ClientesJpaController(em);        
+            ClientesJpaController clientesController = new ClientesJpaController(em);
             ArticulosJpaController articulosController = new ArticulosJpaController(em);
 
-            Integer cli_codigo = datosCabecera.getCliId();        
+            Integer cli_codigo = datosCabecera.getCliId();
             Clientes clienteFactura = null;
             if (cli_codigo == null || cli_codigo == 0){                        //Se debe crear el cliente
 
@@ -916,7 +1005,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                     clienteFactura.setCliNombres( datosCabecera.getCliente().trim().toUpperCase() );
                     clienteFactura.setCliDir( datosCabecera.getDireccion() );
                     clienteFactura.setCliTelf( datosCabecera.getTelf());
-                    clienteFactura.setCliEmail( datosCabecera.getEmail());                    
+                    clienteFactura.setCliEmail( datosCabecera.getEmail());
                 }
             }
             else{

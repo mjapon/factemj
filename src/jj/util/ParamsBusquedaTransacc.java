@@ -21,12 +21,15 @@ public class ParamsBusquedaTransacc {
     private String sortColumn;
     private String sortOrder;
     private Integer traCodigo;
+    private String filtro;
 
     public ParamsBusquedaTransacc() {
     }
 
-    public ParamsBusquedaTransacc(Date desde, Date hasta, Integer cliId, Integer artId, String sortColumn, 
-            String sortOrder, Integer traCodigo) {
+    public ParamsBusquedaTransacc(Date desde, Date hasta, Integer cliId, 
+            Integer artId, String sortColumn, 
+            String sortOrder, Integer traCodigo,
+            String filtro) {
         this.desde = desde;
         this.hasta = hasta;
         this.cliId = cliId;
@@ -34,6 +37,7 @@ public class ParamsBusquedaTransacc {
         this.sortColumn = sortColumn;
         this.sortOrder = sortOrder;
         this.traCodigo = traCodigo;
+        this.filtro = filtro;
     }
 
     public Date getDesde() {
@@ -91,5 +95,12 @@ public class ParamsBusquedaTransacc {
     public void setTraCodigo(Integer traCodigo) {
         this.traCodigo = traCodigo;
     }
-    
+
+    public String getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(String filtro) {
+        this.filtro = filtro;
+    }
 }

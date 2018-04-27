@@ -31,25 +31,9 @@ public class FarmaAppMain extends javax.swing.JFrame {
      * Creates new form FarmaAppMain
      */
     public FarmaAppMain() {
-        
         initComponents();
-        
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         initEstados();
-        /*
-        BufferedImage img = null;
-        try {            
-            URL resource = FarmaAppMain.class.getResource("MarcaVG.png");            
-            img = ImageIO.read(resource);            
-            ImageIcon imageIcon = new ImageIcon(img);
-            setContentPane(new JLabel(imageIcon));           
-        
-        } catch (Throwable e) {
-            System.out.println("Error al cargar la image-->");
-            e.printStackTrace();
-        }
-        */                
-        
         ChangeListener changeListener = new ChangeListener() {
             public void stateChanged(ChangeEvent changeEvent) {
                 JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
@@ -176,6 +160,12 @@ public class FarmaAppMain extends javax.swing.JFrame {
             EstadoAPP cajasAPP = new EstadoAPP(movsCajaFrame.getContentPane(), icon, "Movimientos Caja", movsCajaFrame);
             return cajasAPP;
         }
+        else if (PlanCuentasFrame.class.getName().equalsIgnoreCase(className)){
+            PlanCuentasFrame planCuentasFrame = new PlanCuentasFrame();
+            planCuentasFrame.setRoot(this);
+            EstadoAPP planCuentasAPP = new EstadoAPP(planCuentasFrame.getContentPane(), icon, "Plan Cuentas", planCuentasFrame);
+            return planCuentasAPP;
+        }
         
         return null;
         
@@ -222,6 +212,8 @@ public class FarmaAppMain extends javax.swing.JFrame {
         cutMenuItem = new javax.swing.JMenuItem();
         cajasMenu = new javax.swing.JMenu();
         movsCajaMenuItem = new javax.swing.JMenuItem();
+        contabMenu = new javax.swing.JMenu();
+        planCuentasMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -358,6 +350,22 @@ public class FarmaAppMain extends javax.swing.JFrame {
         cajasMenu.add(movsCajaMenuItem);
 
         menuBar.add(cajasMenu);
+
+        contabMenu.setMnemonic('e');
+        contabMenu.setText("Contabilidad");
+        contabMenu.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        planCuentasMenuItem.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        planCuentasMenuItem.setMnemonic('t');
+        planCuentasMenuItem.setText("Plan Cuentas");
+        planCuentasMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                planCuentasMenuItemActionPerformed(evt);
+            }
+        });
+        contabMenu.add(planCuentasMenuItem);
+
+        menuBar.add(contabMenu);
 
         helpMenu.setMnemonic('h');
         helpMenu.setText("Ayuda");
@@ -548,6 +556,18 @@ public class FarmaAppMain extends javax.swing.JFrame {
         }
         logicaOpenPane(estadoApp);        
     }//GEN-LAST:event_movsCajaMenuItemActionPerformed
+
+    private void planCuentasMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_planCuentasMenuItemActionPerformed
+        
+        EstadoAPP estadoApp = estadosApp.get(PlanCuentasFrame.class.getName());
+        if (estadoApp == null){
+            estadoApp = createEstado(PlanCuentasFrame.class.getName(), 0);
+            estadosApp.put(PlanCuentasFrame.class.getName(), estadoApp);
+        }
+        logicaOpenPane(estadoApp);        
+        
+        
+    }//GEN-LAST:event_planCuentasMenuItemActionPerformed
     
     public SplashScreen getSplashScreen() {
         return splashScreen;
@@ -595,6 +615,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem adminComprasMenuItem;
     private javax.swing.JMenuItem adminMenuItem;
     private javax.swing.JMenu cajasMenu;
+    private javax.swing.JMenu contabMenu;
     private javax.swing.JMenuItem contentMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
     private javax.swing.JMenuItem exitMenuItem1;
@@ -606,6 +627,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem movsCajaMenuItem;
+    private javax.swing.JMenuItem planCuentasMenuItem;
     private javax.swing.JMenuItem regFacturaComprarMI;
     private javax.swing.JMenu salirMI;
     private javax.swing.JTabbedPane tabbedPaneMain;

@@ -36,7 +36,8 @@ public class VentasDataModel extends AbstractTableModel{
         DESCUENTO(6, "Descuento", BigDecimal.class,"factDesc"),
         TOTAL(7, "Total", BigDecimal.class, "factTotal"),      
         EFECTIVO(8, "Efectivo", BigDecimal.class, "factTotal"),
-        CREDITO(9, "Crédito", BigDecimal.class, "factTotal");
+        CREDITO(9, "Crédito", BigDecimal.class, "factTotal"),
+        SALDO(10, "Saldo Pend", BigDecimal.class, "factTotal");
         
         public final int index;
         public String desc;
@@ -99,6 +100,7 @@ public class VentasDataModel extends AbstractTableModel{
          mapSort.put(7, 0);
          mapSort.put(8, 0);
          mapSort.put(9, 0);
+         mapSort.put(10, 0);
     }
 
     public ParamsBusquedaTransacc getParams() {
@@ -115,6 +117,7 @@ public class VentasDataModel extends AbstractTableModel{
         BigDecimal sumaTotal = BigDecimal.ZERO;
         BigDecimal sumaEfectivo = BigDecimal.ZERO;
         BigDecimal sumaCredito = BigDecimal.ZERO;
+        BigDecimal sumaSaldo = BigDecimal.ZERO;
         
         for (FilaVenta filaVenta: this.items){            
             sumaIva = sumaIva.add(filaVenta.getIva());
@@ -122,6 +125,7 @@ public class VentasDataModel extends AbstractTableModel{
             sumaTotal = sumaTotal.add(filaVenta.getTotal());
             sumaEfectivo = sumaEfectivo.add(filaVenta.getEfectivo());
             sumaCredito = sumaCredito.add(filaVenta.getCredito());
+            sumaSaldo = sumaSaldo.add(filaVenta.getSaldo());
         }
         
         if (this.totalesVentasModel == null){
@@ -133,6 +137,7 @@ public class VentasDataModel extends AbstractTableModel{
         totalesVentasModel.setSumaTotal(sumaTotal);
         totalesVentasModel.setSumaEfectivo(sumaEfectivo);
         totalesVentasModel.setSumaCredito(sumaCredito);
+        totalesVentasModel.setSumaSaldo(sumaSaldo);
     }
     
     public VentasDataModel(){
@@ -241,6 +246,7 @@ public class VentasDataModel extends AbstractTableModel{
             
             BigDecimal efectivo = (BigDecimal)art[10];
             BigDecimal credito = (BigDecimal)art[11];
+            BigDecimal saldo = (BigDecimal)art[12];
             
             if (efectivo.compareTo(BigDecimal.ZERO)==0 && credito.compareTo(BigDecimal.ZERO)==0){
                 efectivo = total;
@@ -249,6 +255,7 @@ public class VentasDataModel extends AbstractTableModel{
             FilaVenta fila = new FilaVenta(ventaId, nro, cliente, ciruc, iva, 
                     descuento, total, subtotal, 
                     FechasUtil.format(fechaReg), efectivo, credito);
+            fila.setSaldo(saldo);
             items.add(fila);
         }
         
@@ -321,6 +328,11 @@ public class VentasDataModel extends AbstractTableModel{
                 BigDecimal credito = filaVenta.getCredito();
                 credito.setScale(CtesU.NUM_DECIM_VIEW, BigDecimal.ROUND_HALF_UP);
                 return credito.toPlainString();
+            }
+            else if (columnIndex==ColVentasEnum.SALDO.index){
+                BigDecimal saldo = filaVenta.getSaldo();
+                saldo.setScale(CtesU.NUM_DECIM_VIEW, BigDecimal.ROUND_HALF_UP);
+                return saldo.toPlainString();
             }
             else{
                 return "";

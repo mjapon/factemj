@@ -6,16 +6,13 @@
 package jj.gui;
 
 import com.serviestudios.print.util.TextPrinterUtil;
-import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +51,7 @@ import jj.util.GenTxtFactura;
 import jj.util.IVAComboBoxEditor;
 import jj.util.IVAComboBoxRenderer;
 import jj.util.NumbersUtil;
+import jj.util.PrintFactUtil;
 import jj.util.StringUtil;
 import jj.util.TotalesFactura;
 import jj.util.datamodels.ArticulosDataModel;
@@ -275,7 +273,9 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         this.em = EntityManagerUtil.createEntintyManagerFactory();        
         
         if (this.tra_codigo == 1)//Factura de venta:
-        {
+        {   
+            this.jLabelRef.setText("Cliente");
+                
             String estabPtoEmi = "";
             Ctes ctesStab = ctesController.findByClave("ESTAB");
 
@@ -309,6 +309,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         }        
         else if (this.tra_codigo == 2){
             
+            this.jLabelRef.setText("Proveedor");
             this.jLabelEstPtoEmi.setText("");
             this.jTFNumFact.setText("");
             
@@ -1017,6 +1018,14 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_formWindowOpened
     
+    //PrintFactUtil
+    public void logicaImpresion(DatosCabeceraFactura cabecera, 
+            TotalesFactura totales, 
+            List<FilaFactura> detalles){
+        PrintFactUtil.imprimir(ctesController, cabecera, totales, detalles);
+    }
+    
+    /*
     public void logicaImpresion(DatosCabeceraFactura cabecera, 
             TotalesFactura totales, 
             List<FilaFactura> detalles){
@@ -1088,6 +1097,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }
+*/
     
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
         try{

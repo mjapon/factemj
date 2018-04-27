@@ -156,6 +156,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
             
             this.jLabelSumaEfectivo.setText("EFECTIVO=" +totalesVentasModel.getSumaEfectivo().setScale(2, RoundingMode.HALF_UP).toPlainString());
             this.jLabelSumaCredito.setText("CREDITO=" +totalesVentasModel.getSumaCredito().setScale(2, RoundingMode.HALF_UP).toPlainString());
+            this.jLabelSumaSaldo.setText("SALDO PEND=" +totalesVentasModel.getSumaSaldo().setScale(2, RoundingMode.HALF_UP).toPlainString());
             
             this.jLabelSumaUtilidades.setText("UTILIDADES="+totalesVentasModel.getUtilidades().setScale(2, RoundingMode.HALF_UP).toPlainString());
         }
@@ -181,6 +182,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jLabel3 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
         jBtnQuitarArt = new javax.swing.JButton();
+        jTextFieldFiltro = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jPanel11 = new javax.swing.JPanel();
@@ -199,6 +201,8 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jLabelSumaEfectivo = new javax.swing.JLabel();
         jPanel15 = new javax.swing.JPanel();
         jLabelSumaCredito = new javax.swing.JLabel();
+        jPanel16 = new javax.swing.JPanel();
+        jLabelSumaSaldo = new javax.swing.JLabel();
         jPanel13 = new javax.swing.JPanel();
         jLabelSumaUtilidades = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
@@ -260,6 +264,17 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
             }
         });
 
+        jTextFieldFiltro.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jTextFieldFiltroMouseReleased(evt);
+            }
+        });
+        jTextFieldFiltro.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldFiltroKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -271,34 +286,41 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(114, 114, 114)
                         .addComponent(articuloSelLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(78, 78, 78)
-                        .addComponent(articuloSelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jBtnQuitarArt)
-                        .addGap(46, 46, 46)
-                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(153, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextFieldFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jBtnQuitarArt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(articuloSelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(195, 195, 195))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(articuloSelBtn)
-                                .addComponent(jBtnQuitarArt))
-                            .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(13, 13, 13)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextFieldFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(17, 17, 17)
+                        .addComponent(articuloSelLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(24, 24, 24)
-                .addComponent(articuloSelLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addComponent(articuloSelBtn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jBtnQuitarArt)))))
                 .addContainerGap(88, Short.MAX_VALUE))
         );
 
@@ -358,7 +380,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         jPanel7.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
-        jPanel7.setLayout(new java.awt.GridLayout(1, 6));
+        jPanel7.setLayout(new java.awt.GridLayout(1, 7));
 
         jPanel8.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
 
@@ -394,6 +416,13 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jPanel15.add(jLabelSumaCredito);
 
         jPanel7.add(jPanel15);
+
+        jPanel16.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
+
+        jLabelSumaSaldo.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jPanel16.add(jLabelSumaSaldo);
+
+        jPanel7.add(jPanel16);
 
         jPanel13.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
 
@@ -439,6 +468,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
             params.setDesde(desde);
             params.setHasta(hasta);
             params.setTraCodigo(tra_codigo);
+            params.setFiltro(jTextFieldFiltro.getText());
             
             params.setArtId(0);
             if (this.articuloSel != null){
@@ -581,6 +611,19 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         showDetallesFrame();
     }//GEN-LAST:event_btnDetallesActionPerformed
 
+    private void jTextFieldFiltroMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldFiltroMouseReleased
+        
+    }//GEN-LAST:event_jTextFieldFiltroMouseReleased
+
+    private void jTextFieldFiltroKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldFiltroKeyReleased
+        
+        System.out.println("key released");
+        
+        
+        
+        
+    }//GEN-LAST:event_jTextFieldFiltroKeyReleased
+
     
     public void showDetallesFrame(){
         System.out.println("Select action");
@@ -632,6 +675,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
     private javax.swing.JLabel jLabelSumaDesc;
     private javax.swing.JLabel jLabelSumaEfectivo;
     private javax.swing.JLabel jLabelSumaIva;
+    private javax.swing.JLabel jLabelSumaSaldo;
     private javax.swing.JLabel jLabelSumaTot;
     private javax.swing.JLabel jLabelSumaUtilidades;
     private javax.swing.JPanel jPanel1;
@@ -641,6 +685,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -651,6 +696,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable2;
+    private javax.swing.JTextField jTextFieldFiltro;
     // End of variables declaration//GEN-END:variables
 
 }

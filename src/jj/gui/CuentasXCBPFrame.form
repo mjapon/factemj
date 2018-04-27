@@ -36,19 +36,24 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabelTitulo" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jLabelTitulo" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                           <Component id="jPanel12" min="-2" pref="190" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jComboBox1" min="-2" pref="128" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
-                          <Component id="jCmbEstado" min="-2" pref="183" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="jCmbEstado" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnBuscar" min="-2" pref="108" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jTextFieldFiltro" pref="204" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="146" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -58,13 +63,12 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabelTitulo" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                          <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCmbEstado" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnBuscar" alignment="3" min="-2" pref="55" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="jPanel12" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jCmbEstado" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnBuscar" alignment="3" min="-2" pref="55" max="-2" attributes="0"/>
+                      <Component id="jPanel12" alignment="0" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="jTextFieldFiltro" alignment="3" min="-2" pref="55" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="20" max="32767" attributes="0"/>
               </Group>
@@ -143,6 +147,11 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
+        </Component>
+        <Component class="javax.swing.JTextField" name="jTextFieldFiltro">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextFieldFiltroKeyReleased"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

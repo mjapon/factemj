@@ -19,6 +19,7 @@ public class TotalesVentasModel {
     private BigDecimal utilidades = BigDecimal.ZERO;
     private BigDecimal sumaEfectivo = BigDecimal.ZERO;
     private BigDecimal sumaCredito = BigDecimal.ZERO;
+    private BigDecimal sumaSaldo = BigDecimal.ZERO;
 
     public TotalesVentasModel() {
        
@@ -71,7 +72,10 @@ public class TotalesVentasModel {
     public void setSumaCredito(BigDecimal sumaCredito) {
         this.sumaCredito = sumaCredito;
     }
-    
-    
-    
+    public BigDecimal getSumaSaldo() {
+        return sumaSaldo;
+    }
+    public void setSumaSaldo(BigDecimal sumaSaldo) {
+        this.sumaSaldo = sumaSaldo;
+    }
 }

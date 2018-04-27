@@ -7,12 +7,18 @@ package jj.gui;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
+import jj.controller.CtesJpaController;
 import jj.controller.FacturasJpaController;
 import jj.entity.Facturas;
+import jj.util.DatosCabeceraFactura;
 import jj.util.EntityManagerUtil;
 import jj.util.FechasUtil;
+import jj.util.FilaFactura;
 import jj.util.NumbersUtil;
+import jj.util.PrintFactUtil;
+import jj.util.TotalesFactura;
 import jj.util.datamodels.DetallesFactDataModel;
 /**
  *
@@ -26,30 +32,30 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
     private DetallesFactDataModel dataModel;
     private Facturas factura;
     private Integer tra_codigo;
+    
+    private final CtesJpaController ctesController;
+    
     /**
      * Creates new form DetallesFacturaFrame
      */
     public DetallesFacturaFrame(Integer factId) {
         initComponents();
-        this.factId = factId;        
-        em = EntityManagerUtil.createEntintyManagerFactory();        
+        this.factId = factId;
+        em = EntityManagerUtil.createEntintyManagerFactory();
         facturaController = new FacturasJpaController(em);
+        ctesController = new CtesJpaController(em);   
         
         try{
             this.tra_codigo = facturaController.getTraCodigo(factId);
-            
         }catch(Throwable ex){
             System.out.println("Error:"+ex.getMessage());
             ex.printStackTrace();
         }
-        
         dataModel = new DetallesFactDataModel(this.tra_codigo);
-        
         List<Object[]> detalles = facturaController.listarDetalles(factId);
-        factura = facturaController.buscar(factId);        
+        factura = facturaController.buscar(factId);
         
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("NUM ARTÍCULOS:"+detalles.size()));
-        
         
         this.jLabel1.setText(" Detalles del Comprobante Nro: "+ factura.getFactNum());
         this.labelFecha.setText(FechasUtil.format(factura.getFactFecha()));
@@ -181,6 +187,11 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
 
         jButtonPrint.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonPrint.setText("Imprimir");
+        jButtonPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPrintActionPerformed(evt);
+            }
+        });
         jPanel2.add(jButtonPrint);
 
         jButtonSalir.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -357,6 +368,18 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
         this.setVisible(false);
     }//GEN-LAST:event_jButtonSalirActionPerformed
+
+    private void jButtonPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPrintActionPerformed
+        
+        System.out.println("Logica de impresion");        
+        Map<String,Object> datosFactura = facturaController.getDetallesFactura(factId);
+        
+        DatosCabeceraFactura cabecera = (DatosCabeceraFactura)datosFactura.get("cabecera");
+        TotalesFactura totales = (TotalesFactura)datosFactura.get("totales");
+        List<FilaFactura> detalles = (List<FilaFactura>)datosFactura.get("detalles");
+        
+        PrintFactUtil.imprimir(ctesController, cabecera, totales, detalles);        
+    }//GEN-LAST:event_jButtonPrintActionPerformed
 
   
     

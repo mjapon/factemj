@@ -220,6 +220,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox<>();
         btnBuscar = new javax.swing.JButton();
         jCmbEstado = new javax.swing.JComboBox<>();
+        jTextFieldFiltro = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -270,6 +271,12 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
             }
         });
 
+        jTextFieldFiltro.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldFiltroKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -277,17 +284,21 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelTitulo)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabelTitulo)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(51, 51, 51)
-                        .addComponent(jCmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(146, Short.MAX_VALUE))
+                        .addComponent(jCmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldFiltro, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -295,12 +306,12 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabelTitulo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jCmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -418,6 +429,57 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    public void restoreDefaultsDividerLocation() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("restoreDefaultsDividerLocation --->");
+                jSplitPane1.setDividerLocation( 0.6 );
+            }
+        });
+    }
+    private void jButtonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseActionPerformed
+        
+        FarmaAppMain farmaApp = (FarmaAppMain)this.root;        
+        farmaApp.logicaClosePane(this.getClass().getName()+this.tra_codigo);
+        
+        
+    }//GEN-LAST:event_jButtonCloseActionPerformed
+
+    private void jButtonAbonarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAbonarActionPerformed
+        int row = this.jTable1.getSelectedRow();
+        if (row>-1){
+            FilaCXCP fila = (FilaCXCP)this.cPDataModel.getValueAt(row);
+            abonosFrame = new AbonosFrame(fila, this.tra_codigo);
+            abonosFrame.setParentFrame(this);
+            
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            abonosFrame.setLocation(dim.width/2-abonosFrame.getSize().width/2, dim.height/2-abonosFrame.getSize().height/2);
+            
+            abonosFrame.setVisible(true);
+        }
+        
+    }//GEN-LAST:event_jButtonAbonarActionPerformed
+
+    private void jButtonVerFactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerFactActionPerformed
+        
+        showDetallesFrame();
+        
+    }//GEN-LAST:event_jButtonVerFactActionPerformed
+
+    private void jCmbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCmbEstadoActionPerformed
+
+        logicaBuscar();
+
+    }//GEN-LAST:event_jCmbEstadoActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        if (cPDataModel != null){
+            logicaBuscar();
+        }
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
 
         Integer fechaIndex = this.jComboBox1.getSelectedIndex();
@@ -477,68 +539,25 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         }
 
         logicaBuscar();
-
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
-    
-    public void restoreDefaultsDividerLocation() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("restoreDefaultsDividerLocation --->");
-                jSplitPane1.setDividerLocation( 0.6 );
-            }
-        });
-    }
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        if (cPDataModel != null){
+    private void jTextFieldFiltroKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldFiltroKeyReleased
+        
+        String filtro = jTextFieldFiltro.getText().trim();
+        if (filtro.length()>3){
+            System.out.println("Busqueda por filtro --->");
             logicaBuscar();
-        }
-    }//GEN-LAST:event_btnBuscarActionPerformed
-
-    private void jButtonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseActionPerformed
-        
-        FarmaAppMain farmaApp = (FarmaAppMain)this.root;        
-        farmaApp.logicaClosePane(this.getClass().getName()+this.tra_codigo);
-        
-        
-    }//GEN-LAST:event_jButtonCloseActionPerformed
-
-    private void jButtonAbonarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAbonarActionPerformed
-        int row = this.jTable1.getSelectedRow();
-        if (row>-1){
-            FilaCXCP fila = (FilaCXCP)this.cPDataModel.getValueAt(row);
-            abonosFrame = new AbonosFrame(fila, this.tra_codigo);
-            abonosFrame.setParentFrame(this);
             
-            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-            abonosFrame.setLocation(dim.width/2-abonosFrame.getSize().width/2, dim.height/2-abonosFrame.getSize().height/2);
-            
-            abonosFrame.setVisible(true);
         }
         
-    }//GEN-LAST:event_jButtonAbonarActionPerformed
-
-    private void jButtonVerFactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerFactActionPerformed
-        
-        showDetallesFrame();
-        
-    }//GEN-LAST:event_jButtonVerFactActionPerformed
-
-    private void jCmbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCmbEstadoActionPerformed
-        
-        
-        logicaBuscar();
-        
-    }//GEN-LAST:event_jCmbEstadoActionPerformed
-    
-     
+    }//GEN-LAST:event_jTextFieldFiltroKeyReleased
      
     public void logicaBuscar(){
         ParamBusquedaCXCP paramsBusqueda = new ParamBusquedaCXCP();
         
         paramsBusqueda.setEstadoPago(2);
         paramsBusqueda.setCliId(0);
+        paramsBusqueda.setFiltro( jTextFieldFiltro.getText().trim() );
         
         Integer tra_codigo = 1;
         if (this.tra_codigo == 4){
@@ -616,5 +635,6 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
+    private javax.swing.JTextField jTextFieldFiltro;
     // End of variables declaration//GEN-END:variables
 }

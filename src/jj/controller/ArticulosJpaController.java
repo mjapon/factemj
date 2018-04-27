@@ -158,13 +158,20 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
     
     public void incrementInv(Integer artCodigo, BigDecimal cant){
         Articulos articulo = em.find(Articulos.class, artCodigo);        
-        if (articulo != null){
-            System.out.println("El articulo es distinto de null-->");            
+        if (articulo != null){            
             BigDecimal artInv = articulo.getArtInv();
             BigDecimal newInv = BigDecimal.ZERO;
-            if (artInv.compareTo(BigDecimal.ZERO)>0){
+            if (artInv.compareTo(BigDecimal.ZERO)>=0){
+                System.out.println("El inventario es >= cero se suma al invetario actual");
                 newInv = artInv.add(cant);
             }
+            else{
+                System.out.println("El inventario es menor ha cero se establece el inventario en el monto que viene en la compra");
+                newInv = artInv;
+            }
+            
+            System.out.println("El nuevo inventario es-->" + newInv);
+            
             articulo.setArtInv(newInv);            
             em.persist(articulo);
         }
