@@ -378,6 +378,39 @@ public class ArticulosDataModel extends AbstractTableModel{
         fireTableDataChanged();
     }
     
+    public void loadFromDataBaseCat(Integer codCat)throws Exception{
+        
+        int sortIndex = getSorIndex();
+        int sortorder = mapSort.get(sortIndex);
+        
+        String sortord = sortorder==-1?"desc":"asc";
+        String sortcolumn = getSortColumn(sortIndex);
+        
+        List<Object[]> arts = controller.listarRaw(sortcolumn, sortord);
+        
+        items.clear();
+        for(Object[] art: arts){            
+            FilaArticulo filaArticulo = new FilaArticulo(
+                    (Integer)art[0],
+                    (String)art[2],
+                    (String)art[1],
+                    (BigDecimal)art[3],
+                    (BigDecimal)art[4],
+                    (BigDecimal)art[5],
+                    (boolean)art[8],
+                    (BigDecimal)art[6]
+            );
+            
+            items.add(filaArticulo);
+        }
+        
+        if (this.articulosFrame != null){
+            this.articulosFrame.disableBtnBorar();
+        }        
+        fireTableDataChanged();
+        
+    }
+    
     public void loadFromDataBaseFilter(String filtro)throws Exception{
         int sortIndex = getSorIndex();
         int sortorder = mapSort.get(sortIndex);

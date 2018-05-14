@@ -16,6 +16,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import jj.gui.cajas.AperturaCajaFrame;
+import jj.gui.cajas.CierreCajaFrame;
 import jj.util.EstadoAPP;
 
 /**
@@ -65,6 +67,13 @@ public class FarmaAppMain extends javax.swing.JFrame {
                     artsFrame.updateArticulos();
                     System.out.println(" Administrar Artículos focusBarCode();---------> ");
                 }
+                else if ("Administrar Productos".equalsIgnoreCase(title)){
+                    EstadoAPP estadoApp = estadosApp.get(MercaderiaFrame.class.getName());
+                    MercaderiaFrame mercsFrame = (MercaderiaFrame)estadoApp.getFrame();
+                    mercsFrame.updateArticulos();
+                    mercsFrame.filtroFocus();                    
+                    System.out.println(" Administrar Productos focusBarCode();---------> ");
+                }
                 else if ("Cuentas X Cobrar".equalsIgnoreCase(title)){
                     EstadoAPP estadoApp = estadosApp.get(CuentasXCBPFrame.class.getName()+"3");
                     CuentasXCBPFrame facturaFrame = (CuentasXCBPFrame)estadoApp.getFrame();
@@ -106,12 +115,9 @@ public class FarmaAppMain extends javax.swing.JFrame {
                 EstadoAPP facturaEstadoAPP = new EstadoAPP(newFacturaFrame.getContentPane(), icon, "Factura de Compra", newFacturaFrame);        
 
                 return facturaEstadoAPP;
-                
-            }
-            
+            }            
         }
-        else if (ArticulosFrame.class.getName().equalsIgnoreCase(className)){
-            
+        else if (ArticulosFrame.class.getName().equalsIgnoreCase(className)){            
             //Inventario de articulos
             ArticulosFrame articulosFrame = new ArticulosFrame(); 
             articulosFrame.setRoot(this);
@@ -119,7 +125,14 @@ public class FarmaAppMain extends javax.swing.JFrame {
             
             return inventarioEstadoAPP;
         }
-        else if (AdminVentasFrame.class.getName().equalsIgnoreCase(className)){            
+        else if (MercaderiaFrame.class.getName().equalsIgnoreCase(className)){
+            MercaderiaFrame mercaderiaFrame = new MercaderiaFrame();
+            mercaderiaFrame.setRoot(this);
+            
+            EstadoAPP mercaderiaEstadoAPP = new EstadoAPP(mercaderiaFrame.getContentPane(), icon, "Administrar Productos", mercaderiaFrame);
+            return mercaderiaEstadoAPP;
+        }
+        else if (AdminVentasFrame.class.getName().equalsIgnoreCase(className)){
             if (tra_codigo == 1){                
                 //Administrar ventas
                 AdminVentasFrame adminVentasFrame = new AdminVentasFrame(1);//Ventas
@@ -210,8 +223,11 @@ public class FarmaAppMain extends javax.swing.JFrame {
         facturarMenuItem2 = new javax.swing.JMenuItem();
         adminArtsMenu = new javax.swing.JMenu();
         cutMenuItem = new javax.swing.JMenuItem();
+        cutMenuItem1 = new javax.swing.JMenuItem();
         cajasMenu = new javax.swing.JMenu();
         movsCajaMenuItem = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         contabMenu = new javax.swing.JMenu();
         planCuentasMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
@@ -333,6 +349,16 @@ public class FarmaAppMain extends javax.swing.JFrame {
         });
         adminArtsMenu.add(cutMenuItem);
 
+        cutMenuItem1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        cutMenuItem1.setMnemonic('t');
+        cutMenuItem1.setText("A1dministrar");
+        cutMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cutMenuItem1ActionPerformed(evt);
+            }
+        });
+        adminArtsMenu.add(cutMenuItem1);
+
         menuBar.add(adminArtsMenu);
 
         cajasMenu.setMnemonic('e');
@@ -348,6 +374,24 @@ public class FarmaAppMain extends javax.swing.JFrame {
             }
         });
         cajasMenu.add(movsCajaMenuItem);
+
+        jMenuItem1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jMenuItem1.setText("Apertura");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        cajasMenu.add(jMenuItem1);
+
+        jMenuItem2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jMenuItem2.setText("Cierre");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        cajasMenu.add(jMenuItem2);
 
         menuBar.add(cajasMenu);
 
@@ -436,21 +480,15 @@ public class FarmaAppMain extends javax.swing.JFrame {
         
     }
     
-    public void logicaClosePane(EstadoAPP estadoAPP){
-        
+    public void logicaClosePane(EstadoAPP estadoAPP){        
         Integer indexOfComp =  tabbedPaneMain.indexOfComponent(estadoAPP.getPane());
-        
         if (indexOfComp  == -1){
             
         }
         else{
-            tabbedPaneMain.remove(estadoAPP.getPane());          
-            
+            tabbedPaneMain.remove(estadoAPP.getPane());
         }                
     }
-    
-    
-    
     
     private void cutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cutMenuItemActionPerformed
         
@@ -568,6 +606,36 @@ public class FarmaAppMain extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_planCuentasMenuItemActionPerformed
+
+    private void cutMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cutMenuItem1ActionPerformed
+        
+        EstadoAPP estadoApp = estadosApp.get(MercaderiaFrame.class.getName());        
+        if (estadoApp == null){
+            estadoApp = createEstado(MercaderiaFrame.class.getName(), 0);
+            estadosApp.put(MercaderiaFrame.class.getName(), estadoApp);
+        }
+        
+        logicaOpenPane(estadoApp);
+        
+        
+    }//GEN-LAST:event_cutMenuItem1ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        
+        AperturaCajaFrame    aperturaCajaFrame = new AperturaCajaFrame();
+        aperturaCajaFrame.centerOnScreen();
+        aperturaCajaFrame.setVisible(true);  
+        
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        
+        
+         CierreCajaFrame cierreCajaFrame = new CierreCajaFrame();        
+        cierreCajaFrame.centerOnScreen();
+        cierreCajaFrame.setVisible(true);  
+        
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
     
     public SplashScreen getSplashScreen() {
         return splashScreen;
@@ -618,6 +686,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
     private javax.swing.JMenu contabMenu;
     private javax.swing.JMenuItem contentMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
+    private javax.swing.JMenuItem cutMenuItem1;
     private javax.swing.JMenuItem exitMenuItem1;
     private javax.swing.JMenuItem facturarMenuItem;
     private javax.swing.JMenuItem facturarMenuItem1;
@@ -625,6 +694,8 @@ public class FarmaAppMain extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu fileMenu3;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem movsCajaMenuItem;
     private javax.swing.JMenuItem planCuentasMenuItem;

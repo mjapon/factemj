@@ -23,6 +23,7 @@ public class FilaArticulo {
     private BigDecimal precioMin;
     private boolean iva;
     private BigDecimal inventario;
+    private String tipo;
     
     public FilaArticulo(Integer artId, String codBarra, String nombre, BigDecimal precioCompra, BigDecimal precioVenta, BigDecimal precioMin, boolean iva, BigDecimal inventario) {
         this.artId = artId;
@@ -34,6 +35,7 @@ public class FilaArticulo {
         this.precioMin = precioMin;
         this.iva = iva;
         this.inventario = inventario;
+        this.tipo = "B";
     }
     
     /*
@@ -165,4 +167,13 @@ public class FilaArticulo {
     public void setArtId(Integer artId) {
         this.artId = artId;
     }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }    
+    
 }

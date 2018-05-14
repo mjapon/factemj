@@ -25,6 +25,8 @@ import jj.util.FilaArticulo;
  */
 public class ArticulosJpaController extends BaseJpaController implements Serializable {
     
+    private String baseQuery = "";
+    
     public ArticulosJpaController(EntityManager em){
         super(em);
     }
@@ -234,6 +236,7 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
             articulo.setArtPrecioCompra(filaArt.getPrecioCompra());
             articulo.setArtPreciomin(filaArt.getPrecioMin());
             articulo.setUnidId(1);
+            articulo.setArtTipo(filaArt.getTipo());
 
             em.persist(articulo);
             
@@ -352,6 +355,9 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
     }
     
     
+    
+    
+    
     public List<Articulos> listar(String sortBy, String sortOrder, String filtro) throws Exception{
         try{
             String thequery = "from Articulos o where o.artNombre like '%"+filtro.toUpperCase()+"%' or o.artCodbar like '%"+ filtro.toUpperCase() +"%' order by o."+sortBy+" "+sortOrder;
@@ -376,7 +382,7 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
     }
     
     public boolean yaExisteNombre(String nombre){
-        Query query = newQuery("from Articulos o where o.artCodbar = '"+nombre.trim().toUpperCase()+"'");
+        Query query = newQuery("from Articulos o where o.artNombre = '"+nombre.trim().toUpperCase()+"'");
         List resultList = query.getResultList();        
         return resultList.size()>0;
     }

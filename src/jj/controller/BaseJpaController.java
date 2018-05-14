@@ -44,6 +44,23 @@ public class BaseJpaController<T> {
         List<T> result = getResultList(queryStr);
         return result!=null? result.size():0;
     }
+    
+    public Long getCountResult(String countQuery){        
+        return (Long)em.createQuery(countQuery).getSingleResult();
+    }
+    
+    
+    public void beginTrans(){
+        em.getTransaction().begin();
+    }
+    
+    public void commitTrans(){
+        em.getTransaction().commit();
+    }
+    
+    public void rollbackTrans(){
+        em.getTransaction().rollback();
+    }
 
     public T getResultFirst(Query query) {
         List<T> resultList = query.getResultList();
@@ -52,6 +69,25 @@ public class BaseJpaController<T> {
         } else {
             return null;
         }
+    }
+    
+    public Integer runCountQuery(String queryStr){        
+        Query query = newNativeQuery(queryStr);        
+        List<Long> resultList = query.getResultList();
+        Integer countResult = 0;
+        if (resultList != null){
+            Long longResult= (Long)resultList.get(0);
+            countResult = longResult.intValue();
+        }        
+        return countResult;        
+    }
+    
+    public Object[] getResultFirstNQ(String nativeQuery){
+        List<Object[]> resultList = newNativeQuery(nativeQuery).getResultList();
+        if (resultList != null && resultList.size()>0){
+            return resultList.get(0);
+        }        
+        return null;
     }
     
     public T getResultFirst(String queryStr){
@@ -82,4 +118,16 @@ public class BaseJpaController<T> {
         System.out.println(logMessage+"->"+ex.getMessage());
         ex.printStackTrace();
     }
+    
+    public void beginTransacction(){
+        em.getTransaction().begin();
+    }
+    public void commitTransacction(){
+        em.getTransaction().commit();
+    }
+    public void rollbackTransacction(){
+        em.getTransaction().rollback();
+    }
 }
+
+

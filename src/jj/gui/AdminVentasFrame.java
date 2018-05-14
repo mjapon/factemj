@@ -451,10 +451,8 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
         //this.setVisible(false);
-        
-        FarmaAppMain farmaApp = (FarmaAppMain)this.root;        
+        FarmaAppMain farmaApp = (FarmaAppMain)this.root;
         farmaApp.logicaClosePane(this.getClass().getName()+this.tra_codigo);
-        
         
     }//GEN-LAST:event_btnCloseActionPerformed
     

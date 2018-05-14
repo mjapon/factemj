@@ -17,4 +17,8 @@ public class NumbersUtil {
     public static BigDecimal round(BigDecimal value, int scale){
         return value.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
+    
+    public static BigDecimal round2(BigDecimal value){
+        return NumbersUtil.round(value, 2);
+    }
 }

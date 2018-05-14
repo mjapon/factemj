@@ -64,6 +64,10 @@ public class Articulos implements Serializable {
     private Boolean artIva;
     @Column(name = "unid_id")
     private Integer unidId;
+    @Column(name = "cat_id")
+    private Integer catId;
+    @Column(name = "art_tipo")    
+    private String artTipo;
 
     public Articulos() {
     }
@@ -157,6 +161,22 @@ public class Articulos implements Serializable {
         this.unidId = unidId;
     }
 
+    public Integer getCatId() {
+        return catId;
+    }
+
+    public void setCatId(Integer catId) {
+        this.catId = catId;
+    }
+
+    public String getArtTipo() {
+        return artTipo;
+    }
+
+    public void setArtTipo(String artTipo) {
+        this.artTipo = artTipo;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -181,6 +201,5 @@ public class Articulos implements Serializable {
     public String toString() {
         //return "jj.entity.Articulos[ artId=" + artId + " ]";        
         return artNombre!=null?artNombre.toUpperCase():"";
-    }
-    
+    }    
 }

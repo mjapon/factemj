@@ -42,13 +42,14 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
     private ArticulosJpaController articulosController;
     
     private JFrame root;
- public JFrame getRoot() {
-        return root;
- }
+    
+    public JFrame getRoot() {
+           return root;
+    }
 
- public void setRoot(JFrame root) {
-      this.root = root;
- }
+    public void setRoot(JFrame root) {
+         this.root = root;
+    }
     
     /**
      * Creates new form ArticulosFrame
@@ -139,25 +140,20 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
     }
     
     public void updateArticulos(){
-        
         try{
             articulosDataModel.loadFromDataBase();
-            
-           if (this.articulosDataModel.getItems() != null){
-                    jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                        String.valueOf( "("+ this.articulosDataModel.getItems().size() + ")" )    
+            if (this.articulosDataModel.getItems() != null){
+                jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                        String.valueOf( "("+ this.articulosDataModel.getItems().size() + ")" )
                     ));
-                } 
-            
+            }
         }
         catch(Throwable ex){
             System.out.println("Error al traer de base de datos:"+ex.getMessage());
             updateLabelEstado("Error al traer de base de datos:"+ex.getMessage());
             JOptionPane.showMessageDialog(null, "Error al traer de base de datos:"+ex.getMessage());
         }
-        
-        articulosDataModel.fireTableDataChanged();        
-        
+        articulosDataModel.fireTableDataChanged();
     }
     
     public void logicaAdd(){
@@ -180,7 +176,7 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
                 codBarra = "GEN";
             }
         
-            FilaArticulo auxfilaArt = new FilaArticulo(artId, codBarra, nombre, precioCompraConIva, precioVentaConIva, precioMinConIva, IVA, inventario);            
+            FilaArticulo auxfilaArt = new FilaArticulo(artId, codBarra, nombre, precioCompraConIva, precioVentaConIva, precioMinConIva, IVA, inventario);
             FilaArticulo filaArt  = new FilaArticulo(artId, 
                     codBarra, 
                     nombre, 
@@ -188,8 +184,9 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
                     auxfilaArt.getPrecioVentaSinIva(),
                     auxfilaArt.getPrecioMinSinIva(),
                     IVA, 
-                    inventario);            
-            boolean valid = this.articulosDataModel.validar(filaArt);            
+                    inventario);
+            
+            boolean valid = this.articulosDataModel.validar(filaArt);
             if (valid){
                 //Verificar codigo de barra y nombre de articulo
                 if (!genCodbar && articulosController.yaExisteBarcode(codBarra)){
@@ -600,13 +597,11 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
             //System.out.println("Se aplica el filtro:"+filtro);
             try{
                 this.articulosDataModel.loadFromDataBaseFilter(filtro);
-                
                 if (this.articulosDataModel.getItems() != null){
                     jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                        "("+ String.valueOf( this.articulosDataModel.getItems().size() ) + ")"    
+                        "("+ String.valueOf( this.articulosDataModel.getItems().size() ) + ")"
                     ));
-                } 
-                
+                }
             }
             catch(Throwable ex){
                 System.out.println("Error al cargar datos:"+ ex.getMessage());
@@ -638,12 +633,9 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
     private void tfPrecioCompraFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfPrecioCompraFocusLost
       //Se debe calcular el iva del precio de compra
       logicaIvaPrecioCompra(jCBCalPrecio.isSelected());
-     
-      
         
     }//GEN-LAST:event_tfPrecioCompraFocusLost
 
-    
     private void logicaIvaPrecioCompra(boolean calPrecio){
          BigDecimal valorIvaPC = BigDecimal.ZERO;      
       try{
@@ -670,9 +662,7 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
             
                 this.tfPrecioVenta.setText(posiblePreVenta.toPlainString());
                 this.tfPrecioMin.setText(posiblePreMin.toPlainString());
-          }          
-              
-              
+          }
       }
       catch(Throwable ex){
           System.out.println("Error al calcular el iva:"+ ex.getMessage());
@@ -693,14 +683,12 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
     }//GEN-LAST:event_cbIvaInputActionPerformed
 
     private void jCBGenCodbarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBGenCodbarActionPerformed
-        
         if (this.jCBGenCodbar.isSelected()){
             this.tfCodBarra.setEnabled(false);
         }
         else{
             this.tfCodBarra.setEnabled(true);
         }
-        
     }//GEN-LAST:event_jCBGenCodbarActionPerformed
     
     private boolean filtroInRow(String filtro, FilaArticulo filaArt){

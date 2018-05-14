@@ -7,6 +7,7 @@ package jj.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class FechasUtil {
     public static SimpleDateFormat dateFormat;
     public static SimpleDateFormat dateHourFormat;
     public static Map<Integer, String> mesesMap;
+    public static Map<Integer, String> diasMap;
     
     static{
         dateFormat = new SimpleDateFormat(formato);
@@ -40,6 +42,16 @@ public class FechasUtil {
         mesesMap.put(9, "OCTUBRE");
         mesesMap.put(10, "NOMVIEMBRE");
         mesesMap.put(11, "DICIEMBRE");
+        
+         diasMap = new HashMap<Integer, String>();
+        
+        diasMap.put(1, "Domingo");
+        diasMap.put(2, "Lunes");
+        diasMap.put(3, "Martes");
+        diasMap.put(4, "Miercoles");
+        diasMap.put(5, "Jueves");
+        diasMap.put(6, "Viernes");
+        diasMap.put(7, "Sábado");
     }
     
     public static Date parse(String fecha) throws ParseException{        
@@ -73,5 +85,18 @@ public class FechasUtil {
             }
         }
         return null;
+    }
+    
+     public static String getDayName(Integer index){
+        return diasMap.get(index);
+    }
+    
+    public static String getDayNameOfDate(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        System.out.println("valor para date es:"+ date);        
+        System.out.println("Valor para day of week es:" + dayOfWeek);        
+        return  FechasUtil.getDayName(dayOfWeek);
     }
 }
