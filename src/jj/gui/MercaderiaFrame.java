@@ -13,7 +13,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -217,7 +216,8 @@ public class MercaderiaFrame extends javax.swing.JFrame {
         jPanelNorth.setPreferredSize(new java.awt.Dimension(100, 60));
         jPanelNorth.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setText("jLabel1");
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabel1.setText("MERCADERÍA");
         jPanelNorth.add(jLabel1, java.awt.BorderLayout.CENTER);
 
         jCrearArtBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/Plus_48px.png"))); // NOI18N
@@ -250,6 +250,7 @@ public class MercaderiaFrame extends javax.swing.JFrame {
 
         jPanel5.setLayout(new java.awt.BorderLayout());
 
+        jListCategorias.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
         jScrollPane1.setViewportView(jListCategorias);
 
         jPanel5.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -277,6 +278,7 @@ public class MercaderiaFrame extends javax.swing.JFrame {
 
         jPanel2.add(jPanel3, java.awt.BorderLayout.NORTH);
 
+        jTableArts.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
         jTableArts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -328,10 +330,12 @@ public class MercaderiaFrame extends javax.swing.JFrame {
     private void jCrearCatBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCrearCatBtnActionPerformed
         String nombrecat = JOptionPane.showInputDialog(this," Ingrese el nombre de la categoria ");
         try{
-            jStatusLabel.setText("");
-            catsController.crear(nombrecat);
-            jStatusLabel.setText("Categoría creada");
-            loadCats();
+            if (nombrecat != null && nombrecat.trim().length()>0){
+                jStatusLabel.setText("");
+                catsController.crear(nombrecat.trim().toUpperCase());
+                jStatusLabel.setText("Categoría creada");
+                loadCats();
+            }
         }
         catch(Throwable ex){
             showMsgError(ex);

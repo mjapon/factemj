@@ -8,7 +8,6 @@ package jj.controller;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
@@ -177,7 +176,7 @@ public class CategoriasJpaController extends BaseJpaController<Categorias> imple
             commitTransacction();
         }
         catch(Throwable ex){
-            rollbackTransacction();
+            //rollbackTransacction();
             logError(ex);
         }
     }
@@ -199,7 +198,7 @@ public class CategoriasJpaController extends BaseJpaController<Categorias> imple
         }
         catch(Throwable ex){
             logError(ex);
-            rollbackTransacction();
+            //rollbackTransacction();
         }
     }    
     
@@ -215,7 +214,7 @@ public class CategoriasJpaController extends BaseJpaController<Categorias> imple
             commitTransacction();
         }
         catch(Throwable ex){
-            rollbackTransacction();
+//            rollbackTransacction();
             logError(ex);
         }
     }

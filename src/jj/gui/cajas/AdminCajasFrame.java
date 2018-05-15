@@ -6,11 +6,11 @@
 
 package jj.gui.cajas;
 
-import java.util.Calendar;
+import java.util.Date;
 import javax.swing.JFormattedTextField;
+import jj.controller.CajasJpaController;
 import jj.gui.BaseFrame;
 import jj.util.FechasUtil;
-
 /**
  *
  * @author mjapon
@@ -19,11 +19,13 @@ public class AdminCajasFrame extends BaseFrame {
     
     private JFormattedTextField desdeTF;
     private JFormattedTextField hastaTF;
+    private CajasJpaController cajasController;
 
     /** Creates new form AdminCajasFrame */
     public AdminCajasFrame() {
         initComponents();        
         setupFechas();
+        cajasController = new CajasJpaController(em);
     }
     
     public void setupFechas(){
@@ -33,9 +35,20 @@ public class AdminCajasFrame extends BaseFrame {
         jPanel12.add( hastaTF );
     }
     
+    
     public void logicaBuscar(){
         
-    }
+        try{
+            Date fechaDesde = FechasUtil.parse(desdeTF.getText());
+            Date fechaHasta = FechasUtil.parse(hastaTF.getText());
+            
+            cajasController.listar(fechaDesde, fechaHasta);
+            
+            
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -64,7 +77,7 @@ public class AdminCajasFrame extends BaseFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setLayout(new java.awt.GridLayout(2, 1));
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
         jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -72,7 +85,7 @@ public class AdminCajasFrame extends BaseFrame {
         jLabel1.setText("Administración de cajas");
         jPanel5.add(jLabel1);
 
-        jPanel1.add(jPanel5);
+        jPanel1.add(jPanel5, java.awt.BorderLayout.NORTH);
 
         jComboBox1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hoy", "Ayer", "Esta Semana", "Este Mes", "Mes Anterior", "Este Año" }));
@@ -111,7 +124,7 @@ public class AdminCajasFrame extends BaseFrame {
                 .addContainerGap(49, Short.MAX_VALUE))
         );
 
-        jPanel1.add(jPanel6);
+        jPanel1.add(jPanel6, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
@@ -163,7 +176,9 @@ public class AdminCajasFrame extends BaseFrame {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
-        // TODO add your handling code here:
+        
+        
+        
     }//GEN-LAST:event_jButtonBuscarActionPerformed
 
 

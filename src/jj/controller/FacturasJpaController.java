@@ -394,7 +394,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         paramsList.add("m.mov_valido = 0");        
         
         if (params.getDesde() != null){
-            paramsList.add("date(m.mov_fechareg) >= date(?paramDesde) ");            
+            paramsList.add("date(m.mov_fechareg) >= date(?paramDesde) ");
         }
         if (params.getHasta() != null){
             paramsList.add("date(m.mov_fechareg) <= date(?paramHasta) ");

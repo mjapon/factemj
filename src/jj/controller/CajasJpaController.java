@@ -7,12 +7,14 @@ package jj.controller;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.TemporalType;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import jj.controller.exceptions.NonexistentEntityException;
@@ -20,6 +22,7 @@ import jj.entity.Cajas;
 import jj.entity.Facturas;
 import jj.util.ErrorValidException;
 import jj.util.FechasUtil;
+import jj.util.datamodels.FilaCajas;
 
 /**
  *
@@ -122,6 +125,58 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
         caja.setCjEstado(1);
         
         commitTrans();
+    }
+    
+    public List<FilaCajas> listar(Date desde, Date hasta){
+        
+        String sql = "select cj_id,"+
+                        "cj_saldoant,"+
+                        "cj_ventas,"+
+                        "cj_abonoscxc,"+
+                        "cj_abonoscxp,"+
+                        "cj_obsaper,"+
+                        "cj_obscierre,"+
+                        "cj_fecaper,"+
+                        "cj_feccierre,"+
+                          "cj_estado,"+
+                        "case cj_estado when 0 then 'Abierto'"+
+                           "            when 1 then 'Cerrado'"+
+                           "            when 2 then 'Anulado' end as estado,"+
+                        "cj_obsanul,"+
+                        "cj_saldo from cajas where date(cj_fecaper) >= date(?paramDesde)"+
+                        "AND date(cj_fecaper) <= date(?paramHasta)";
+        
+        Query query = this.newNativeQuery(sql);
+        query = query.setParameter("paramDesde", desde, TemporalType.DATE);
+        query = query.setParameter("paramHasta", hasta, TemporalType.DATE);
+        
+        List<Object[]> tmpList =  query.getResultList();
+        
+        List<FilaCajas> resultList = new ArrayList<>();
+        
+        for (Object[] obj: tmpList){
+            
+            Integer cj_id = (Integer)obj[0];
+            BigDecimal cj_saldoant = (BigDecimal)obj[0];
+            BigDecimal cj_ventas = (BigDecimal)obj[0];
+            BigDecimal cj_abonoscxc = (BigDecimal)obj[0];
+            BigDecimal cj_abonoscxp = (BigDecimal)obj[0];
+            String cj_obsaper = (String)obj[0];
+            String cj_obscierre = (String)obj[0];
+            String cj_fecaper = (String)obj[0];
+            String cj_feccierre = (String)obj[0];
+            Integer cj_estado = (Integer)obj[0];
+            String estado = (String)obj[0];
+            String cj_obsanul = (String)obj[0];
+            BigDecimal cj_saldo = (BigDecimal)obj[0];
+         
+            FilaCajas filaCaja = new FilaCajas(cj_id, cj_saldoant, cj_ventas, cj_abonoscxc, cj_abonoscxp, cj_obsaper, cj_obscierre, cj_fecaper, cj_feccierre, cj_estado, estado, cj_obsanul, cj_saldo);
+            
+            resultList.add(filaCaja);
+        }
+        
+        return resultList;
+        
     }
 
     public void create(Cajas cajas) {
