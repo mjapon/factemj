@@ -11,7 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -31,7 +30,7 @@ import jj.util.datamodels.CatsListModel;
  *
  * @author manuel.japon
  */
-public class MercaderiaFrame extends javax.swing.JFrame {
+public class MercaderiaFrame extends BaseFrame {
     
     private ArticulosDataModel articulosDataModel;
     private ArticulosModelListener articulosModelListener;
@@ -40,8 +39,6 @@ public class MercaderiaFrame extends javax.swing.JFrame {
     private CategoriasJpaController catsController;
     private List<Categorias> catsList;
     private CatsListModel catsModelList;
-    private JFrame root;
-
     /**
      * Creates new form MercaderiaFrame
      */
@@ -304,9 +301,19 @@ public class MercaderiaFrame extends javax.swing.JFrame {
         jPanelBtns.add(jGuardarBtn);
 
         btnBorrar.setText("Borrar");
+        btnBorrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBorrarActionPerformed(evt);
+            }
+        });
         jPanelBtns.add(btnBorrar);
 
         jMoverBtn.setText("Mover");
+        jMoverBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMoverBtnActionPerformed(evt);
+            }
+        });
         jPanelBtns.add(jMoverBtn);
 
         jCerrarBtn.setText("Cerrar");
@@ -359,6 +366,19 @@ public class MercaderiaFrame extends javax.swing.JFrame {
         doFilter();
         
     }//GEN-LAST:event_filtroTFKeyReleased
+
+    private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
+        
+        
+        
+    }//GEN-LAST:event_btnBorrarActionPerformed
+
+    private void jMoverBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMoverBtnActionPerformed
+        
+        
+        
+        
+    }//GEN-LAST:event_jMoverBtnActionPerformed
     
     public void loadCats(){
         try{
@@ -371,22 +391,6 @@ public class MercaderiaFrame extends javax.swing.JFrame {
             showMsgError(ex);
         }
     }
-    
-    private void showMsgError(Throwable ex){
-        System.out.println("Error:"+ex.getMessage());
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error:"+ex.getMessage());
-        jStatusLabel.setText("Error:"+ex.getMessage());
-    }
-    
-    public JFrame getRoot() {
-           return root;
-    }
-
-    public void setRoot(JFrame root) {
-         this.root = root;
-    }
-    
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

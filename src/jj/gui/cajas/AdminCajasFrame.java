@@ -6,11 +6,19 @@
 
 package jj.gui.cajas;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Date;
 import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import jj.controller.CajasJpaController;
 import jj.gui.BaseFrame;
 import jj.util.FechasUtil;
+import jj.util.ParamBusquedaCXCP;
+import jj.util.datamodels.CajasDataModel;
+import jj.util.datamodels.FilaCajas;
 /**
  *
  * @author mjapon
@@ -20,12 +28,15 @@ public class AdminCajasFrame extends BaseFrame {
     private JFormattedTextField desdeTF;
     private JFormattedTextField hastaTF;
     private CajasJpaController cajasController;
+    
+    private CajasDataModel cajasDataModel;
 
     /** Creates new form AdminCajasFrame */
     public AdminCajasFrame() {
-        initComponents();        
-        setupFechas();
+        initComponents();
         cajasController = new CajasJpaController(em);
+        setupFechas();
+        init();
     }
     
     public void setupFechas(){
@@ -33,6 +44,91 @@ public class AdminCajasFrame extends BaseFrame {
         hastaTF = new JFormattedTextField(createFormatter("##/##/####"));
         jPanel12.add( desdeTF );
         jPanel12.add( hastaTF );
+    }
+    
+    public void init(){
+        desdeTF.setText(FechasUtil.getFechaActual());
+        hastaTF.setText(FechasUtil.getFechaActual());
+        
+        cajasDataModel = new CajasDataModel();
+        cajasDataModel.setController(cajasController);
+        jTable1.setModel(cajasDataModel);
+        
+        
+        jTable1.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int col = jTable1.columnAtPoint(e.getPoint());
+                String name = jTable1.getColumnName(col);
+                //System.out.println("TableHeader column index selected " + col + " " + name);
+                
+                try{
+                    for (int i=0; i<cajasDataModel.getColumnCount();i++){
+                        jTable1.getColumnModel().getColumn(i).setHeaderValue( cajasDataModel.getColumnName(i) );
+                    }                    
+                    cajasDataModel.switchSortColumn(col);                    
+                }
+                catch(Throwable ex){
+                    JOptionPane.showMessageDialog(null, "Error en sort:"+ex.getMessage());
+                    System.out.println("Error en sort:"+ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
+        });
+        
+        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                //System.out.println("List selection changed--->");
+                if (e.getFirstIndex()>=0){
+                    jButtonAnular.setEnabled(false);
+                    //Verificar que el registro seleccionado no este anulado
+                    try{
+                        int row = jTable1.getSelectedRow();
+                        if (row>=-1){
+                            FilaCajas filart = cajasDataModel.getValueAt(row);        
+                            if (filart.getCj_estado() != 2){
+                                jButtonAnular.setEnabled(true);
+                            }
+                        }
+                        
+                    }
+                    catch(Throwable ex){
+                        System.out.println("Error en selection listener:"+ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                    
+                }
+                else{
+                    jButtonAnular.setEnabled(false);
+                }
+            }
+        });
+        
+        jTable1.updateUI();
+        cajasDataModel.fireTableDataChanged();
+        
+        //setup select event
+        
+    }
+    
+    public void doAnular(){
+        int row = this.jTable1.getSelectedRow();
+        if (row>-1){
+            FilaCajas filart = this.cajasDataModel.getValueAt(row);        
+            if (filart != null){
+                try {
+                    this.cajasController.anularCaja(filart.getCj_id());
+                    showMsg("La caja ha sido anulada");
+                    this.cajasDataModel.loadFromDataBase();
+                } catch (Throwable ex) {
+                    showMsgError(ex);
+                }
+            }
+        }
+        else{
+            showMsg("Elija el registro que desea anular");
+        }
     }
     
     
@@ -44,6 +140,12 @@ public class AdminCajasFrame extends BaseFrame {
             
             cajasController.listar(fechaDesde, fechaHasta);
             
+            ParamBusquedaCXCP params = new ParamBusquedaCXCP();
+            params.setDesde(fechaDesde);
+            params.setHasta(fechaHasta);
+            
+            cajasDataModel.setParams(params);
+            cajasDataModel.loadFromDataBase();
             
         }
         catch(Throwable ex){
@@ -130,6 +232,7 @@ public class AdminCajasFrame extends BaseFrame {
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 
+        jTable1.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -147,7 +250,7 @@ public class AdminCajasFrame extends BaseFrame {
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        jPanel3.setLayout(new java.awt.GridLayout(4, 1));
+        jPanel3.setLayout(new java.awt.GridLayout(7, 1));
 
         jButtonBuscar.setText("Buscar");
         jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
@@ -158,9 +261,20 @@ public class AdminCajasFrame extends BaseFrame {
         jPanel3.add(jButtonBuscar);
 
         jButtonAnular.setText("Anular");
+        jButtonAnular.setEnabled(false);
+        jButtonAnular.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAnularActionPerformed(evt);
+            }
+        });
         jPanel3.add(jButtonAnular);
 
         jButtonCerrar.setText("Cerrar");
+        jButtonCerrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCerrarActionPerformed(evt);
+            }
+        });
         jPanel3.add(jButtonCerrar);
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.EAST);
@@ -177,9 +291,21 @@ public class AdminCajasFrame extends BaseFrame {
 
     private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
         
-        
+        logicaBuscar();
         
     }//GEN-LAST:event_jButtonBuscarActionPerformed
+
+    private void jButtonCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCerrarActionPerformed
+        
+        this.closeFrame();
+        
+    }//GEN-LAST:event_jButtonCerrarActionPerformed
+
+    private void jButtonAnularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnularActionPerformed
+        if (showConfirmMsg("¿Seguro que desea anular este registro?")){
+            doAnular();
+        }
+    }//GEN-LAST:event_jButtonAnularActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

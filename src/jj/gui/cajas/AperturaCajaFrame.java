@@ -197,6 +197,7 @@ public class AperturaCajaFrame extends BaseFrame {
 
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
         try{
+            saldoInicial = new BigDecimal(jTFSaldoAnterior.getText());
             cajasController.crearCaja(dia, saldoInicial, jTAObs.getText());
             String dayName = FechasUtil.getDayNameOfDate(dia);
             showMsg("CAJA APERTURA PARA EL DIA DE HOY:" + dayName);

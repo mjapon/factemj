@@ -5,10 +5,22 @@
  */
 package jj.util;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author mjapon
  */
 public class TotalesCajas {
+    
+    private BigDecimal sumaSaldo;
+
+    public BigDecimal getSumaSaldo() {
+        return sumaSaldo;
+    }
+
+    public void setSumaSaldo(BigDecimal sumaSaldo) {
+        this.sumaSaldo = sumaSaldo;
+    }
     
 }

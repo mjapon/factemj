@@ -5,7 +5,6 @@
  */
 package jj.gui;
 
-import com.serviestudios.print.util.TextPrinterUtil;
 import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -47,7 +46,6 @@ import jj.util.FechasUtil;
 import jj.util.FilaArticulo;
 import jj.util.FilaFactura;
 import jj.util.FilaPago;
-import jj.util.GenTxtFactura;
 import jj.util.IVAComboBoxEditor;
 import jj.util.IVAComboBoxRenderer;
 import jj.util.NumbersUtil;

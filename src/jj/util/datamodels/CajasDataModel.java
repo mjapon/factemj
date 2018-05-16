@@ -7,18 +7,14 @@ package jj.util.datamodels;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import jj.controller.CajasJpaController;
-import jj.controller.FacturasJpaController;
-import jj.util.FechasUtil;
 import jj.util.ParamBusquedaCXCP;
 import jj.util.TotalesCajas;
-import jj.util.TotalesCuentasXPC;
 
 /**
  *
@@ -159,26 +155,35 @@ public class CajasDataModel extends AbstractTableModel{
             }
             else 
             */
-            if (columnIndex==ColumnaCAJASEnum.FECHAFACT.index){
-                return fila.getFecha();
+            if (columnIndex==ColumnaCAJASEnum.NRO.index){
+                return fila.getCj_id();
             }
-            else if (columnIndex==ColumnaCAJASEnum.NROFACT.index){
-                return fila.getNumFactura();
+            else if (columnIndex==ColumnaCAJASEnum.SALDOANT.index){
+                return fila.getCj_saldoant();
             }
-            else if (columnIndex==ColumnaCAJASEnum.MONTO.index){
-                return fila.getMonto();
-            }
-            else if (columnIndex==ColumnaCAJASEnum.VALORPEND.index){
-                return fila.getDeuda();
-            }
-            else if (columnIndex==ColumnaCAJASEnum.REFERENTE.index){
-                return fila.getReferente();
-            }
-            else if (columnIndex==ColumnaCAJASEnum.OBSERVACION.index){
-                return fila.getObservacion();
+            else if (columnIndex==ColumnaCAJASEnum.FECHAAPER.index){
+                return fila.getCj_fecaper();
             }
             else if (columnIndex==ColumnaCAJASEnum.ESTADO.index){
-                return fila.getEstadoDesc();
+                return fila.getEstado();
+            }
+            else if (columnIndex==ColumnaCAJASEnum.FECHACIERRE.index){
+                return fila.getCj_feccierre();
+            }
+            else if (columnIndex==ColumnaCAJASEnum.OBSAPER.index){
+                return fila.getCj_obsaper();
+            }
+            else if (columnIndex==ColumnaCAJASEnum.TOTVENTAS.index){
+                return fila.getCj_ventas();
+            }
+            else if (columnIndex==ColumnaCAJASEnum.ABCOBRA.index){
+                return fila.getCj_abonoscxc();
+            }
+            else if (columnIndex==ColumnaCAJASEnum.ABPAGA.index){
+                return fila.getCj_abonoscxp();
+            }
+            else if (columnIndex==ColumnaCAJASEnum.SALDO.index){
+                return fila.getCj_saldo();
             }
             else{
                 return "";
@@ -189,8 +194,10 @@ public class CajasDataModel extends AbstractTableModel{
         }
     }
     
+    /*
     public void loadItems(List<Object[]> items){        
-        for (Object[] item: items){            
+        for (Object[] item: items){
+            
             Integer facturaId = (Integer)item[0];
             String numFactura = (String)item[1];
             Date fechafactura = (Date)item[2];
@@ -200,6 +207,23 @@ public class CajasDataModel extends AbstractTableModel{
             String obs = (String)item[9];   
             Integer codPago = (Integer)item[0]; 
             String estadoDesc = (String)item[11];
+            
+            
+            
+            Integer cj_id, 
+            BigDecimal cj_saldoant, 
+            BigDecimal cj_ventas, 
+            BigDecimal cj_abonoscxc, 
+            BigDecimal cj_abonoscxp, 
+            String cj_obsaper, 
+            String cj_obscierre, 
+            String cj_fecaper, 
+            String cj_feccierre, 
+            Integer cj_estado, 
+            String estado, 
+            String cj_obsanul, 
+            BigDecimal cj_saldo
+            
             FilaCajas fila = new FilaCajas(facturaId, numFactura, monto, deuda, referente, 
                     obs, FechasUtil.format(fechafactura), codPago, estadoDesc, BigDecimal.ZERO);
             addItem(fila);
@@ -208,6 +232,7 @@ public class CajasDataModel extends AbstractTableModel{
         fireTableDataChanged();
         
     }
+    */  
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
@@ -221,7 +246,7 @@ public class CajasDataModel extends AbstractTableModel{
     
     public void switchSortColumn(Integer column) throws Exception{    
         
-        for (int i = 0; i<CuentaXCPDataModel.ColumnaCAJASEnum.values().length;i++){
+        for (int i = 0; i<CajasDataModel.ColumnaCAJASEnum.values().length;i++){
             
             if (i == column){
                 Integer sortValue = mapSort.get(column);
@@ -243,7 +268,7 @@ public class CajasDataModel extends AbstractTableModel{
     
     public Integer getSorIndex(){
         int index = 0;//Por defecto se ordena por nombre
-        for (int i=0; i<CuentaXCPDataModel.ColumnaCAJASEnum.values().length; i++){
+        for (int i=0; i<CajasDataModel.ColumnaCAJASEnum.values().length; i++){
             if (mapSort.containsKey(i)){
                 if (mapSort.get(i)!= 0){
                     index = i;
@@ -254,7 +279,7 @@ public class CajasDataModel extends AbstractTableModel{
     }
     
     public String getSortColumn(Integer column){       
-        String colName = CuentaXCPDataModel.ColumnaCAJASEnum.GET_ENTITY(column);
+        String colName = CajasDataModel.ColumnaCAJASEnum.GET_ENTITY(column);
         return colName;       
     }
     
@@ -268,45 +293,25 @@ public class CajasDataModel extends AbstractTableModel{
         this.params.setSortColumn(sortcolumn);
         this.params.setSortOrder(sortord);
         
-        List<Object[]> cuentasXCpList = controller.listarCuentasXCP(this.params);        
+        List<FilaCajas> cajasList = controller.listar(this.params.getDesde(),this.params.getHasta());        
         items.clear();
-        
-        for(Object[] item: cuentasXCpList){            
-            Integer facturaId = (Integer)item[0];
-            String numFactura = (String)item[1];
-            Date fechafactura = (Date)item[2];
-            BigDecimal monto = (BigDecimal)item[3];
-            BigDecimal deuda = (BigDecimal)item[8];
-            String referente = (String)item[4];
-            String obs = (String)item[9];      
-            Integer codPago = (Integer)item[10];
-            
-            String estadoDesc = (String)item[11];
-            
-            FilaCajas fila = new FilaCajas(facturaId, numFactura, monto, deuda, 
-                    referente, obs, FechasUtil.format(fechafactura), codPago, 
-                    estadoDesc, BigDecimal.ZERO);
-            
-            items.add(fila);
-        }
-        
+        items = cajasList;
         totalizar();
         fireTableDataChanged();
     }    
     
     public void totalizar(){
-        BigDecimal sumaAbonos = BigDecimal.ZERO;        
+        BigDecimal sumaSaldos = BigDecimal.ZERO;        
         for (FilaCajas fila: this.items){
-            sumaAbonos = sumaAbonos.add( fila.getMonto() );
+            sumaSaldos = sumaSaldos.add( fila.getCj_saldo()!=null?fila.getCj_saldo():BigDecimal.ZERO );
         }
         
-        if (this.getTotalesFactura() == null){
-            this.setTotalesFactura(new TotalesCuentasXPC());
+        if (this.getTotalesCajas() == null){
+            this.setTotalesCajas(new TotalesCajas());
         }
         
-        TotalesCuentasXPC totales = this.getTotalesFactura();
-        totales.setSumaMonto(sumaAbonos);
-        
+        TotalesCajas totales = this.getTotalesCajas();
+        totales.setSumaSaldo(sumaSaldos);
     }
 
     public List<FilaCajas> getItems() {
@@ -317,11 +322,11 @@ public class CajasDataModel extends AbstractTableModel{
         this.items = items;
     }
 
-    public TotalesCuentasXPC getTotalesFactura() {
+    public TotalesCajas getTotalesCajas() {
         return totales;
     }
 
-    public void setTotalesFactura(TotalesCuentasXPC totales) {
+    public void setTotalesCajas(TotalesCajas totales) {
         this.totales = totales;
     }
     
@@ -341,11 +346,11 @@ public class CajasDataModel extends AbstractTableModel{
         this.params = params;
     }
 
-    public FacturasJpaController getController() {
+    public CajasJpaController getController() {
         return controller;
     }
 
-    public void setController(FacturasJpaController controller) {
+    public void setController(CajasJpaController controller) {
         this.controller = controller;
     }
     

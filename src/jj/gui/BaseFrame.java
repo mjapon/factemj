@@ -11,6 +11,7 @@ import java.util.Calendar;
 import javax.persistence.EntityManager;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.text.MaskFormatter;
 import jj.util.EntityManagerUtil;
@@ -23,6 +24,7 @@ import jj.util.FechasUtil;
 public class BaseFrame extends javax.swing.JFrame {
     
     protected EntityManager em;
+    protected JFrame root;
 
     /**
      * Creates new form BaseFrame
@@ -117,6 +119,24 @@ public class BaseFrame extends javax.swing.JFrame {
                 break;
             }
         }
+    }
+    
+    public JFrame getRoot() {
+           return root;
+    }
+
+    public void setRoot(JFrame root) {
+         this.root = root;
+    }
+    
+    public void closeFrame(){
+        FarmaAppMain farmaApp = (FarmaAppMain)this.root;
+        farmaApp.logicaClosePane(this.getClass().getName());
+    }
+    
+    public boolean showConfirmMsg(String msg){
+        int response = JOptionPane.showConfirmDialog(null, msg);
+        return response == JOptionPane.YES_OPTION;
     }
     
     /**

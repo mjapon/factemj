@@ -151,26 +151,28 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
         query = query.setParameter("paramHasta", hasta, TemporalType.DATE);
         
         List<Object[]> tmpList =  query.getResultList();
-        
         List<FilaCajas> resultList = new ArrayList<>();
         
         for (Object[] obj: tmpList){
             
             Integer cj_id = (Integer)obj[0];
-            BigDecimal cj_saldoant = (BigDecimal)obj[0];
-            BigDecimal cj_ventas = (BigDecimal)obj[0];
-            BigDecimal cj_abonoscxc = (BigDecimal)obj[0];
-            BigDecimal cj_abonoscxp = (BigDecimal)obj[0];
-            String cj_obsaper = (String)obj[0];
-            String cj_obscierre = (String)obj[0];
-            String cj_fecaper = (String)obj[0];
-            String cj_feccierre = (String)obj[0];
-            Integer cj_estado = (Integer)obj[0];
-            String estado = (String)obj[0];
-            String cj_obsanul = (String)obj[0];
-            BigDecimal cj_saldo = (BigDecimal)obj[0];
+            BigDecimal cj_saldoant = (BigDecimal)obj[1];
+            BigDecimal cj_ventas = (BigDecimal)obj[2];
+            BigDecimal cj_abonoscxc = (BigDecimal)obj[3];
+            BigDecimal cj_abonoscxp = (BigDecimal)obj[4];
+            String cj_obsaper = (String)obj[5];
+            String cj_obscierre = (String)obj[6];
+            Date cj_fecaper = (Date)obj[7];
+            Date cj_feccierre = (Date)obj[8];
+            Integer cj_estado = (Integer)obj[9];
+            String estado = (String)obj[10];
+            String cj_obsanul = (String)obj[11];
+            BigDecimal cj_saldo = (BigDecimal)obj[12];
+            
+            String fecAper = cj_fecaper!=null?FechasUtil.format(cj_fecaper):"";
+            String fecCierre = cj_feccierre!=null?FechasUtil.format(cj_feccierre):"";
          
-            FilaCajas filaCaja = new FilaCajas(cj_id, cj_saldoant, cj_ventas, cj_abonoscxc, cj_abonoscxp, cj_obsaper, cj_obscierre, cj_fecaper, cj_feccierre, cj_estado, estado, cj_obsanul, cj_saldo);
+            FilaCajas filaCaja = new FilaCajas(cj_id, cj_saldoant, cj_ventas, cj_abonoscxc, cj_abonoscxp, cj_obsaper, cj_obscierre, fecAper, fecCierre, cj_estado, estado, cj_obsanul, cj_saldo);
             
             resultList.add(filaCaja);
         }
@@ -194,9 +196,7 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
     }
 
     public void edit(Cajas cajas) throws NonexistentEntityException, Exception {
-        EntityManager em = null;
         try {
-            em = getEntityManager();
             em.getTransaction().begin();
             cajas = em.merge(cajas);
             em.getTransaction().commit();
@@ -231,9 +231,11 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
             em.remove(cajas);
             em.getTransaction().commit();
         } finally {
+            /*
             if (em != null) {
                 em.close();
             }
+            */
         }
     }
 
@@ -281,6 +283,35 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
         } finally {
             em.close();
         }
+    }
+    
+    public Cajas findById(Integer factId){
+        
+        
+        return em.find(Cajas.class, factId);
+        
+    }
+    
+    public void anularCaja(Integer cjId){
+        
+        try{
+            
+            beginTrans();
+            Cajas caja = findById(cjId);
+            
+            if (caja != null){
+                caja.setCjEstado(2);//1-->anulado
+            }
+            
+            commitTrans();
+        }
+        catch(Throwable ex){
+            logError(ex);
+            throw new ErrorValidException("Error al tratar de anular caja:"+ex.getMessage());
+        }
+        
+        
+        
     }
     
 }

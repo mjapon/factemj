@@ -16,6 +16,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import jj.gui.cajas.AdminCajasFrame;
 import jj.gui.cajas.AperturaCajaFrame;
 import jj.gui.cajas.CierreCajaFrame;
 import jj.util.EstadoAPP;
@@ -25,10 +26,8 @@ import jj.util.EstadoAPP;
  * @author manuel.japon
  */
 public class FarmaAppMain extends javax.swing.JFrame {
-    
-    private SplashScreen splashScreen;    
+    private SplashScreen splashScreen;
     public static Map<String, EstadoAPP> estadosApp;
-
     /**
      * Creates new form FarmaAppMain
      */
@@ -179,6 +178,12 @@ public class FarmaAppMain extends javax.swing.JFrame {
             EstadoAPP planCuentasAPP = new EstadoAPP(planCuentasFrame.getContentPane(), icon, "Plan Cuentas", planCuentasFrame);
             return planCuentasAPP;
         }
+        else if (AdminCajasFrame.class.getName().equalsIgnoreCase(className)){
+            AdminCajasFrame adminCajasFrame = new AdminCajasFrame();
+            adminCajasFrame.setRoot(this);
+            EstadoAPP planCuentasAPP = new EstadoAPP(adminCajasFrame.getContentPane(), icon, "Listado de Cajas", adminCajasFrame);
+            return planCuentasAPP;
+        }
         
         return null;
         
@@ -228,6 +233,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
         movsCajaMenuItem = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
         contabMenu = new javax.swing.JMenu();
         planCuentasMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
@@ -393,6 +399,14 @@ public class FarmaAppMain extends javax.swing.JFrame {
         });
         cajasMenu.add(jMenuItem2);
 
+        jMenuItem3.setText("Administrar");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        cajasMenu.add(jMenuItem3);
+
         menuBar.add(cajasMenu);
 
         contabMenu.setMnemonic('e');
@@ -432,7 +446,6 @@ public class FarmaAppMain extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
     static ImageIcon createImageIcon(String path) {
         java.net.URL imgURL = FarmaAppMain.class.getResource(path);
         if (imgURL != null) {
@@ -447,12 +460,10 @@ public class FarmaAppMain extends javax.swing.JFrame {
     private void facturarMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_facturarMenuItemActionPerformed
                 
         EstadoAPP estadoApp = estadosApp.get(FacturaVentaFrame.class.getName()+"1");
-        
         if (estadoApp == null){
             estadoApp = createEstado(FacturaVentaFrame.class.getName(), 1);
             estadosApp.put(FacturaVentaFrame.class.getName()+"1", estadoApp);
         }
-        
         logicaOpenPane(estadoApp);
         
     }//GEN-LAST:event_facturarMenuItemActionPerformed
@@ -636,6 +647,17 @@ public class FarmaAppMain extends javax.swing.JFrame {
         cierreCajaFrame.setVisible(true);  
         
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        
+        EstadoAPP estadoApp = estadosApp.get(AdminCajasFrame.class.getName());        
+        if (estadoApp == null){
+            estadoApp = createEstado(AdminCajasFrame.class.getName(), 0);
+            estadosApp.put(AdminCajasFrame.class.getName(), estadoApp);
+        }
+        logicaOpenPane(estadoApp);
+        
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
     
     public SplashScreen getSplashScreen() {
         return splashScreen;
@@ -696,6 +718,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem movsCajaMenuItem;
     private javax.swing.JMenuItem planCuentasMenuItem;
