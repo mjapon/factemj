@@ -232,6 +232,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         });
 
         btnBuscar.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-search.png"))); // NOI18N
         btnBuscar.setText("Buscar");
         btnBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -349,6 +350,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jPanel11.setLayout(new java.awt.GridLayout(7, 1));
 
         btnAnular.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnAnular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-cancel_subscription.png"))); // NOI18N
         btnAnular.setText("Anular");
         btnAnular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -358,6 +360,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jPanel11.add(btnAnular);
 
         btnDetalles.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnDetalles.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-view_details.png"))); // NOI18N
         btnDetalles.setText("Detalles");
         btnDetalles.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -367,6 +370,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jPanel11.add(btnDetalles);
 
         btnClose.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         btnClose.setText("Cerrar");
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -468,7 +468,7 @@ public class CierreCajaFrame extends BaseFrame {
                             .addComponent(jLabel8)
                             .addGap(18, 18, 18)
                             .addComponent(jTFCuentasXPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -634,6 +634,7 @@ public class CierreCajaFrame extends BaseFrame {
 
         jPanel3.setLayout(new java.awt.GridLayout(8, 1));
 
+        jButtonUpdVal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-connection_sync.png"))); // NOI18N
         jButtonUpdVal.setText("Actualizar Valores");
         jButtonUpdVal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -650,6 +651,7 @@ public class CierreCajaFrame extends BaseFrame {
         });
         jPanel3.add(jButton1);
 
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jButton2.setText("Cancelar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

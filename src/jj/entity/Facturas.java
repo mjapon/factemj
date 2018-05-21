@@ -97,6 +97,9 @@ public class Facturas implements Serializable {
     @Column(name = "fact_desc")
     private BigDecimal factDesc;
     
+    @Column(name = "fact_descg")
+    private BigDecimal factDescg;
+    
     @Column(name = "user_id")
     private Integer userId;
     @JoinColumn(name = "cli_id", referencedColumnName = "cli_id")
@@ -273,6 +276,16 @@ public class Facturas implements Serializable {
     public void setTraId(Transacciones traId) {
         this.traId = traId;
     }
+
+    public BigDecimal getFactDescg() {
+        return factDescg;
+    }
+
+    public void setFactDescg(BigDecimal factDescg) {
+        this.factDescg = factDescg;
+    }
+    
+    
 
     /*
     public Integer getTra_traId() {

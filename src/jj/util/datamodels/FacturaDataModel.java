@@ -179,6 +179,7 @@ public class FacturaDataModel extends AbstractTableModel{
                 filafactura.setPrecioUnitario(new BigDecimal(aValue.toString()));
             }
             else if(columnIndex == ColumnaFacturaEnum.VDESC.index) {
+                System.out.println("Valor para descuento es:"+ aValue.toString());
                 filafactura.setDescuento(new BigDecimal(aValue.toString()));
             }
             else if (columnIndex == ColumnaFacturaEnum.PDESC.index){

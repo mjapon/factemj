@@ -297,9 +297,11 @@ public class MercaderiaFrame extends BaseFrame {
 
         jPanelBtns.setLayout(new java.awt.GridLayout(6, 1));
 
+        jGuardarBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-save.png"))); // NOI18N
         jGuardarBtn.setText("Guardar");
         jPanelBtns.add(jGuardarBtn);
 
+        btnBorrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-trash.png"))); // NOI18N
         btnBorrar.setText("Borrar");
         btnBorrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -308,6 +310,7 @@ public class MercaderiaFrame extends BaseFrame {
         });
         jPanelBtns.add(btnBorrar);
 
+        jMoverBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-change.png"))); // NOI18N
         jMoverBtn.setText("Mover");
         jMoverBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -316,6 +319,7 @@ public class MercaderiaFrame extends BaseFrame {
         });
         jPanelBtns.add(jMoverBtn);
 
+        jCerrarBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jCerrarBtn.setText("Cerrar");
         jCerrarBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

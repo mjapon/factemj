@@ -186,6 +186,7 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
         jPanel2.setLayout(new java.awt.GridLayout(6, 1));
 
         jButtonPrint.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-print.png"))); // NOI18N
         jButtonPrint.setText("Imprimir");
         jButtonPrint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -195,6 +196,7 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
         jPanel2.add(jButtonPrint);
 
         jButtonSalir.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jButtonSalir.setText("Cerrar");
         jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

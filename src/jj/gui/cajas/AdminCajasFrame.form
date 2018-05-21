@@ -186,6 +186,9 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="jButtonBuscar">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/jj/gui/icons/icons8-search.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Buscar"/>
           </Properties>
           <Events>
@@ -194,6 +197,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonAnular">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/jj/gui/icons/icons8-cancel_subscription.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Anular"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
@@ -203,6 +209,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonCerrar">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/jj/gui/icons/icons8-close_pane_filled.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Cerrar"/>
           </Properties>
           <Events>

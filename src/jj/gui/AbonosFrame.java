@@ -110,7 +110,7 @@ public class AbonosFrame extends javax.swing.JFrame {
                             .addGap(31, 31, 31)
                             .addComponent(jTFValorPend, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,6 +135,7 @@ public class AbonosFrame extends javax.swing.JFrame {
         jPanel3.setLayout(new java.awt.GridLayout(4, 1));
 
         jButtonGuardar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-save.png"))); // NOI18N
         jButtonGuardar.setText("Guardar");
         jButtonGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -144,6 +145,7 @@ public class AbonosFrame extends javax.swing.JFrame {
         jPanel3.add(jButtonGuardar);
 
         jButtonCerrar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jButtonCerrar.setText("Cerrar");
         jButtonCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

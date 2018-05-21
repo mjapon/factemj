@@ -502,6 +502,8 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jPanelTotal1 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabelDescuento = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jTFDescGlobal = new javax.swing.JTextField();
         jPanelTotal = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabelIVA = new javax.swing.JLabel();
@@ -577,6 +579,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jPanel9.setLayout(new java.awt.GridLayout(7, 1));
 
         jButtonBorrar.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jButtonBorrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-trash.png"))); // NOI18N
         jButtonBorrar.setText("Quitar");
         jButtonBorrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -586,6 +589,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jPanel9.add(jButtonBorrar);
 
         jButtonGuardar.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jButtonGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-save.png"))); // NOI18N
         jButtonGuardar.setText("Guardar");
         jButtonGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -595,6 +599,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jPanel9.add(jButtonGuardar);
 
         jButtonSalir.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jButtonSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jButtonSalir.setText("Cerrar");
         jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -649,14 +654,28 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
 
         jPanelSouth.add(jPanelSubT);
 
-        jPanelTotal1.setLayout(new java.awt.GridLayout(2, 1));
+        jPanelTotal1.setLayout(new java.awt.GridLayout(2, 2));
 
         jLabel12.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel12.setText("DESCUENTO:");
+        jLabel12.setText("DESC. X FILA:");
+        jLabel12.setToolTipText("");
         jPanelTotal1.add(jLabel12);
 
         jLabelDescuento.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
         jPanelTotal1.add(jLabelDescuento);
+
+        jLabel17.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel17.setText("DESC. FACTURA:");
+        jLabel17.setToolTipText("");
+        jPanelTotal1.add(jLabel17);
+
+        jTFDescGlobal.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        jTFDescGlobal.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTFDescGlobalKeyReleased(evt);
+            }
+        });
+        jPanelTotal1.add(jTFDescGlobal);
 
         jPanelSouth.add(jPanelTotal1);
 
@@ -1462,6 +1481,11 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     private void jTFEfectivoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTFEfectivoFocusLost
        onMontoEfectivoChange();
     }//GEN-LAST:event_jTFEfectivoFocusLost
+
+    private void jTFDescGlobalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFDescGlobalKeyReleased
+        //Se debe realizar el calcula de la factura
+        
+    }//GEN-LAST:event_jTFDescGlobalKeyReleased
     
     public void doFilter(){                 
         String filtro = this.filtroTF.getText().trim();
@@ -1524,6 +1548,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1573,6 +1598,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTFCI;
     private javax.swing.JTextField jTFCliente;
     private javax.swing.JTextField jTFCredito;
+    private javax.swing.JTextField jTFDescGlobal;
     private javax.swing.JTextField jTFDireccion;
     private javax.swing.JTextField jTFEfectivo;
     private javax.swing.JTextField jTFEmail;

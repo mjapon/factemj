@@ -91,6 +91,9 @@ public class FarmaAppMain extends javax.swing.JFrame {
           };
         
         this.tabbedPaneMain.addChangeListener(changeListener);
+        
+        
+        initHome();
     }    
     
     public EstadoAPP createEstado(String className, Integer tra_codigo){
@@ -456,15 +459,18 @@ public class FarmaAppMain extends javax.swing.JFrame {
         }
     }
     
-    
-    private void facturarMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_facturarMenuItemActionPerformed
-                
+    public void showNewFacturaFrame(){
         EstadoAPP estadoApp = estadosApp.get(FacturaVentaFrame.class.getName()+"1");
         if (estadoApp == null){
             estadoApp = createEstado(FacturaVentaFrame.class.getName(), 1);
             estadosApp.put(FacturaVentaFrame.class.getName()+"1", estadoApp);
         }
         logicaOpenPane(estadoApp);
+    }
+    
+    private void facturarMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_facturarMenuItemActionPerformed
+                
+        showNewFacturaFrame();
         
     }//GEN-LAST:event_facturarMenuItemActionPerformed
 
@@ -514,15 +520,19 @@ public class FarmaAppMain extends javax.swing.JFrame {
         
     }//GEN-LAST:event_cutMenuItemActionPerformed
 
-    private void adminMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminMenuItemActionPerformed
-       
-        EstadoAPP estadoApp = estadosApp.get(AdminVentasFrame.class.getName()+"1");        
+    public void showListaVentas(){
+         EstadoAPP estadoApp = estadosApp.get(AdminVentasFrame.class.getName()+"1");        
         if (estadoApp == null){
             estadoApp = createEstado(AdminVentasFrame.class.getName(), 1);
             estadosApp.put(AdminVentasFrame.class.getName()+"1", estadoApp);
         }
 
         logicaOpenPane(estadoApp);
+    }
+    
+    private void adminMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminMenuItemActionPerformed
+       
+       showListaVentas();
         
         
     }//GEN-LAST:event_adminMenuItemActionPerformed
@@ -538,9 +548,8 @@ public class FarmaAppMain extends javax.swing.JFrame {
             System.out.println("Error al tratar de setear ico->");
         }        
     }//GEN-LAST:event_formWindowOpened
-
-    private void facturarMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_facturarMenuItem1ActionPerformed
-        
+    
+    public void showCuentasXCobrar(){
         EstadoAPP estadoApp = estadosApp.get(CuentasXCBPFrame.class.getName()+"3");        
         if (estadoApp == null){
             estadoApp = createEstado(CuentasXCBPFrame.class.getName(), 3);
@@ -548,25 +557,32 @@ public class FarmaAppMain extends javax.swing.JFrame {
         }
 
         logicaOpenPane(estadoApp);
+    }
+    private void facturarMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_facturarMenuItem1ActionPerformed
+        
+        showCuentasXCobrar();
         
         
     }//GEN-LAST:event_facturarMenuItem1ActionPerformed
-
-    private void facturarMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_facturarMenuItem2ActionPerformed
-        
-         EstadoAPP estadoApp = estadosApp.get(CuentasXCBPFrame.class.getName()+"4");        
+    
+    public void showCuentasXPagar(){
+          EstadoAPP estadoApp = estadosApp.get(CuentasXCBPFrame.class.getName()+"4");        
         if (estadoApp == null){
             estadoApp = createEstado(CuentasXCBPFrame.class.getName(), 4);
             estadosApp.put(CuentasXCBPFrame.class.getName()+"4", estadoApp);
         }
 
-        logicaOpenPane(estadoApp);
+        logicaOpenPane(estadoApp); 
+    }
+    
+    private void facturarMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_facturarMenuItem2ActionPerformed
+        
+      showCuentasXPagar();
         
     }//GEN-LAST:event_facturarMenuItem2ActionPerformed
-
-    private void regFacturaComprarMIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regFacturaComprarMIActionPerformed
-        
-        EstadoAPP estadoApp = estadosApp.get(FacturaVentaFrame.class.getName()+"2");
+    
+    public void showFacturaCompra(){
+         EstadoAPP estadoApp = estadosApp.get(FacturaVentaFrame.class.getName()+"2");
         
         if (estadoApp == null){
             estadoApp = createEstado(FacturaVentaFrame.class.getName(), 2);
@@ -574,11 +590,16 @@ public class FarmaAppMain extends javax.swing.JFrame {
         }
         
         logicaOpenPane(estadoApp);
+    }
+        
+    private void regFacturaComprarMIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regFacturaComprarMIActionPerformed
+        
+       showFacturaCompra();
         
     }//GEN-LAST:event_regFacturaComprarMIActionPerformed
-
-    private void adminComprasMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminComprasMenuItemActionPerformed
-        EstadoAPP estadoApp = estadosApp.get(AdminVentasFrame.class.getName()+"2");        
+    
+    public void showListaCompras(){
+         EstadoAPP estadoApp = estadosApp.get(AdminVentasFrame.class.getName()+"2");        
         if (estadoApp == null){
             estadoApp = createEstado(AdminVentasFrame.class.getName(), 2);
             estadosApp.put(AdminVentasFrame.class.getName()+"2", estadoApp);
@@ -586,6 +607,9 @@ public class FarmaAppMain extends javax.swing.JFrame {
 
         logicaOpenPane(estadoApp);
         
+    }
+    private void adminComprasMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminComprasMenuItemActionPerformed
+       showListaCompras();
     }//GEN-LAST:event_adminComprasMenuItemActionPerformed
 
     private void exitMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItem1ActionPerformed
@@ -617,9 +641,8 @@ public class FarmaAppMain extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_planCuentasMenuItemActionPerformed
-
-    private void cutMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cutMenuItem1ActionPerformed
-        
+    
+    public void showInventarios(){
         EstadoAPP estadoApp = estadosApp.get(MercaderiaFrame.class.getName());        
         if (estadoApp == null){
             estadoApp = createEstado(MercaderiaFrame.class.getName(), 0);
@@ -627,24 +650,37 @@ public class FarmaAppMain extends javax.swing.JFrame {
         }
         
         logicaOpenPane(estadoApp);
+    }
+    
+    private void cutMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cutMenuItem1ActionPerformed
+        
+        showInventarios();
         
         
     }//GEN-LAST:event_cutMenuItem1ActionPerformed
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        
+    
+    public void showAperturaCaja(){
         AperturaCajaFrame    aperturaCajaFrame = new AperturaCajaFrame();
         aperturaCajaFrame.centerOnScreen();
         aperturaCajaFrame.setVisible(true);  
+    }
+    
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        
+        showAperturaCaja();
         
     }//GEN-LAST:event_jMenuItem1ActionPerformed
-
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        
-        
-         CierreCajaFrame cierreCajaFrame = new CierreCajaFrame();        
+    
+    public void showCierreCaja(){
+        CierreCajaFrame cierreCajaFrame = new CierreCajaFrame();        
         cierreCajaFrame.centerOnScreen();
         cierreCajaFrame.setVisible(true);  
+    }
+    
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        
+        showCierreCaja();
+         
         
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
@@ -669,6 +705,15 @@ public class FarmaAppMain extends javax.swing.JFrame {
     
     public void hideSplashScreen(){
         this.splashScreen.setVisible(false);
+    }
+    
+    public void initHome(){        
+        ImageIcon icon = createImageIcon("icons/icons8-home.png");
+        HomeFrame homeFrame = new HomeFrame();
+        
+        homeFrame.setFarmaAppMain(this);
+        tabbedPaneMain.addTab("Home", icon,  homeFrame.getContentPane());
+        tabbedPaneMain.setSelectedComponent(homeFrame.getContentPane());
     }
     
     /**

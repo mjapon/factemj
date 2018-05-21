@@ -138,6 +138,7 @@ public class PagosFrame extends javax.swing.JFrame {
         });
         jPanelSouth.add(jButtonAllCredito);
 
+        jButtonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-checked.png"))); // NOI18N
         jButtonCerrar.setText("Aceptar");
         jButtonCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

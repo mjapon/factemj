@@ -83,6 +83,9 @@
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Arial" size="14" style="1"/>
                         </Property>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/jj/gui/icons/icons8-trash.png"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="Quitar"/>
                       </Properties>
                       <Events>
@@ -94,6 +97,9 @@
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Arial" size="14" style="1"/>
                         </Property>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/jj/gui/icons/icons8-save.png"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="Guardar"/>
                       </Properties>
                       <Events>
@@ -104,6 +110,9 @@
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Arial" size="14" style="1"/>
+                        </Property>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/jj/gui/icons/icons8-close_pane_filled.png"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Cerrar"/>
                       </Properties>
@@ -232,7 +241,7 @@
                                 <Container class="javax.swing.JPanel" name="jPanelTotal1">
 
                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
-                                    <Property name="columns" type="int" value="1"/>
+                                    <Property name="columns" type="int" value="2"/>
                                     <Property name="rows" type="int" value="2"/>
                                   </Layout>
                                   <SubComponents>
@@ -241,7 +250,8 @@
                                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                                           <Font name="Arial" size="14" style="0"/>
                                         </Property>
-                                        <Property name="text" type="java.lang.String" value="DESCUENTO:"/>
+                                        <Property name="text" type="java.lang.String" value="DESC. X FILA:"/>
+                                        <Property name="toolTipText" type="java.lang.String" value=""/>
                                       </Properties>
                                     </Component>
                                     <Component class="javax.swing.JLabel" name="jLabelDescuento">
@@ -250,6 +260,25 @@
                                           <Font name="Arial" size="24" style="0"/>
                                         </Property>
                                       </Properties>
+                                    </Component>
+                                    <Component class="javax.swing.JLabel" name="jLabel17">
+                                      <Properties>
+                                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                          <Font name="Arial" size="14" style="0"/>
+                                        </Property>
+                                        <Property name="text" type="java.lang.String" value="DESC. FACTURA:"/>
+                                        <Property name="toolTipText" type="java.lang.String" value=""/>
+                                      </Properties>
+                                    </Component>
+                                    <Component class="javax.swing.JTextField" name="jTFDescGlobal">
+                                      <Properties>
+                                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                          <Font name="Lucida Grande" size="14" style="0"/>
+                                        </Property>
+                                      </Properties>
+                                      <Events>
+                                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTFDescGlobalKeyReleased"/>
+                                      </Events>
                                     </Component>
                                   </SubComponents>
                                 </Container>

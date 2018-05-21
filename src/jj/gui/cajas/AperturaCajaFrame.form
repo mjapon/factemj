@@ -69,7 +69,7 @@
                       <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="12" max="32767" attributes="0"/>
+                  <EmptySpace pref="9" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jTFSaldoAnterior" min="-2" pref="157" max="-2" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" pref="353" max="-2" attributes="0"/>
@@ -185,6 +185,9 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="jButtonGuardar">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/jj/gui/icons/icons8-save.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Guardar"/>
           </Properties>
           <Events>
@@ -193,6 +196,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButtonCerrar">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/jj/gui/icons/icons8-close_pane_filled.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Cerrar"/>
           </Properties>
           <Events>

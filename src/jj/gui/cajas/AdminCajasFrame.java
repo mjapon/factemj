@@ -252,6 +252,7 @@ public class AdminCajasFrame extends BaseFrame {
 
         jPanel3.setLayout(new java.awt.GridLayout(7, 1));
 
+        jButtonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-search.png"))); // NOI18N
         jButtonBuscar.setText("Buscar");
         jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -260,6 +261,7 @@ public class AdminCajasFrame extends BaseFrame {
         });
         jPanel3.add(jButtonBuscar);
 
+        jButtonAnular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-cancel_subscription.png"))); // NOI18N
         jButtonAnular.setText("Anular");
         jButtonAnular.setEnabled(false);
         jButtonAnular.addActionListener(new java.awt.event.ActionListener() {
@@ -269,6 +271,7 @@ public class AdminCajasFrame extends BaseFrame {
         });
         jPanel3.add(jButtonAnular);
 
+        jButtonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jButtonCerrar.setText("Cerrar");
         jButtonCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

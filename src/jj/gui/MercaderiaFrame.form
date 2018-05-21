@@ -249,11 +249,17 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="jGuardarBtn">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/jj/gui/icons/icons8-save.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Guardar"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btnBorrar">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/jj/gui/icons/icons8-trash.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Borrar"/>
           </Properties>
           <Events>
@@ -262,6 +268,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jMoverBtn">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/jj/gui/icons/icons8-change.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Mover"/>
           </Properties>
           <Events>
@@ -270,6 +279,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jCerrarBtn">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/jj/gui/icons/icons8-close_pane_filled.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Cerrar"/>
           </Properties>
           <Events>
