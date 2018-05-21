@@ -18,6 +18,7 @@ import jj.entity.Articulos;
 import jj.entity.Secuencias;
 import jj.util.ErrorValidException;
 import jj.util.FilaArticulo;
+import sun.security.pkcs11.Secmod;
 
 /**
  *
@@ -257,6 +258,29 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
         }        
     }
     
+    public void cambiarCategoria(Integer artId, Integer newCatId){
+        
+        try{
+            beginTrans();
+            
+            Articulos art = em.find(Articulos.class, artId);
+            if (art!= null){
+                art.setCatId(newCatId);
+            }
+            
+            em.persist(art);
+            //em.flush();
+            commitTrans();
+            
+        }
+        catch(Throwable ex){
+            logError(ex);
+            throw  new ErrorValidException(ex.getMessage());
+        }
+        
+        
+    }
+    
     public void actualizarArticulo(FilaArticulo filaArt) throws Exception{
         
          try{
@@ -286,19 +310,16 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
 
                     em.getTransaction().commit();
                 }
-                else{
-                    //em.getTransaction().commit();
+                else{                    
                     throw  new Exception("No se encuentra registradoe la articulo con codigo:"+filaArt.getArtId());
                 }
             }
-            else{
-                //em.getTransaction().commit();
+            else{                
                 throw new Exception("Este articulo aun no ha sido registrado");
             }
         }
         catch(Throwable ex){
-            System.out.println("Error al registrar articulo:"+ex.getMessage());
-            ex.printStackTrace();
+            logError(ex);            
             throw  new Exception("Error al registrar articulo:"+ex.getMessage());
         }    
          finally{
@@ -318,6 +339,23 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
                 "o.provId,"+
                 "o.artIva,"+
                 "o.unidId from Articulos o order by o."+sortBy+" "+sortOrder;            
+        
+        Query query = this.newQuery(queryStr);
+        return query.getResultList();
+    }
+    
+     public List<Object[]> listarRawCat(String sortBy, String sortOrder, Integer catId) throws Exception{        
+        String queryStr = "select "+
+                "o.artId,"+
+                "o.artNombre,"+
+                "o.artCodbar,"+
+                "o.artPrecioCompra,"+
+                "o.artPrecio,"+
+                "o.artPreciomin,"+
+                "o.artInv,"+
+                "o.provId,"+
+                "o.artIva,"+
+                "o.unidId from Articulos o where o.catId = "+catId+" order by o."+sortBy+" "+sortOrder;            
         
         Query query = this.newQuery(queryStr);
         return query.getResultList();

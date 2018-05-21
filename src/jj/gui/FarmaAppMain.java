@@ -68,11 +68,11 @@ public class FarmaAppMain extends javax.swing.JFrame {
                 }
                 else if ("Administrar Productos".equalsIgnoreCase(title)){
                     EstadoAPP estadoApp = estadosApp.get(MercaderiaFrame.class.getName());
-                    MercaderiaFrame mercsFrame = (MercaderiaFrame)estadoApp.getFrame();
-                    mercsFrame.updateArticulos();
-                    mercsFrame.filtroFocus();                    
-                    System.out.println(" Administrar Productos focusBarCode();---------> ");
-                }
+                    MercaderiaFrame artsFrame = (MercaderiaFrame)estadoApp.getFrame();
+                    artsFrame.filtroFocus();
+                    artsFrame.updateArticulos();
+                    System.out.println(" Administrar Artículos focusBarCode();---------> ");
+                }                
                 else if ("Cuentas X Cobrar".equalsIgnoreCase(title)){
                     EstadoAPP estadoApp = estadosApp.get(CuentasXCBPFrame.class.getName()+"3");
                     CuentasXCBPFrame facturaFrame = (CuentasXCBPFrame)estadoApp.getFrame();
@@ -611,14 +611,16 @@ public class FarmaAppMain extends javax.swing.JFrame {
     private void adminComprasMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminComprasMenuItemActionPerformed
        showListaCompras();
     }//GEN-LAST:event_adminComprasMenuItemActionPerformed
-
-    private void exitMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItem1ActionPerformed
-        
+    
+    public void exitApp(){
         int response = JOptionPane.showConfirmDialog(null, "¿Seguro que desea salir? ");
         if (response == JOptionPane.YES_OPTION){
             System.exit(0);
         }
-        
+    }
+    
+    private void exitMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItem1ActionPerformed
+        exitApp();
     }//GEN-LAST:event_exitMenuItem1ActionPerformed
 
     private void movsCajaMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_movsCajaMenuItemActionPerformed

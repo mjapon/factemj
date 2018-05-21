@@ -16,6 +16,7 @@ import jj.controller.exceptions.NonexistentEntityException;
 import jj.controller.exceptions.YaExisteRegistroException;
 import jj.entity.Articulos;
 import jj.entity.Categorias;
+import jj.util.ErrorValidException;
 import jj.util.FilaArticulo;
 
 /**
@@ -159,6 +160,7 @@ public class CategoriasJpaController extends BaseJpaController<Categorias> imple
     
     public void actualizar(Integer catId, String nombre) throws Exception{        
         try{
+            beginTransacction();
             Categorias cat = em.find(Categorias.class, catId);
             if (cat == null){
                 throw  new Exception("No esta registrada la categoria con el id especificado");
@@ -170,14 +172,13 @@ public class CategoriasJpaController extends BaseJpaController<Categorias> imple
                 if (existe(nombre)){
                     throw new YaExisteRegistroException("La categoría:"+nombre+" ya existe ingrese otra");
                 }
-            }
-            beginTransacction();
+            }            
             cat.setCatName(newName);
             commitTransacction();
         }
         catch(Throwable ex){
-            //rollbackTransacction();
             logError(ex);
+            throw new ErrorValidException(ex.getMessage());
         }
     }
     
@@ -197,25 +198,26 @@ public class CategoriasJpaController extends BaseJpaController<Categorias> imple
             }
         }
         catch(Throwable ex){
-            logError(ex);
-            //rollbackTransacction();
+            logError(ex);            
+            throw new ErrorValidException(ex.getMessage());
         }
     }    
     
     public void crear(String nombre) throws Exception{
         try{
+            beginTransacction();
             if (existe(nombre)){
                 throw new YaExisteRegistroException("La categoría:"+nombre+" ya existe ingrese otra");
             }
-            beginTransacction();
             Categorias categorias = new Categorias();
             categorias.setCatName(nombre.trim().toUpperCase());
             em.persist(categorias);
             commitTransacction();
         }
         catch(Throwable ex){
-//            rollbackTransacction();
             logError(ex);
+            rollbackTrans();
+            throw new ErrorValidException(ex.getMessage());
         }
     }
     

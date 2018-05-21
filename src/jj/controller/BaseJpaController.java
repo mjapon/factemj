@@ -120,8 +120,9 @@ public class BaseJpaController<T> {
     }
     
     public void beginTransacction(){
-        em.getTransaction().begin();
+        em.getTransaction().begin();        
     }
+    
     public void commitTransacction(){
         em.getTransaction().commit();
     }

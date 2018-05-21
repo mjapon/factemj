@@ -10,7 +10,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-import javax.persistence.EntityManager;
+import java.util.stream.Stream;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -19,12 +20,11 @@ import javax.swing.table.TableColumn;
 import jj.controller.ArticulosJpaController;
 import jj.controller.CategoriasJpaController;
 import jj.entity.Categorias;
-import jj.util.ArticulosModelListener;
-import jj.util.EntityManagerUtil;
+import jj.util.FilaArticulo;
 import jj.util.IVAComboBoxEditor;
 import jj.util.IVAComboBoxRenderer;
-import jj.util.datamodels.ArticulosDataModel;
 import jj.util.datamodels.CatsListModel;
+import jj.util.datamodels.MercaderiaDataModel;
 
 /**
  *
@@ -32,9 +32,7 @@ import jj.util.datamodels.CatsListModel;
  */
 public class MercaderiaFrame extends BaseFrame {
     
-    private ArticulosDataModel articulosDataModel;
-    private ArticulosModelListener articulosModelListener;
-    private EntityManager em;
+    private MercaderiaDataModel mercaderiaDataModel;    
     private ArticulosJpaController articulosController;
     private CategoriasJpaController catsController;
     private List<Categorias> catsList;
@@ -43,21 +41,15 @@ public class MercaderiaFrame extends BaseFrame {
      * Creates new form MercaderiaFrame
      */
     public MercaderiaFrame() {
+        super();
         initComponents();
-        this.em = EntityManagerUtil.createEntintyManagerFactory();
+        
         articulosController = new ArticulosJpaController(em);
         catsController = new CategoriasJpaController(em);
+        mercaderiaDataModel = new MercaderiaDataModel();
+        mercaderiaDataModel.setController(articulosController);
         
-        boolean forSelect = false;
-        
-        articulosDataModel = new ArticulosDataModel(1);
-        articulosDataModel.setController(articulosController);
-        //articulosDataModel.setArticulosFrame(this);
-        
-        articulosModelListener = new ArticulosModelListener();
-        articulosDataModel.addTableModelListener(articulosModelListener);
-        
-        jTableArts.setModel(articulosDataModel);
+        jTableArts.setModel(mercaderiaDataModel);
         String[] values = new String[] { "SI", "NO"};
         
         TableColumn col = jTableArts.getColumnModel().getColumn(6);
@@ -78,19 +70,14 @@ public class MercaderiaFrame extends BaseFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = jTableArts.columnAtPoint(e.getPoint());
-                String name = jTableArts.getColumnName(col);
-                //System.out.println("TableHeader column index selected " + col + " " + name);
-                
                 try{
-                    for (int i=0; i<articulosDataModel.getColumnCount();i++){
-                        jTableArts.getColumnModel().getColumn(i).setHeaderValue( articulosDataModel.getColumnName(i) );
+                    for (int i=0; i<mercaderiaDataModel.getColumnCount();i++){
+                        jTableArts.getColumnModel().getColumn(i).setHeaderValue( mercaderiaDataModel.getColumnName(i) );
                     }                    
-                    articulosDataModel.switchSortColumn(col);                    
+                    mercaderiaDataModel.switchSortColumn(col);
                 }
                 catch(Throwable ex){
-                    JOptionPane.showMessageDialog(null, "Error en sort:"+ex.getMessage());
-                    System.out.println("Error en sort:"+ex.getMessage());
-                    ex.printStackTrace();
+                    showMsgError(ex);
                 }
             }
         });
@@ -98,33 +85,59 @@ public class MercaderiaFrame extends BaseFrame {
         jTableArts.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                //System.out.println("List selection changed--->");
                 if (e.getFirstIndex()>=0){
                     btnBorrar.setEnabled(true);
                 }
                 else{
-                    btnBorrar.setEnabled(false);                    
+                    btnBorrar.setEnabled(false);
                 }
             }
         });
         
+        try{
+            mercaderiaDataModel.loadFromDataBase();
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }
+        
         jTableArts.updateUI();
-        articulosDataModel.fireTableDataChanged();
+        mercaderiaDataModel.fireTableDataChanged();
         
-        jListCategorias.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+        jListCategorias.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);        
         jListCategorias.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    String selectedValue = jListCategorias.getSelectedValue();                    
-                    System.out.println("valueChangedEvent:"+selectedValue);
+                    String selectedValue = jListCategorias.getSelectedValue();                                        
+                }
+            }
+        });
+        
+        jListCategorias.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                JList list = (JList)evt.getSource();
+                if (evt.getClickCount() == 2) {
+                    int index = list.locationToIndex(evt.getPoint());
+                    if (index>=0){
+                        showEditCatName(index);
+                    }
+                }
+                else if (evt.getClickCount() == 1) {
+                    try{
+                        int index = list.locationToIndex(evt.getPoint());
+                        Categorias selectedCat = catsList.get(index);
+                        mercaderiaDataModel.loadFromDataBaseCat(selectedCat.getCatId());
+                    }
+                    catch(Throwable ex){
+                        showMsgError(ex);
+                    }
+                    
                 }
             }
         });
         
         loadCats();
-        //tfCodBarra.requestFocus();        
     }
     
     public void updateLabelEstado(String label){
@@ -132,45 +145,37 @@ public class MercaderiaFrame extends BaseFrame {
     }
     
     public void filtroFocus(){
-        
         this.filtroTF.requestFocus();
-        
+    }
+    
+    public void updateLabelBorder(){
+        if (mercaderiaDataModel.getItems() != null){
+            jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(
+                String.valueOf( "("+ mercaderiaDataModel.getItems().size() + ")" )
+            ));
+        }
     }
     
     public void updateArticulos(){
         try{
-            articulosDataModel.loadFromDataBase();
-            if (this.articulosDataModel.getItems() != null){
-                jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                        String.valueOf( "("+ this.articulosDataModel.getItems().size() + ")" )
-                    ));
-            }
+            mercaderiaDataModel.loadFromDataBase();
+            updateLabelBorder();
         }
         catch(Throwable ex){
-            System.out.println("Error al traer de base de datos:"+ex.getMessage());
-            updateLabelEstado("Error al traer de base de datos:"+ex.getMessage());
-            JOptionPane.showMessageDialog(null, "Error al traer de base de datos:"+ex.getMessage());
+            showMsgError(ex);
         }
-        articulosDataModel.fireTableDataChanged();
+        mercaderiaDataModel.fireTableDataChanged();
     }
     
     public void doFilter(){
-        //System.out.println("Filtro key pressed--->");        
-        //Se debe filtrar todos los articulos del model                
         String filtro = this.filtroTF.getText().trim();
         if (filtro.length()>0){
-            //System.out.println("Se aplica el filtro:"+filtro);
             try{
-                this.articulosDataModel.loadFromDataBaseFilter(filtro);
-                if (this.articulosDataModel.getItems() != null){
-                    jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(
-                        "("+ String.valueOf( this.articulosDataModel.getItems().size() ) + ")"
-                    ));
-                }
+                mercaderiaDataModel.loadFromDataBaseFilter(filtro);
+                updateLabelBorder();
             }
             catch(Throwable ex){
-                System.out.println("Error al cargar datos:"+ ex.getMessage());
-                ex.printStackTrace();
+                showMsgError(ex);
             }
         }
     }
@@ -287,6 +292,7 @@ public class MercaderiaFrame extends BaseFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTableArts.setRowHeight(25);
         jScrollPane2.setViewportView(jTableArts);
 
         jPanel2.add(jScrollPane2, java.awt.BorderLayout.CENTER);
@@ -299,6 +305,11 @@ public class MercaderiaFrame extends BaseFrame {
 
         jGuardarBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-save.png"))); // NOI18N
         jGuardarBtn.setText("Guardar");
+        jGuardarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jGuardarBtnActionPerformed(evt);
+            }
+        });
         jPanelBtns.add(jGuardarBtn);
 
         btnBorrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-trash.png"))); // NOI18N
@@ -341,18 +352,47 @@ public class MercaderiaFrame extends BaseFrame {
     private void jCrearCatBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCrearCatBtnActionPerformed
         String nombrecat = JOptionPane.showInputDialog(this," Ingrese el nombre de la categoria ");
         try{
-            if (nombrecat != null && nombrecat.trim().length()>0){
-                jStatusLabel.setText("");
-                catsController.crear(nombrecat.trim().toUpperCase());
-                jStatusLabel.setText("Categoría creada");
-                loadCats();
+            if (nombrecat != null){                
+                if (nombrecat.trim().length()>0){
+                    jStatusLabel.setText("");
+                    catsController.crear(nombrecat.trim().toUpperCase());
+                    jStatusLabel.setText("Categoría creada");
+                    loadCats();
+                }
+                else{
+                    showMsg("Nombre incorrecto");
+                }
             }
         }
         catch(Throwable ex){
             showMsgError(ex);
         }        
     }//GEN-LAST:event_jCrearCatBtnActionPerformed
-
+    
+    public void showEditCatName(Integer catIndex){
+        try{            
+            Categorias selectedCat = catsList.get(catIndex);
+            String currentName = selectedCat.getCatName().trim().toUpperCase();
+            String newName = JOptionPane.showInputDialog("Ingrese el nuevo nombre de la categoría", currentName);
+            
+            if (newName!=null){
+                if (newName.trim().length()>0){
+                    if (!newName.trim().toUpperCase().equalsIgnoreCase(currentName)){                        
+                        catsController.actualizar(selectedCat.getCatId(), newName);                    
+                        showMsg("Actualizado correctamente");
+                        loadCats();
+                    }
+                }
+                else{
+                    showMsg("Nombre incorrecto");
+                }   
+            }
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }
+    }
+    
     private void jCerrarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCerrarBtnActionPerformed
         FarmaAppMain farmaApp = (FarmaAppMain)this.root;
         farmaApp.logicaClosePane(this.getClass().getName());
@@ -360,32 +400,58 @@ public class MercaderiaFrame extends BaseFrame {
     }//GEN-LAST:event_jCerrarBtnActionPerformed
 
     private void filtroTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filtroTFActionPerformed
-        
         //doFilter();
-        
     }//GEN-LAST:event_filtroTFActionPerformed
 
     private void filtroTFKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filtroTFKeyReleased
-        
-        doFilter();
-        
+       doFilter();
     }//GEN-LAST:event_filtroTFKeyReleased
 
     private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
         
-        
-        
     }//GEN-LAST:event_btnBorrarActionPerformed
 
     private void jMoverBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMoverBtnActionPerformed
-        
-        
+        try{
+            Stream stream = catsList.stream().map(cat -> cat.getCatName());
+            String[] catsArray = (String[])stream.toArray(size -> new String[size]);
+
+            String catSelected = (String)JOptionPane.showInputDialog(null, "Selecione la categoría??", 
+                "Cambio de categoría", JOptionPane.QUESTION_MESSAGE, null, catsArray, catsArray[0]);
+            
+            if (catSelected !=null){
+                System.out.println(catSelected);
+                showMsg(catSelected);
+                
+                Stream streamFilter = catsList.stream().filter(cat->cat.getCatName().equalsIgnoreCase(catSelected));
+                Object[] filtrado = (Object[])streamFilter.toArray();
+                
+                if (filtrado.length>0){
+                    showMsg(String.valueOf(filtrado.length));                    
+                    Categorias newCatSelected = (Categorias)filtrado[0];
+                    
+                    int[] rows = this.jTableArts.getSelectedRows();
+                    for(int rowIndexSel: rows){
+                        FilaArticulo filaArt = mercaderiaDataModel.getFila(rowIndexSel);
+                        articulosController.cambiarCategoria(filaArt.getArtId(), newCatSelected.getCatId());
+                    }
+                }
+                
+                showMsg("Operación Exitosa");                
+            }
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }
         
         
     }//GEN-LAST:event_jMoverBtnActionPerformed
-    
+
+    private void jGuardarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jGuardarBtnActionPerformed
+        mercaderiaDataModel.saveAllRecords();   
+    }//GEN-LAST:event_jGuardarBtnActionPerformed
     public void loadCats(){
-        try{
+        try{            
             catsList = catsController.listar();
             catsModelList = new CatsListModel();
             catsModelList.setItems(catsList);
@@ -395,7 +461,6 @@ public class MercaderiaFrame extends BaseFrame {
             showMsgError(ex);
         }
     }
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBorrar;

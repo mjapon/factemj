@@ -21,3 +21,6 @@ ALTER TABLE public.facturas ADD fact_descg NUMERIC(15,4) DEFAULT 0.0 NULL;
 
 ALTER TABLE public.transacciones ADD tra_mask TEXT NULL
 COMMENT ON COLUMN public.transacciones.tra_mask IS 'configuracion para las columnas que se visualizan en la factura'
+
+
+INSERT INTO public.secuencias (sec_id, sec_clave, sec_valor) VALUES (3, 'SEC_SERVS', 1);

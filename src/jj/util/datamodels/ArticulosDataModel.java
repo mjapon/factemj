@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.text.html.HTML;
 import jj.controller.ArticulosJpaController;
-import jj.entity.Articulos;
 import jj.gui.ILabelEstado;
 import jj.util.ErrorValidException;
 import jj.util.FilaArticulo;
@@ -61,13 +59,10 @@ public class ArticulosDataModel extends AbstractTableModel{
         "Inventario"//2   artInv
     };
     
-    private Map<Integer, Integer> mapSort;      
-    
+    private Map<Integer, Integer> mapSort;          
     private List<FilaArticulo> items = new ArrayList<>();
     private ArticulosJpaController controller;
     private ILabelEstado articulosFrame;
-    
-    //private boolean forSelect= false;
     private int type;
     
     public void initForAdmin(){

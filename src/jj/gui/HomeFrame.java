@@ -17,14 +17,10 @@ public class HomeFrame extends javax.swing.JFrame {
      */
     public HomeFrame() {
         initComponents();
-    }
-    
+    }    
     public void setFarmaAppMain(FarmaAppMain appMain){
-        
         this.appMain = appMain;
-        
-    }
-    
+    }    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -44,6 +40,7 @@ public class HomeFrame extends javax.swing.JFrame {
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
+        jButton10 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridLayout(4, 3));
@@ -125,6 +122,15 @@ public class HomeFrame extends javax.swing.JFrame {
         });
         getContentPane().add(jButton9);
 
+        jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/logout_rounded_left_60_1px.png"))); // NOI18N
+        jButton10.setText("SALIR");
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton10);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -170,10 +176,13 @@ public class HomeFrame extends javax.swing.JFrame {
         appMain.showListaCompras();
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        appMain.exitApp();
+    }//GEN-LAST:event_jButton10ActionPerformed
     
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
