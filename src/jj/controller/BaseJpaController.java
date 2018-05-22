@@ -109,6 +109,12 @@ public class BaseJpaController<T> {
         ex.printStackTrace();
     }
     
+    public void logErrorWithThrow(Throwable ex) throws Throwable{
+        logError(ex);
+        throw  ex;
+    }
+    
+    
     /**
      * Imprimir el mensaje de error enviado, seguido del mensaje de la expepcion
      * @param ex

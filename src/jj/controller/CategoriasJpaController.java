@@ -6,7 +6,9 @@
 package jj.controller;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
@@ -16,8 +18,10 @@ import jj.controller.exceptions.NonexistentEntityException;
 import jj.controller.exceptions.YaExisteRegistroException;
 import jj.entity.Articulos;
 import jj.entity.Categorias;
+import jj.util.ArrayUtil;
 import jj.util.ErrorValidException;
 import jj.util.FilaArticulo;
+import jj.util.datamodels.CatRow;
 
 /**
  *
@@ -160,7 +164,6 @@ public class CategoriasJpaController extends BaseJpaController<Categorias> imple
     
     public void actualizar(Integer catId, String nombre) throws Exception{        
         try{
-            beginTransacction();
             Categorias cat = em.find(Categorias.class, catId);
             if (cat == null){
                 throw  new Exception("No esta registrada la categoria con el id especificado");
@@ -172,13 +175,14 @@ public class CategoriasJpaController extends BaseJpaController<Categorias> imple
                 if (existe(nombre)){
                     throw new YaExisteRegistroException("La categoría:"+nombre+" ya existe ingrese otra");
                 }
-            }            
+            }
+            beginTransacction();
             cat.setCatName(newName);
             commitTransacction();
         }
         catch(Throwable ex){
+            //rollbackTransacction();
             logError(ex);
-            throw new ErrorValidException(ex.getMessage());
         }
     }
     
@@ -198,30 +202,36 @@ public class CategoriasJpaController extends BaseJpaController<Categorias> imple
             }
         }
         catch(Throwable ex){
-            logError(ex);            
-            throw new ErrorValidException(ex.getMessage());
+            logError(ex);
+            //rollbackTransacction();
         }
     }    
     
-    public void crear(String nombre) throws Exception{
+    public void crear(String nombre) throws Throwable{
         try{
-            beginTransacction();
             if (existe(nombre)){
                 throw new YaExisteRegistroException("La categoría:"+nombre+" ya existe ingrese otra");
             }
+            beginTransacction();
             Categorias categorias = new Categorias();
             categorias.setCatName(nombre.trim().toUpperCase());
             em.persist(categorias);
             commitTransacction();
         }
         catch(Throwable ex){
-            logError(ex);
-            rollbackTrans();
-            throw new ErrorValidException(ex.getMessage());
+            logErrorWithThrow(ex);
         }
     }
     
     public List<Categorias> listar(){
         return this.newQuery("from Categorias o order by o.catName ").getResultList();
+    }
+    
+    public List<CatRow> parseCatList(List<Categorias> catList){
+        Stream stream = catList.stream().map(cat -> new CatRow(cat.getCatId(), cat.getCatName()));
+        List<CatRow> parseList = ArrayUtil.streamToList(stream);
+        CatRow allCatRow = new CatRow(0, "<TODOS>");
+        parseList.add(0,allCatRow);
+        return parseList;
     }
 }

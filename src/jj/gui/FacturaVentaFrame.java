@@ -139,7 +139,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.IVA.index).setPreferredWidth(80);
         
         /*
-        jTableFactura.updateUI();        
+        jTableFactura.updateUI();
         facturaDataModel.fireTableDataChanged();
         */
         
@@ -199,7 +199,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         });  
         
         float[] columnWidthPercentage = {20.0f, 55.0f, 10.0f, 5.0f, 5.0f, 5.0f};
-
         
         resizeColumns();
         jTableArts.addComponentListener(new ComponentAdapter() {
@@ -371,19 +370,9 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     }
     
     public void syncPagos(Boolean isToPagos){
-        
         if (isToPagos){
-            
             this.jTFEfectivo.setText(pagosMap.get(1).getMonto().toPlainString());
             this.jTFCredito.setText(pagosMap.get(2).getMonto().toPlainString());
-            
-            /*
-            pagosFrame.loadDatosPagos(
-                    pagosMap.get(1).getMonto(),
-                    pagosMap.get(2).getMonto(),
-                    pagosMap.get(2).getObservacion()
-            );
-            */
         }
         else{            
             Map<Integer, FilaPago> mapPagos = new HashMap<Integer, FilaPago>();
@@ -391,19 +380,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             mapPagos.put(2, new FilaPago(2, "CRÉDITO", new BigDecimal(this.jTFCredito.getText()), this.jTextAreaObs.getText()));
             pagosMap = mapPagos;
         }
-        
-        /*
-        if (isToPagos){
-            pagosFrame.loadDatosPagos(
-                    pagosMap.get(1).getMonto(),
-                    pagosMap.get(2).getMonto(),
-                    pagosMap.get(2).getObservacion()
-            );
-        }
-        else{
-            pagosMap = pagosFrame.getDatosPagos();
-        }
-        */
     }    
     
     public void restoreDefaultsDividerLocation() {
@@ -1029,7 +1005,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     }
     
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        
         //System.out.println("Window opened----->");        
         //barCodeInput.requestFocus();
         
@@ -1040,81 +1015,8 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             TotalesFactura totales, 
             List<FilaFactura> detalles){
         PrintFactUtil.imprimir(ctesController, cabecera, totales, detalles);
-    }
-    
-    /*
-    public void logicaImpresion(DatosCabeceraFactura cabecera, 
-            TotalesFactura totales, 
-            List<FilaFactura> detalles){
-        try{
-            System.out.println("Logica de impresion-->"); 
-            
-            String templateCab = ctesController.findValueByClave("TEMPLATE_CAB");
-            
-            if (templateCab == null){
-                System.out.println("Templatecab no definido");
-                templateCab = "";
-            }
-            
-            String templateFila = ctesController.findValueByClave("TEMPLATE_DET");
-            if (templateFila == null){
-                System.out.println("Templatedet no definido");
-                templateFila = "";
-            }
-            
-            String templatePie = ctesController.findValueByClave("TEMPLATE_PIE");
-            if (templatePie == null){
-                System.out.println("Templatepie no definido");
-                templatePie = "";
-            }
-            
-            try{                
-                String textToPrint = GenTxtFactura.getTxt(
-                        cabecera,
-                        detalles, 
-                        totales, 
-                        templateCab, 
-                        templateFila, 
-                        templatePie
-                );
-                
-                //Verificar el numero de copias ha imprimir
-                Integer copysToPrint = 1;
-                try{
-                    String auxNroCopys = ctesController.findValueByClave("NUMBER_COPYS_PRINT");
-                    if (auxNroCopys!=null){
-                        copysToPrint = Integer.valueOf(auxNroCopys);
-                    }
-                }
-                catch(Throwable ex){
-                    System.out.println("Error al tratar de obtener el numero de copias ha imprimir: "+ex.getMessage());
-                    ex.printStackTrace();
-                }
-                                
-                if (copysToPrint>1){
-                    textToPrint = GenTxtFactura.getCopias(textToPrint, copysToPrint);
-                }
-                
-                System.out.println("texto ha imprimir");
-                System.out.println(textToPrint);                    
-                
-                //IMPRESORA
-                String impresora = ctesController.findValueByClave("IMPRESORA");
-                TextPrinterUtil printerUtil = new TextPrinterUtil();
-                printerUtil.imprimir(impresora, textToPrint);                            
-            }
-            catch(Throwable ex){
-                System.out.println("Error al generar txt:"+ex.getMessage());
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error al imprimir:"+ex.getMessage());
-            }            
-        }
-        catch(Throwable ex){
-            System.out.println("Error al tratar de imprimir:"+ex.getMessage());
-            ex.printStackTrace();
-        }
-    }
-*/
+    }    
+   
     
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
         try{
@@ -1291,7 +1193,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jTFCIKeyPressed
 
     private void jTFVueltoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFVueltoKeyReleased
-        
         BigDecimal cambio = BigDecimal.ZERO;
         try{
             BigDecimal efectivo = new BigDecimal(this.jTFVuelto.getText());            
@@ -1302,19 +1203,15 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
                 cambio = efectivo.subtract(totalFactura);
                 cambio = cambio.setScale(2, RoundingMode.HALF_UP);
             }
-            
         }
         catch(Throwable ex){
             System.out.println("Error al calcular el vuelto:"+ ex.getMessage());
             ex.printStackTrace();
-        }
-        
+        }        
         this.jLabelVuelto.setText(cambio.toPlainString());
-        
     }//GEN-LAST:event_jTFVueltoKeyReleased
 
     private void jButtonBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBorrarActionPerformed
-        
         try{
             if (this.jTableFactura.getSelectedRows().length>0){
                 int rowSelected = this.jTableFactura.getSelectedRows()[0];
@@ -1329,8 +1226,6 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al tratar de quitar item de factura:"+ex.getMessage());
         }
-        
-        
     }//GEN-LAST:event_jButtonBorrarActionPerformed
 
     private void jTFFechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFFechaActionPerformed
@@ -1487,7 +1382,7 @@ public class FacturaVentaFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jTFDescGlobalKeyReleased
     
-    public void doFilter(){                 
+    public void doFilter(){
         String filtro = this.filtroTF.getText().trim();
         if (filtro.length()>=0){
             try{

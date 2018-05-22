@@ -11,11 +11,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import jj.controller.ArticulosJpaController;
+import jj.gui.FarmaAppMain;
 import jj.util.ErrorValidException;
 import jj.util.FilaArticulo;
+import jj.util.NumbersUtil;
 import jj.util.StringUtil;
 
 /**
@@ -32,13 +35,14 @@ public class MercaderiaDataModel extends AbstractTableModel{
         "Prec. Venta",//4  artPrecio
         "Precio Mínimo",//5  artPreciomin
         "IVA",//6   artIva
-        "Inventario"//7    artInv
+        "Inventario",//7    artInv
+        "Categoría"//8    
     };
     
     private Map<Integer, Integer> mapSort;
     private List<FilaArticulo> items = new ArrayList<>();
-    private ArticulosJpaController controller;    
-    
+    private ArticulosJpaController controller;
+    private TotalesMercaderia totales;
     
     public MercaderiaDataModel(){
         mapSort = new HashMap<>();
@@ -49,7 +53,8 @@ public class MercaderiaDataModel extends AbstractTableModel{
         mapSort.put(4, 0);
         mapSort.put(5, 0);
         mapSort.put(6, 0);
-        mapSort.put(7, 0);
+        mapSort.put(7, 0);        
+        totales = new TotalesMercaderia();
     }
     
     public void clearItems(){
@@ -125,35 +130,39 @@ public class MercaderiaDataModel extends AbstractTableModel{
         String columnName = "artNombre";       
         switch(column){
             case 0:{
-                columnName = "artId";
+                columnName = "art_id";
                 break;
             }
             case 1:{
-                columnName = "artCodbar";
+                columnName = "art_codbar";
                 break;
             }
             case 2:{
-                columnName = "artNombre";
+                columnName = "art_nombre";
                 break;
             }
             case 3:{
-                columnName = "artPrecioCompra";
+                columnName = "art_preciocompra";
                 break;
             }
             case 4:{
-                columnName = "artPrecio";
+                columnName = "art_precio";
                 break;
             }
             case 5:{
-                columnName = "artPreciomin";
+                columnName = "art_preciomin";
                 break;
             }
             case 6:{
-                columnName = "artIva";
+                columnName = "art_iva";
                 break;
             }
             case 7:{
-                columnName = "artInv";
+                columnName = "art_inv";
+                break;
+            }
+            case 8:{
+                columnName = "cat_name";
                 break;
             }
         }
@@ -164,10 +173,8 @@ public class MercaderiaDataModel extends AbstractTableModel{
         return getSortColumnForAdmin(column);
     }
     
-    public void switchSortColumn(Integer column) throws Exception{    
-        
+    public void switchSortColumn(Integer column) throws Exception{
         for (int i = 0; i<columNames.length;i++){
-            
             if (i == column){
                 Integer sortValue = mapSort.get(column);
                 if (sortValue == -1){
@@ -181,27 +188,15 @@ public class MercaderiaDataModel extends AbstractTableModel{
                 mapSort.put(i, 0);
             }
         }
-        
         this.loadFromDataBase();
-        
     }
     
-    public void loadFromDataBase() throws Exception{
-        
+    public String[] getSortOrdColumn(){
         int sortIndex = getSorIndex();
         int sortorder = mapSort.get(sortIndex);
-        
         String sortord = sortorder==-1?"desc":"asc";
         String sortcolumn = getSortColumn(sortIndex);
-        
-        List<Object[]> arts = controller.listarRaw(sortcolumn, sortord);
-        
-        items.clear();
-        for(Object[] art: arts){            
-           items.add(getNewFromRow(art));
-        }
-        
-        fireTableDataChanged();
+        return new String[]{sortcolumn,sortord};
     }
     
     public FilaArticulo getNewFromRow(Object[] art){
@@ -213,83 +208,102 @@ public class MercaderiaDataModel extends AbstractTableModel{
                     (BigDecimal)art[4],
                     (BigDecimal)art[5],
                     (boolean)art[8],
-                    (BigDecimal)art[6]
+                    (BigDecimal)art[6],
+                    (String)art[10],
+                    (String)art[11],
+                    0
+                 
             );
          return filaArticulo;
     }
     
-     public void loadFromDataBaseCat(Integer codCat)throws Exception{
+    public void updateTotales(){
+        BigDecimal sumaPrecioVenta = items.stream()
+                .map(FilaArticulo::getPrecioVentaConIva)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         
-        int sortIndex = getSorIndex();
-        int sortorder = mapSort.get(sortIndex);
+        BigDecimal sumaPrecioCompra = items.stream()
+                .map(FilaArticulo::getPrecioCompra)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         
-        String sortord = sortorder==-1?"desc":"asc";
-        String sortcolumn = getSortColumn(sortIndex);
+        BigDecimal sumaPrecioVentaMin = items.stream()
+                .map(FilaArticulo::getPrecioMinConIva)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         
-        List<Object[]> arts = controller.listarRawCat(sortcolumn, sortord, codCat);
+        BigDecimal sumaInv = items.stream()
+                .map(FilaArticulo::getInventario)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         
-        items.clear();
-        for(Object[] art: arts){
-            items.add(getNewFromRow(art));
-        }
+        totales.setSumaInv(NumbersUtil.round(sumaInv,2));
+        totales.setSumaPrecioCompra(NumbersUtil.round(sumaPrecioCompra,2));
+        totales.setSumaPrecioVenta(NumbersUtil.round(sumaPrecioVenta,2));
+        totales.setSumaPrecioVentaMin(NumbersUtil.round(sumaPrecioVentaMin,2));
+    }
+    
+    public void loadFromDataBase() throws Exception{
+        String[] sortValues = getSortOrdColumn();
+        List<Object[]> arts = controller.listarRaw(sortValues[0], sortValues[1]);
+        items = arts.stream().map(row->getNewFromRow(row)).collect(Collectors.toList());
+        updateTotales();
+        fireTableDataChanged();
+    }
+    
+    public void loadFromDataBaseCat(Integer codCat)throws Exception{
+        String[] sortValues = getSortOrdColumn();
+        List<Object[]> arts = controller.listarRawCat(sortValues[0], sortValues[1], codCat);        
+        items = arts.stream().map(row->getNewFromRow(row)).collect(Collectors.toList());
+        updateTotales();
+        fireTableDataChanged();        
+    }
+    
+    public void loadFromDataBaseFilter(String filtro)throws Exception{
+        String[] sortValues = getSortOrdColumn();
+        List<Object[]> arts = controller.listarRaw(sortValues[0], sortValues[1], filtro);
+        items = arts.stream().map(row->getNewFromRow(row)).collect(Collectors.toList());
+        updateTotales();
         fireTableDataChanged();        
     }
      
-     public void loadFromDataBaseFilter(String filtro)throws Exception{
-        int sortIndex = getSorIndex();
-        int sortorder = mapSort.get(sortIndex);
-        
-        String sortord = sortorder==-1?"desc":"asc";
-        String sortcolumn = getSortColumn(sortIndex);
-        
-        List<Object[]> arts = controller.listarRaw(sortcolumn, sortord, filtro);        
-        items.clear();
-        
-        for(Object[] art: arts){            
-           items.add(getNewFromRow(art));
-        }            
-        
-        fireTableDataChanged();        
-    }    
-     
-      public void saveAllRecords(){
-        try{                //actualizar en la base de datos
+     public void saveAllRecords(){
+        try{//actualizar en la base de datos
             for(FilaArticulo filafactura: items){
                 if (filafactura.getArtId()>0){
                     controller.actualizarArticulo(filafactura);
                 }                
             }
-            
-            JOptionPane.showMessageDialog(null,"Guardado");            
+            JOptionPane.showMessageDialog(null,"Guardado");
             loadFromDataBase();
-
         }
         catch(Throwable ex){
             showInfoError(ex);
             JOptionPane.showMessageDialog(null, "ERRO:"+ex.getMessage());
         }
     }
-      
-      public void showInfoError(Throwable ex){
+     
+     public void showInfoError(Throwable ex){
           System.out.println("Error:"+ex.getMessage());
           ex.printStackTrace();
       }
       
-      
       @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+      public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (rowIndex>=0 && rowIndex<items.size()){
             FilaArticulo filafactura = items.get(rowIndex);
-            switch (columnIndex){                
+            boolean updated = false;
+            
+            switch (columnIndex){
                 case 1: {
+                    updated = !aValue.toString().equalsIgnoreCase(filafactura.getCodBarra());
                     filafactura.setCodBarra(aValue.toString());
                     break;
                 }
                 case 2: {
+                    updated = !aValue.toString().equalsIgnoreCase(filafactura.getNombre());
                     filafactura.setNombre(aValue.toString());
                     break;
                 }
                 case 3: {
+                    updated = !aValue.toString().equalsIgnoreCase(filafactura.getPrecioCompra().toPlainString());
                     BigDecimal precioCompra = new BigDecimal(aValue.toString());
                     filafactura.setPrecioCompra( precioCompra );
                     
@@ -297,44 +311,68 @@ public class MercaderiaDataModel extends AbstractTableModel{
                 }
                 case 4:{
                     BigDecimal precioVenta = new BigDecimal(aValue.toString());
-                    BigDecimal precioVentaSinIva = filafactura.getPrecioSinIva(precioVenta);                    
+                    BigDecimal precioVentaSinIva = filafactura.getPrecioSinIva(precioVenta);
+                    updated = precioVentaSinIva.toPlainString().equalsIgnoreCase(filafactura.getPrecioVenta().toPlainString());
                     filafactura.setPrecioVenta( precioVentaSinIva );
                     break;
                 }
                 case 5: {
                     BigDecimal precioMin = new BigDecimal(aValue.toString());
                     BigDecimal precioMinSinIva = filafactura.getPrecioSinIva(precioMin);
+                    updated = !precioMinSinIva.toPlainString().equalsIgnoreCase(filafactura.getPrecioMin().toPlainString());
                     filafactura.setPrecioMin( precioMinSinIva );
                     break;
                 }
                 case 6: {
-                    boolean isIva = "SI".equalsIgnoreCase(aValue.toString());
+                    //boolean isIva = "SI".equalsIgnoreCase(aValue.toString());
+                    boolean isIva = (Boolean)aValue;
+                    updated = filafactura.isIva()!=isIva;
                     filafactura.setIva(isIva);
                     break;
                 }
                     
-                case 7: {
+                case 7: {                    
+                    updated = !aValue.toString().equalsIgnoreCase(filafactura.getInventario().toPlainString());
                     filafactura.setInventario(new BigDecimal(aValue.toString()));
                     break;
                 }
-            }      
-            
+                /*
+                case 8: {
+                    filafactura.setCategoria(aValue.toString());
+                    break;
+                }
+                */
+            }
             try{
                 if (filafactura.getArtId()>0){
                     controller.actualizarArticulo(filafactura);
+                    updateTotales();
+                    
+                    fireTableDataChanged();
+                    
+                    if (updated){
+                        FarmaAppMain.showSystemTrayMsg("Los cambios han sido registrados");
+                    }
                 }
             }
             catch(Throwable ex){
                 showInfoError(ex);
                 JOptionPane.showMessageDialog(null, "ERRO:"+ex.getMessage());
             }
+            
             fireTableCellUpdated(rowIndex, columnIndex);
         }
         super.setValueAt(aValue, rowIndex, columnIndex); //To change body of generated methods, choose Tools | Templates.
     }
     
-    
-    public Object getValueAtForAdmin(int rowIndex, int columnIndex){
+     public FilaArticulo getValueAt(int rowIndex) {
+         if (rowIndex>=0 && rowIndex<items.size()){
+            return items.get(rowIndex);              
+         }
+         return null;
+     }
+      
+    public Object getValueAt(int rowIndex, int columnIndex) {
         if (rowIndex>=0 && rowIndex<items.size()){
             FilaArticulo filaArticulo = items.get(rowIndex);            
             switch (columnIndex){
@@ -355,24 +393,19 @@ public class MercaderiaDataModel extends AbstractTableModel{
                     BigDecimal precioMinIva = filaArticulo.getPrecioMinConIva().setScale(4, RoundingMode.HALF_UP);
                     return precioMinIva;                    
                 }
-                case 6: return filaArticulo.isIva()?"SI":"NO";                
+                case 6: return filaArticulo.isIva(); //return filaArticulo.isIva()?"SI":"NO";                
                 case 7: return filaArticulo.getInventario();
+                case 8: return filaArticulo.getCategoria();
                 default: return "";
             }
         }
         else{
             return "";
-        }        
+        }
     }
     
-    public Object getValueAt(int rowIndex, int columnIndex) {        
-        
-        return getValueAtForAdmin(rowIndex, columnIndex);
-        
-    }
-    
-    
-    public boolean isCellEditableForAdmin(int rowIndex, int columnIndex) {        
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
         switch(columnIndex){
             case 1: return false;
             case 2: return true;
@@ -380,38 +413,32 @@ public class MercaderiaDataModel extends AbstractTableModel{
             case 4: return true;
             case 5: return true;
             case 6: return true;
-            case 7: return true;
+            case 7: {//Para el caso de inventario solo bienes pueden ser editados
+                FilaArticulo row = getFila(rowIndex);
+                if (row.getTipo()!=null && row.getTipo().equalsIgnoreCase("B") ){
+                    return true;
+                }
+                return false;
+            }
+            case 8: return false;
             default: return false;
         }
     }
     
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) { 
-        
-        
-        return isCellEditableForAdmin(rowIndex, columnIndex);
-        
-        
-    }
-    
-    public Class<?> getColumnClassForAdmin(int columnIndex) {        
-        switch(columnIndex){
+    public Class<?> getColumnClass(int columnIndex) {
+         switch(columnIndex){
             case 0: return Integer.class;//cantidad
             case 1: return String.class;//iva
             case 2: return String.class;//precioUnitario            
             case 3: return BigDecimal.class;
             case 4: return BigDecimal.class;
             case 5: return BigDecimal.class;//precioUnitario            
-            case 6: return String.class;
+            case 6: return Boolean.class;
             case 7: return BigDecimal.class;//precioUnitario                        
+            case 8: return String.class;//precioUnitario
             default: return Object.class;
         }
-    }
-    
-     @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        return getColumnClassForAdmin(columnIndex);
-
     }
     
     public FilaArticulo getFila(int rowIndex){
@@ -432,6 +459,14 @@ public class MercaderiaDataModel extends AbstractTableModel{
 
     public void setController(ArticulosJpaController controller) {
         this.controller = controller;
+    }
+
+    public TotalesMercaderia getTotales() {
+        return totales;
+    }
+
+    public void setTotales(TotalesMercaderia totales) {
+        this.totales = totales;
     }
     
     

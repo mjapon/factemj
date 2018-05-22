@@ -8,7 +8,6 @@ package jj.util.datamodels;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
-import jj.entity.Categorias;
 
 /**
  *
@@ -16,14 +15,14 @@ import jj.entity.Categorias;
  */
 public class CatsListModel extends DefaultListModel implements ListModel{
     
-    private List<Categorias> items;
+    private List<CatRow> items;
     
     @Override
     public int getSize() {
         return items.size();
     }
 
-    public Categorias getElementoAt(int index){
+    public CatRow getElementoAt(int index){
         return items.get(index);
     }
     
@@ -32,11 +31,11 @@ public class CatsListModel extends DefaultListModel implements ListModel{
         return items.get(index).getCatName();
     }
 
-    public List<Categorias> getItems() {
+    public List<CatRow> getItems() {
         return items;
     }
 
-    public void setItems(List<Categorias> items) {
+    public void setItems(List<CatRow> items) {
         this.items = items;
     }
     

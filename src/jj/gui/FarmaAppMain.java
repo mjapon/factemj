@@ -5,8 +5,13 @@
  */
 package jj.gui;
 
+import jj.gui.merc.MercaderiaFrame;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,8 +96,6 @@ public class FarmaAppMain extends javax.swing.JFrame {
           };
         
         this.tabbedPaneMain.addChangeListener(changeListener);
-        
-        
         initHome();
     }    
     
@@ -194,7 +197,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
     
     public void initEstados(){
         estadosApp = new HashMap<>();        
-        estadosApp.put(ArticulosFrame.class.getName(), createEstado(ArticulosFrame.class.getName(), 0));
+        //estadosApp.put(ArticulosFrame.class.getName(), createEstado(ArticulosFrame.class.getName(), 0));
         
         estadosApp.put(FacturaVentaFrame.class.getName()+"1", createEstado(FacturaVentaFrame.class.getName(), 1));        
         estadosApp.put(AdminVentasFrame.class.getName()+"1", createEstado(AdminVentasFrame.class.getName(), 1));    
@@ -244,7 +247,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("SISTEMA DE FACTURACION JAPON");
+        setTitle("SMARTFACT");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -716,6 +719,24 @@ public class FarmaAppMain extends javax.swing.JFrame {
         homeFrame.setFarmaAppMain(this);
         tabbedPaneMain.addTab("Home", icon,  homeFrame.getContentPane());
         tabbedPaneMain.setSelectedComponent(homeFrame.getContentPane());
+    }
+    
+    public static void showSystemTrayMsg(String msg){
+        try{
+            SystemTray tray = SystemTray.getSystemTray();
+            Image image = Toolkit.getDefaultToolkit().createImage("iconpet.png");
+            TrayIcon trayIcon = new TrayIcon(image, "");
+            //Let the system resizes the image if needed
+            trayIcon.setImageAutoSize(true);
+            //Set tooltip text for the tray icon
+            trayIcon.setToolTip("SmartFact");
+            tray.add(trayIcon);
+            trayIcon.displayMessage(msg, "SmartFact", MessageType.INFO);
+        }
+        catch(Throwable ex){
+            System.out.println("Error al presentar el mensaje:"+ex.getMessage());
+            ex.printStackTrace();
+        }
     }
     
     /**

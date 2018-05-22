@@ -28,35 +28,35 @@ public class ArticulosDataModel extends AbstractTableModel{
     private String[] columNames = {};
     
     private String[] columNamesForAdmin={
-        "Nro", //0 artId
-        "Codbar",//1 artCodbar
-        "Articulo",//2  artNombre
-        "Prec. Compra sin Iva",//3   artPrecioCompra
-        "Prec. Venta",//4  artPrecio
-        "Precio Mínimo",//5  artPreciomin
-        "IVA",//6   artIva
-        "Inventario"//7    artInv
+        "Nro", //0 art_id
+        "Codbar",//1 art_codbar
+        "Articulo",//2  art_nombre
+        "Prec. Compra sin Iva",//3   art_preciocompra
+        "Prec. Venta",//4  art_precio
+        "Precio Mínimo",//5  art_preciomin
+        "IVA",//6   art_iva
+        "Inventario"//7    art_inv
     };
     
     private String[] columNamesForSelect={
-        "Codbar",//0 artCodbar
-        "Articulo",//1  artNombre
-        "Prec. Compra con Iva",//2   artPrecioCompra
-        "Prec. Venta",//3  artPrecio
-        "Precio Mínimo",//4  artPreciomin
-        "Inventario"//5    artInv
+        "Codbar",//0 art_codbar
+        "Articulo",//1  art_nombre
+        "Prec. Compra con Iva",//2   art_preciocompra
+        "Prec. Venta",//3  art_precio
+        "Precio Mínimo",//4  art_preciomin
+        "Inventario"//5    art_inv
     };
     
     private String[] columNamesForSearchVenta={        
-        "Articulo",//0  artNombre        
-        "Prec. Venta",//1  artPrecio
-        "Inventario"//2   artInv
+        "Articulo",//0  art_nombre        
+        "Prec. Venta",//1  art_precio
+        "Inventario"//2   art_inv
     };
     
     private String[] columNamesForSearchCompra={        
-        "Articulo",//0  artNombre        
-        "Prec. Compra",//1  artPrecioCompra
-        "Inventario"//2   artInv
+        "Articulo",//0  art_nombre        
+        "Prec. Compra",//1  art_preciocompra
+        "Inventario"//2   art_inv
     };
     
     private Map<Integer, Integer> mapSort;          
@@ -202,38 +202,38 @@ public class ArticulosDataModel extends AbstractTableModel{
     
     
     public String getSortColumnForAdmin(Integer column){
-        String columnName = "artNombre";       
+        String columnName = "art_nombre";       
         switch(column){
             case 0:{
-                columnName = "artId";
+                columnName = "art_id";
                 break;
             }
             case 1:{
-                columnName = "artCodbar";
+                columnName = "art_codbar";
                 break;
             }
             case 2:{
-                columnName = "artNombre";
+                columnName = "art_nombre";
                 break;
             }
             case 3:{
-                columnName = "artPrecioCompra";
+                columnName = "art_preciocompra";
                 break;
             }
             case 4:{
-                columnName = "artPrecio";
+                columnName = "art_precio";
                 break;
             }
             case 5:{
-                columnName = "artPreciomin";
+                columnName = "art_preciomin";
                 break;
             }
             case 6:{
-                columnName = "artIva";
+                columnName = "art_iva";
                 break;
             }
             case 7:{
-                columnName = "artInv";
+                columnName = "art_inv";
                 break;
             }
         }
@@ -241,30 +241,30 @@ public class ArticulosDataModel extends AbstractTableModel{
     }
     
     public String getSortColumnForSelect(Integer column){
-        String columnName = "artNombre";
+        String columnName = "art_nombre";
         switch(column){
             case 0:{
-                columnName = "artCodbar";
+                columnName = "art_codbar";
                 break;
             }
             case 1:{
-                columnName = "artNombre";
+                columnName = "art_nombre";
                 break;
             }
             case 2:{
-                columnName = "artPrecioCompra";
+                columnName = "art_preciocompra";
                 break;
             }
             case 3:{
-                columnName = "artPrecio";
+                columnName = "art_precio";
                 break;
             }
             case 4:{
-                columnName = "artPreciomin";
+                columnName = "art_preciomin";
                 break;
             }
             case 5:{
-                columnName = "artInv";
+                columnName = "art_inv";
                 break;
             }
         }
@@ -272,36 +272,36 @@ public class ArticulosDataModel extends AbstractTableModel{
     }
     
     public String getSortColumnForSearchVenta(Integer column){
-        String columnName = "artNombre";       
+        String columnName = "art_nombre";       
         switch(column){
             case 0:{
-                columnName = "artNombre";
+                columnName = "art_nombre";
                 break;
             }
             case 1:{
-                columnName = "artPrecio";
+                columnName = "art_precio";
                 break;
             }
             case 2:{
-                columnName = "artInv";
+                columnName = "art_inv";
                 break;
             }
         }
         return columnName;
     }
     public String getSortColumnForSearchCompra(Integer column){
-        String columnName = "artNombre";
+        String columnName = "art_nombre";
         switch(column){
             case 0:{
-                columnName = "artNombre";
+                columnName = "art_nombre";
                 break;
             }
             case 1:{
-                columnName = "artPrecioCompra";
+                columnName = "art_preciocompra";
                 break;
             }
             case 2:{
-                columnName = "artInv";
+                columnName = "art_inv";
                 break;
             }
         }
@@ -361,7 +361,10 @@ public class ArticulosDataModel extends AbstractTableModel{
                     (BigDecimal)art[4],
                     (BigDecimal)art[5],
                     (boolean)art[8],
-                    (BigDecimal)art[6]
+                    (BigDecimal)art[6],
+                    (String)art[10],
+                    (String)art[11],
+                    0
             );
             
             items.add(filaArticulo);
@@ -393,7 +396,10 @@ public class ArticulosDataModel extends AbstractTableModel{
                     (BigDecimal)art[4],
                     (BigDecimal)art[5],
                     (boolean)art[8],
-                    (BigDecimal)art[6]
+                    (BigDecimal)art[6],
+                    (String)art[10],
+                    (String)art[11],
+                    0
             );
             
             items.add(filaArticulo);
@@ -425,7 +431,10 @@ public class ArticulosDataModel extends AbstractTableModel{
                     (BigDecimal)art[4],
                     (BigDecimal)art[5],
                     (boolean)art[8],
-                    (BigDecimal)art[6]
+                    (BigDecimal)art[6],
+                    (String)art[10],
+                    (String)art[11],
+                    0
             );
             
             items.add(filaArticulo);
@@ -585,8 +594,7 @@ public class ArticulosDataModel extends AbstractTableModel{
                         BigDecimal precioVentaIva = filaArticulo.getPrecioVentaConIva().setScale(4, RoundingMode.HALF_UP);
                         return precioVentaIva;
                     }
-                    //BigDecimal precioVenta = filaArticulo.getPrecioVenta().setScale(4, RoundingMode.HALF_UP);
-                    
+                    //BigDecimal precioVenta = filaArticulo.getPrecioVenta().setScale(4, RoundingMode.HALF_UP);                    
                 }
                 case 4: {
                     //BigDecimal precioMin = filaArticulo.getPrecioMin().setScale(4, RoundingMode.HALF_UP);

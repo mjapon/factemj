@@ -18,9 +18,13 @@ ALTER TABLE public.facturas ADD fact_descg NUMERIC(15,4) DEFAULT 0.0 NULL;
 
 --Cambios 19 de mayo de 2018
 
-
 ALTER TABLE public.transacciones ADD tra_mask TEXT NULL
 COMMENT ON COLUMN public.transacciones.tra_mask IS 'configuracion para las columnas que se visualizan en la factura'
 
 
 INSERT INTO public.secuencias (sec_id, sec_clave, sec_valor) VALUES (3, 'SEC_SERVS', 1);
+
+--Se agrega clave foranea en tabla de detalles de factura para impedir que se pueda borrar el articulo
+ALTER TABLE public.detallesfact
+ADD CONSTRAINT detallesfact_articulos_art_id_fk
+FOREIGN KEY (art_id) REFERENCES articulos (art_id);

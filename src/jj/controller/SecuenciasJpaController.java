@@ -137,12 +137,20 @@ public class SecuenciasJpaController extends BaseJpaController<Secuencias> imple
         return getResultFirst(newQuery(querystr));
     }
     
+    public Integer getSecuenciaValue(String clave){
+        Secuencias secuencias = getSecuencia(clave);
+        if (secuencias != null){
+            return secuencias.getSecValor();
+        }
+        return null;
+    }
+    
+    
     public void genSecuencia(String clave) throws Exception{
         Secuencias secuencia = getSecuencia(clave);
         if (secuencia != null){
             secuencia.setSecValor(secuencia.getSecValor()+1 );
             em.persist(secuencia);
-            //this.edit(secuencia);
         }
     }
     

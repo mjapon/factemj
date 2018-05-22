@@ -26,7 +26,20 @@ import sun.security.pkcs11.Secmod;
  */
 public class ArticulosJpaController extends BaseJpaController implements Serializable {
     
-    private String baseQuery = "";
+    private String baseSqlArts = "select "+
+                "o.art_id,"+
+                "o.art_nombre,"+
+                "o.art_codbar,"+
+                "o.art_preciocompra,"+
+                "o.art_precio,"+
+                "o.art_preciomin,"+
+                "o.art_inv,"+
+                "o.prov_id,"+
+                "o.art_iva,"+
+                "o.unid_id,"+
+                "c.cat_name, "+
+                "o.art_tipo "+
+                "from articulos o left join categorias c on o.cat_id = c.cat_id ";
     
     public ArticulosJpaController(EntityManager em){
         super(em);
@@ -44,6 +57,11 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
                 em.close();
             }
         }
+    }
+    
+    public boolean articuloEnUso(Integer artId){
+        Integer result = runCountQuery("select count(*) from detallesfact where art_id= "+artId);
+        return result>0;
     }
 
     public void edit(Articulos articulos) throws NonexistentEntityException, Exception {
@@ -69,25 +87,28 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
-        EntityManager em = null;
+    public void destroy(Integer id) throws Throwable {    
         try {
-            em = getEntityManager();
-            em.getTransaction().begin();
+            beginTrans();
             Articulos articulos;
             try {
-                articulos = em.getReference(Articulos.class, id);
+                articulos = em.getReference(Articulos.class, id);                
+                //Verificar articulo en uso
+                if (articuloEnUso(id)){
+                    throw  new ErrorValidException("El artículo "+ articulos.getArtNombre()+" esta siendo usado en alguna transacción, no se puede eliminar");
+                }
+                
                 articulos.getArtId();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The articulos with id " + id + " no longer exists.", enfe);
             }
             em.remove(articulos);
-            em.getTransaction().commit();
-        } finally {
-            if (em != null) {
-                //em.close();
-            }
+            commitTrans();
         }
+        catch(Throwable ex){
+            logErrorWithThrow(ex);
+        }
+        
     }
 
     public List<Articulos> findArticulosEntities() {
@@ -238,13 +259,18 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
             articulo.setArtPreciomin(filaArt.getPrecioMin());
             articulo.setUnidId(1);
             articulo.setArtTipo(filaArt.getTipo());
+            articulo.setCatId(filaArt.getCatId());
 
             em.persist(articulo);
-            
-            
+                        
             if (genCodBarra){
-                  secuenciasJpaController.genSecuencia("ART_CODBAR");
-             }
+                secuenciasJpaController.genSecuencia("ART_CODBAR");
+            }
+            
+            if ("S".equalsIgnoreCase(filaArt.getTipo())){
+                SecuenciasJpaController secuenciasController = new SecuenciasJpaController(em);
+                secuenciasController.genSecuencia("SEC_SERVS");
+            }
             
             em.flush();
             
@@ -281,7 +307,7 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
         
     }
     
-    public void actualizarArticulo(FilaArticulo filaArt) throws Exception{
+    public void actualizarArticulo(FilaArticulo filaArt) throws Throwable{
         
          try{
             em.getTransaction().begin();
@@ -307,10 +333,10 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
 
                     em.persist(articulo);
                     em.flush();
-
                     em.getTransaction().commit();
                 }
-                else{                    
+                else{                      
+                    //em.getTransaction().rollback();
                     throw  new Exception("No se encuentra registradoe la articulo con codigo:"+filaArt.getArtId());
                 }
             }
@@ -319,52 +345,31 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
             }
         }
         catch(Throwable ex){
-            logError(ex);            
-            throw  new Exception("Error al registrar articulo:"+ex.getMessage());
-        }    
-         finally{
-             //em.getTransaction().rollback();
-         }        
+            logErrorWithThrow(ex);            
+            //throw  new Exception("Error al registrar articulo:"+ex.getMessage());
+        }
     }
     
     public List<Object[]> listarRaw(String sortBy, String sortOrder) throws Exception{        
-        String queryStr = "select "+
-                "o.artId,"+
-                "o.artNombre,"+
-                "o.artCodbar,"+
-                "o.artPrecioCompra,"+
-                "o.artPrecio,"+
-                "o.artPreciomin,"+
-                "o.artInv,"+
-                "o.provId,"+
-                "o.artIva,"+
-                "o.unidId from Articulos o order by o."+sortBy+" "+sortOrder;            
-        
-        Query query = this.newQuery(queryStr);
+        String queryStr = baseSqlArts +" order by "+sortBy+" "+sortOrder;
+        Query query = this.newNativeQuery(queryStr);
         return query.getResultList();
     }
     
-     public List<Object[]> listarRawCat(String sortBy, String sortOrder, Integer catId) throws Exception{        
-        String queryStr = "select "+
-                "o.artId,"+
-                "o.artNombre,"+
-                "o.artCodbar,"+
-                "o.artPrecioCompra,"+
-                "o.artPrecio,"+
-                "o.artPreciomin,"+
-                "o.artInv,"+
-                "o.provId,"+
-                "o.artIva,"+
-                "o.unidId from Articulos o where o.catId = "+catId+" order by o."+sortBy+" "+sortOrder;            
-        
-        Query query = this.newQuery(queryStr);
+     public List<Object[]> listarRawCat(String sortBy, String sortOrder, Integer catId) throws Exception{
+        String whereCatId = " where o.cat_id = "+catId;
+        if (catId == 0){//PARA EL CASO DE TODAS LAS CATEGORIAS
+            whereCatId = "";
+        }         
+        String queryStr = baseSqlArts + whereCatId+" order by "+sortBy+" "+sortOrder;
+        Query query = this.newNativeQuery(queryStr);
         return query.getResultList();
     }
     
     public List<Articulos> listar(String sortBy, String sortOrder) throws Exception{
         try{
             //artPrecioCompra
-            String thequery = "from Articulos o order by o."+sortBy+" "+sortOrder;            
+            String thequery = "from Articulos o order by "+sortBy+" "+sortOrder;            
             Query query = this.newQuery(thequery);
             return query.getResultList();
         }
@@ -375,40 +380,23 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
         }
     }
     
-    public List<Object[]> listarRaw(String sortBy, String sortOrder, String filtro) throws Exception{        
-        String queryStr = "select "+
-                "o.artId,"+
-                "o.artNombre,"+
-                "o.artCodbar,"+
-                "o.artPrecioCompra,"+
-                "o.artPrecio,"+
-                "o.artPreciomin,"+
-                "o.artInv,"+
-                "o.provId,"+
-                "o.artIva,"+
-                "o.unidId from Articulos o where o.artNombre like '%"+filtro.toUpperCase()+"%' or o.artCodbar like '%"+ filtro.toUpperCase() +"%' order by o."+sortBy+" "+sortOrder;
+    public List<Object[]> listarRaw(String sortBy, String sortOrder, String filtro) throws Exception{
+        String queryStr = baseSqlArts+" where o.art_nombre like '%"+filtro.toUpperCase()+"%' or o.art_codbar like '%"+ filtro.toUpperCase() +"%' order by o."+sortBy+" "+sortOrder;
         
-        Query query = this.newQuery(queryStr);
+        System.out.println("listarRaw query->");
+        System.out.println(queryStr);        
+        Query query = this.newNativeQuery(queryStr);
         return query.getResultList();
     }
-    
-    
-    
-    
     
     public List<Articulos> listar(String sortBy, String sortOrder, String filtro) throws Exception{
         try{
             String thequery = "from Articulos o where o.artNombre like '%"+filtro.toUpperCase()+"%' or o.artCodbar like '%"+ filtro.toUpperCase() +"%' order by o."+sortBy+" "+sortOrder;
-            
-            System.out.println("query");
-            System.out.println(thequery);            
-            
             Query query = this.newQuery(thequery);
             return query.getResultList();
         }
         catch(Throwable ex){
-            System.out.println("Error al listar los articulos:"+ex.getMessage());
-            ex.printStackTrace();
+            logError(ex);
             throw  new Exception("Error al listar los articulos:"+ex.getMessage());
         }
     }

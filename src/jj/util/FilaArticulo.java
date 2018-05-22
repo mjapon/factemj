@@ -24,8 +24,13 @@ public class FilaArticulo {
     private boolean iva;
     private BigDecimal inventario;
     private String tipo;
+    private String categoria;
+    private Integer catId;
     
-    public FilaArticulo(Integer artId, String codBarra, String nombre, BigDecimal precioCompra, BigDecimal precioVenta, BigDecimal precioMin, boolean iva, BigDecimal inventario) {
+    public FilaArticulo(Integer artId, String codBarra, String nombre, 
+            BigDecimal precioCompra, BigDecimal precioVenta, BigDecimal precioMin, 
+            boolean iva, BigDecimal inventario, String categoria, String tipo, 
+            Integer catid ) {
         this.artId = artId;
         this.secuencial = 0;
         this.codBarra = codBarra;
@@ -35,22 +40,11 @@ public class FilaArticulo {
         this.precioMin = precioMin;
         this.iva = iva;
         this.inventario = inventario;
-        this.tipo = "B";
+        this.tipo = tipo;
+        this.categoria = categoria;
+        this.catId = catid;
     }
     
-    /*
-    public FilaArticulo(Integer secuencial, String codBarra, String nombre, BigDecimal precioCompra, BigDecimal precioVenta, BigDecimal precioMin, boolean iva, BigDecimal inventario) {
-        this.artId = 0;
-        this.secuencial = secuencial;
-        this.codBarra = codBarra;
-        this.nombre = nombre;
-        this.precioCompra = precioCompra;
-        this.precioVenta = precioVenta;
-        this.precioMin = precioMin;
-        this.iva = iva;
-        this.inventario = inventario;
-    }
-*/  
     public BigDecimal getPrecioSinIva(BigDecimal value){
         if (iva){
             BigDecimal div = new BigDecimal(1).add(new BigDecimal(CtesU.IVA));
@@ -175,5 +169,23 @@ public class FilaArticulo {
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }    
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public Integer getCatId() {
+        return catId;
+    }
+
+    public void setCatId(Integer catId) {
+        this.catId = catId;
+    }
+    
+    
     
 }

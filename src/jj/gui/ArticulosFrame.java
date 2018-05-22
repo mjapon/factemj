@@ -176,7 +176,10 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
                 codBarra = "GEN";
             }
         
-            FilaArticulo auxfilaArt = new FilaArticulo(artId, codBarra, nombre, precioCompraConIva, precioVentaConIva, precioMinConIva, IVA, inventario);
+            FilaArticulo auxfilaArt = new FilaArticulo(artId, codBarra, nombre, 
+                    precioCompraConIva, precioVentaConIva, precioMinConIva, 
+                    IVA, inventario, "", "", 0);
+            
             FilaArticulo filaArt  = new FilaArticulo(artId, 
                     codBarra, 
                     nombre, 
@@ -184,7 +187,7 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
                     auxfilaArt.getPrecioVentaSinIva(),
                     auxfilaArt.getPrecioMinSinIva(),
                     IVA, 
-                    inventario);
+                    inventario, "","", 0);
             
             boolean valid = this.articulosDataModel.validar(filaArt);
             if (valid){
@@ -495,10 +498,7 @@ public class ArticulosFrame extends javax.swing.JFrame implements ILabelEstado{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        
         logicaAdd();
-       
-        
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
