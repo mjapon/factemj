@@ -374,7 +374,7 @@ public class MercaderiaDataModel extends AbstractTableModel{
       
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (rowIndex>=0 && rowIndex<items.size()){
-            FilaArticulo filaArticulo = items.get(rowIndex);            
+            FilaArticulo filaArticulo = items.get(rowIndex);
             switch (columnIndex){
                 case 0: return filaArticulo.getArtId();
                 case 1: return filaArticulo.getCodBarra();
@@ -383,18 +383,16 @@ public class MercaderiaDataModel extends AbstractTableModel{
                     BigDecimal precioCompra = filaArticulo.getPrecioCompra().setScale(4, RoundingMode.HALF_UP);
                     return precioCompra;
                 }
-                case 4:{                    
-                    //BigDecimal precioVenta = filaArticulo.getPrecioVenta().setScale(4, RoundingMode.HALF_UP);
+                case 4:{
                     BigDecimal precioVentaIva = filaArticulo.getPrecioVentaConIva().setScale(4, RoundingMode.HALF_UP);
                     return precioVentaIva;
                 }
-                case 5: {                    
-                    //BigDecimal precioMin = filaArticulo.getPrecioMin().setScale(4, RoundingMode.HALF_UP);
+                case 5: {
                     BigDecimal precioMinIva = filaArticulo.getPrecioMinConIva().setScale(4, RoundingMode.HALF_UP);
                     return precioMinIva;                    
                 }
                 case 6: return filaArticulo.isIva(); //return filaArticulo.isIva()?"SI":"NO";                
-                case 7: return filaArticulo.getInventario();
+                case 7: return NumbersUtil.round2(filaArticulo.getInventario());
                 case 8: return filaArticulo.getCategoria();
                 default: return "";
             }
