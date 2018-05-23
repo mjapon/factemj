@@ -465,7 +465,5 @@ public class MercaderiaDataModel extends AbstractTableModel{
 
     public void setTotales(TotalesMercaderia totales) {
         this.totales = totales;
-    }
-    
-    
+    }   
 }

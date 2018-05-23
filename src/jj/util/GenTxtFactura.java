@@ -151,7 +151,7 @@ public class GenTxtFactura {
     
     public static void main(String[] args){
         
-        Pattern pattern = Pattern.compile("\\{(.*?)\\}");        
+        Pattern pattern = Pattern.compile("\\{(.*?)\\}");
         Matcher m = pattern.matcher("FOO{BAR}asfsd{23} asdfasdf{hola:3}");
         while (m.find()) {
             String s = m.group(1);

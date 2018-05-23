@@ -5,8 +5,6 @@
  */
 package jj.gui.merc;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -19,7 +17,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableColumn;
 import jj.controller.ArticulosJpaController;
 import jj.controller.CategoriasJpaController;
 import jj.entity.Categorias;
@@ -27,10 +24,6 @@ import jj.gui.BaseFrame;
 import jj.gui.FarmaAppMain;
 import jj.util.ArrayUtil;
 import jj.util.FilaArticulo;
-import jj.util.IVACheckBoxEditor;
-import jj.util.IVAComboBoxEditor;
-import jj.util.IVAComboBoxRenderer;
-import jj.util.IvaCheckBoxRenderer;
 import jj.util.datamodels.CatRow;
 import jj.util.datamodels.CatsListModel;
 import jj.util.datamodels.MercaderiaDataModel;

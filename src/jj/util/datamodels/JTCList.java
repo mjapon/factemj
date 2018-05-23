@@ -14,24 +14,10 @@ import java.util.List;
  */
 public class JTCList {
     
-    private List<JTableColumn> columnsList; 
-    
-    private JTableColumn<BigDecimal> column = new JTableColumn("Iva", 0, "iva");
-    
+    private List<JTableColumn> columnsList;     
+    //private JTableColumn<BigDecimal> column = new JTableColumn("Iva", 0, "iva");
     private List<FilaCajas> items;
-    
     public void init(){
-        column.setGsValueDlg(new IGetSetValueJC() {
-            @Override
-            public Object getValueAt(int rowIndex) {
-                FilaCajas fila = items;
-            }
-
-            @Override
-            public void setValueAt(int rowIndex, Object value) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        });
         
     }
     

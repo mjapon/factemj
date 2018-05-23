@@ -9,23 +9,21 @@ package jj.util.datamodels;
  *
  * @author manuel.japon
  */
-public class JTableColumn<T> {
+public class JTableColumn<RType> {
     
     private String name;
     private Integer index;
-    private T klassType;
-    private String dbName;
-    
-    private IGetSetValueJC<T> gsValueDlg;
-    
+    private Class klassType;
+    private String dbName;    
+    private IGetSetValueJC gsValueDlg;    
 
-    public JTableColumn(String name, Integer index, String dbName) {
+    public JTableColumn(String name, Integer index, String dbName, Class klassType, IGetSetValueJC<RType> gsValueDlg){
         this.name = name;
         this.index = index;
-        //this.klass =;
+        this.klassType = klassType;
         this.dbName = dbName;
+        this.gsValueDlg = gsValueDlg;
     }
-    
 
     public String getName() {
         return name;
@@ -43,11 +41,11 @@ public class JTableColumn<T> {
         this.index = index;
     }
 
-    public T getKlassType() {
+    public Class getKlassType() {
         return klassType;
     }
 
-    public void setKlassType(T klassType) {
+    public void setKlassType(Class klassType) {
         this.klassType = klassType;
     }
 
@@ -59,16 +57,22 @@ public class JTableColumn<T> {
         this.dbName = dbName;
     }
     
-    public T getValueAt(int rowIndex){
-        return gsValueDlg.getValueAt(rowIndex);
-    }
-    
-    public void setValueAt(int rowIndex, T value){
-        gsValueDlg.setValueAt(rowIndex, value);
-    }
-
+    //Se setea el delegado
     public void setGsValueDlg(IGetSetValueJC gsValueDlg) {
         this.gsValueDlg = gsValueDlg;
+    }  
+    
+    //Metodos para setear o obtener valores de esta columna
+    public Object getValueAt(RType row, int rowIndex){
+        return gsValueDlg.getValueAt(row, rowIndex);
+    }
+    
+    public void setValueAt(RType row, int rowIndex, Object value){
+        gsValueDlg.setValueAt(row, rowIndex, value);
+    }
+    
+    public boolean isCellEditable(Object row){
+        return gsValueDlg.isCellEditable(row);
     }
     
 }
