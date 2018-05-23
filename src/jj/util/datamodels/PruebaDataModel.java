@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import jj.controller.ArticulosJpaController;
 import jj.gui.FarmaAppMain;
-import jj.util.FilaArticulo;
+import jj.util.datamodels.rows.FilaArticulo;
 
 /**
  *

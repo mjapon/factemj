@@ -5,6 +5,7 @@
  */
 package jj.util;
 
+import jj.util.datamodels.rows.FilaFactura;
 import com.serviestudios.print.util.TextPrinterUtil;
 import java.util.List;
 import javax.swing.JOptionPane;

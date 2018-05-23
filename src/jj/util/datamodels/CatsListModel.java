@@ -5,6 +5,7 @@
  */
 package jj.util.datamodels;
 
+import jj.util.datamodels.rows.CatRow;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;

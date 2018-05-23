@@ -22,7 +22,7 @@ import jj.controller.FacturasJpaController;
 import jj.controller.MovtransaccJpaController;
 import jj.util.EntityManagerUtil;
 import jj.util.FechasUtil;
-import jj.util.FilaCXCP;
+import jj.util.datamodels.rows.FilaCXCP;
 import jj.util.ParamBusquedaCXCP;
 import jj.util.datamodels.AbonosDataModel;
 import jj.util.datamodels.CuentaXCPDataModel;

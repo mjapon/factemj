@@ -28,3 +28,48 @@ INSERT INTO public.secuencias (sec_id, sec_clave, sec_valor) VALUES (3, 'SEC_SER
 ALTER TABLE public.detallesfact
 ADD CONSTRAINT detallesfact_articulos_art_id_fk
 FOREIGN KEY (art_id) REFERENCES articulos (art_id);
+
+
+--Creacion de tabla para el registro de kardex de un articulo
+CREATE TABLE public.kardexart
+(
+    ka_id SERIAL PRIMARY KEY NOT NULL,
+    ka_artid INT NOT NULL,
+    ka_fechareg TIMESTAMP NOT NULL,
+    ka_user INT DEFAULT 0,
+    ka_accion VARCHAR(100),
+    ka_valorant VARCHAR(80),
+    ka_valordesp VARCHAR(80),
+    CONSTRAINT kardexart_articulos_art_id_fk FOREIGN KEY (ka_artid) REFERENCES articulos (art_id)
+);
+CREATE UNIQUE INDEX kardexart_ka_id_uindex ON public.kardexart (ka_id);
+
+--Creacion de la tabla de unidades
+CREATE TABLE unidades
+(
+  uni_id      SERIAL NOT NULL
+    CONSTRAINT unidades_pkey
+    PRIMARY KEY,
+  uni_name    VARCHAR(80),
+  uni_simbolo VARCHAR(10)
+);
+
+CREATE UNIQUE INDEX unidades_uni_id_uindex
+  ON unidades (uni_id);
+
+--Creacino de tabla de precios por unidad
+CREATE TABLE public.unidadesprecio
+(
+    unidp_id SERIAL PRIMARY KEY NOT NULL,
+    unidp_artid INT NOT NULL,
+    unidp_precioventa DECIMAL(15,4) DEFAULT 0.0,
+    unidp_preciomin DECIMAL(15,4) DEFAULT 0.0,
+    CONSTRAINT unidadesprecio_articulos_art_id_fk FOREIGN KEY (unidp_artid) REFERENCES articulos (art_id)
+);
+CREATE UNIQUE INDEX unidadesprecio_unidp_id_uindex ON public.unidadesprecio (unidp_id);
+
+
+ALTER TABLE public.unidadesprecio ADD unidp_unid INT NOT NULL;
+ALTER TABLE public.unidadesprecio
+ADD CONSTRAINT unidadesprecio_unidades_uni_id_fk
+FOREIGN KEY (unidp_unid) REFERENCES unidades (uni_id);

@@ -17,7 +17,7 @@ import javax.swing.table.AbstractTableModel;
 import jj.controller.ArticulosJpaController;
 import jj.gui.FarmaAppMain;
 import jj.util.ErrorValidException;
-import jj.util.FilaArticulo;
+import jj.util.datamodels.rows.FilaArticulo;
 import jj.util.NumbersUtil;
 import jj.util.StringUtil;
 

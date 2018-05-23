@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jj.util;
+package jj.util.datamodels.rows;
 
 import java.math.BigDecimal;
 

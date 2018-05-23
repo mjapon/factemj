@@ -15,7 +15,7 @@ import jj.entity.Facturas;
 import jj.util.DatosCabeceraFactura;
 import jj.util.EntityManagerUtil;
 import jj.util.FechasUtil;
-import jj.util.FilaFactura;
+import jj.util.datamodels.rows.FilaFactura;
 import jj.util.NumbersUtil;
 import jj.util.PrintFactUtil;
 import jj.util.TotalesFactura;

@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import jj.controller.MovtransaccJpaController;
 import jj.util.EntityManagerUtil;
-import jj.util.FilaCXCP;
+import jj.util.datamodels.rows.FilaCXCP;
 import jj.util.NumbersUtil;
 import jj.util.form.AbonoForm;
 

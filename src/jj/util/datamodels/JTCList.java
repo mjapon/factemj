@@ -5,6 +5,7 @@
  */
 package jj.util.datamodels;
 
+import jj.util.datamodels.rows.FilaCajas;
 import java.math.BigDecimal;
 import java.util.List;
 

@@ -5,7 +5,7 @@
  */
 package jj.gui.merc;
 
-import jj.util.FilaArticulo;
+import jj.util.datamodels.rows.FilaArticulo;
 
 /**
  *

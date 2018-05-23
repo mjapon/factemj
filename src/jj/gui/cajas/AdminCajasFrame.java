@@ -18,7 +18,7 @@ import jj.gui.BaseFrame;
 import jj.util.FechasUtil;
 import jj.util.ParamBusquedaCXCP;
 import jj.util.datamodels.CajasDataModel;
-import jj.util.datamodels.FilaCajas;
+import jj.util.datamodels.rows.FilaCajas;
 /**
  *
  * @author mjapon

@@ -25,7 +25,7 @@ import jj.controller.FacturasJpaController;
 import jj.entity.Articulos;
 import jj.util.EntityManagerUtil;
 import jj.util.FechasUtil;
-import jj.util.FilaVenta;
+import jj.util.datamodels.rows.FilaVenta;
 import jj.util.ISearchArt;
 import jj.util.ParamsBusquedaTransacc;
 import jj.util.datamodels.TotalesVentasModel;

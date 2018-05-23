@@ -14,7 +14,7 @@ import jj.entity.Articulos;
 import jj.gui.FacturaVentaFrame;
 import jj.util.CtesU;
 import jj.util.DescComboBoxEditor;
-import jj.util.FilaFactura;
+import jj.util.datamodels.rows.FilaFactura;
 import jj.util.TotalesFactura;
 /**
  *

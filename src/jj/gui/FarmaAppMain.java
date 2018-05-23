@@ -46,6 +46,10 @@ public class FarmaAppMain extends javax.swing.JFrame {
                 int index = sourceTabbedPane.getSelectedIndex();
                 
                 String title = sourceTabbedPane.getTitleAt(index);
+                
+                System.out.println("Valor de title es:-->");
+                System.out.println(title);
+                
                 if ("Factura de Venta".equalsIgnoreCase(title)){                    
                     EstadoAPP estadoApp = estadosApp.get(FacturaVentaFrame.class.getName()+"1");
                     FacturaVentaFrame facturaFrame = (FacturaVentaFrame)estadoApp.getFrame();
@@ -71,6 +75,7 @@ public class FarmaAppMain extends javax.swing.JFrame {
                     artsFrame.updateArticulos();
                     System.out.println(" Administrar Artículos focusBarCode();---------> ");
                 }
+                //        Administrar Productos
                 else if ("Administrar Productos".equalsIgnoreCase(title)){
                     EstadoAPP estadoApp = estadosApp.get(MercaderiaFrame.class.getName());
                     MercaderiaFrame artsFrame = (MercaderiaFrame)estadoApp.getFrame();

@@ -26,7 +26,7 @@ import jj.util.ArticulosModelListener;
 import jj.util.CtesU;
 import jj.util.EntityManagerUtil;
 import jj.util.ErrorValidException;
-import jj.util.FilaArticulo;
+import jj.util.datamodels.rows.FilaArticulo;
 import jj.util.IVAComboBoxEditor;
 import jj.util.IVAComboBoxRenderer;
 

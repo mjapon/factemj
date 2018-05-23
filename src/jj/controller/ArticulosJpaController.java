@@ -17,7 +17,7 @@ import jj.controller.exceptions.NonexistentEntityException;
 import jj.entity.Articulos;
 import jj.entity.Secuencias;
 import jj.util.ErrorValidException;
-import jj.util.FilaArticulo;
+import jj.util.datamodels.rows.FilaArticulo;
 import sun.security.pkcs11.Secmod;
 
 /**

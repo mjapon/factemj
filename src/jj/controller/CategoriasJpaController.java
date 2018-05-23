@@ -20,8 +20,8 @@ import jj.entity.Articulos;
 import jj.entity.Categorias;
 import jj.util.ArrayUtil;
 import jj.util.ErrorValidException;
-import jj.util.FilaArticulo;
-import jj.util.datamodels.CatRow;
+import jj.util.datamodels.rows.FilaArticulo;
+import jj.util.datamodels.rows.CatRow;
 
 /**
  *

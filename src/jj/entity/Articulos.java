@@ -7,7 +7,10 @@ package jj.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,8 +18,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -38,6 +43,16 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Articulos.findByUnidId", query = "SELECT a FROM Articulos a WHERE a.unidId = :unidId")})
 public class Articulos implements Serializable {
 
+    @Column(name = "art_inv")
+    private BigDecimal artInv;
+    @Basic(optional = false)
+    @Column(name = "art_tipo")
+    private String artTipo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "kaArtid")
+    private Collection<Kardexart> kardexartCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidpArtid")
+    private Collection<Unidadesprecio> unidadesprecioCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,8 +71,6 @@ public class Articulos implements Serializable {
     private BigDecimal artPrecio;
     @Column(name = "art_preciomin")
     private BigDecimal artPreciomin;
-    @Column(name = "art_inv")
-    private BigDecimal artInv;
     @Column(name = "prov_id")
     private Integer provId;
     @Column(name = "art_iva")
@@ -66,8 +79,6 @@ public class Articulos implements Serializable {
     private Integer unidId;
     @Column(name = "cat_id")
     private Integer catId;
-    @Column(name = "art_tipo")    
-    private String artTipo;
 
     public Articulos() {
     }
@@ -201,5 +212,24 @@ public class Articulos implements Serializable {
     public String toString() {
         //return "jj.entity.Articulos[ artId=" + artId + " ]";        
         return artNombre!=null?artNombre.toUpperCase():"";
-    }    
+    }  
+
+    @XmlTransient
+    public Collection<Kardexart> getKardexartCollection() {
+        return kardexartCollection;
+    }
+
+    public void setKardexartCollection(Collection<Kardexart> kardexartCollection) {
+        this.kardexartCollection = kardexartCollection;
+    }
+
+    @XmlTransient
+    public Collection<Unidadesprecio> getUnidadesprecioCollection() {
+        return unidadesprecioCollection;
+    }
+
+    public void setUnidadesprecioCollection(Collection<Unidadesprecio> unidadesprecioCollection) {
+        this.unidadesprecioCollection = unidadesprecioCollection;
+    }
+   
 }

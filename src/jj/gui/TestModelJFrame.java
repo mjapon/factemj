@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import jj.controller.ArticulosJpaController;
-import jj.util.FilaArticulo;
+import jj.util.datamodels.rows.FilaArticulo;
 import jj.util.NumbersUtil;
 import jj.util.datamodels.DefGSVCol;
 import jj.util.datamodels.JTableColumn;

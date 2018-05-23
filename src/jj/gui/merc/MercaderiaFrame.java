@@ -22,9 +22,10 @@ import jj.controller.CategoriasJpaController;
 import jj.entity.Categorias;
 import jj.gui.BaseFrame;
 import jj.gui.FarmaAppMain;
+import jj.gui.merc.unid.UnidadesFrame;
 import jj.util.ArrayUtil;
-import jj.util.FilaArticulo;
-import jj.util.datamodels.CatRow;
+import jj.util.datamodels.rows.FilaArticulo;
+import jj.util.datamodels.rows.CatRow;
 import jj.util.datamodels.CatsListModel;
 import jj.util.datamodels.MercaderiaDataModel;
 import jj.util.datamodels.TotalesMercaderia;
@@ -35,12 +36,12 @@ import jj.util.datamodels.TotalesMercaderia;
  */
 public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
     
-    private MercaderiaDataModel mercaderiaDataModel;    
+    private MercaderiaDataModel mercaderiaDataModel;
     private ArticulosJpaController articulosController;
     private CategoriasJpaController catsController;
     private List<CatRow> catsList;
     private CatsListModel catsModelList;
-    private Integer selectedCatIndex;    
+    private Integer selectedCatIndex;
     /**
      * Creates new form MercaderiaFrame
      */
@@ -133,36 +134,12 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         loadCats();
     }
     
-    public void updateTotales(){
-        jTableFooter.setEnabled(false);        
-        /*
-        "Nro", //0 artId
-        "Codbar",//1 artCodbar
-        "Articulo",//2  artNombre
-        "Prec. Compra sin Iva",//3   artPrecioCompra
-        "Prec. Venta",//4  artPrecio
-        "Precio Mínimo",//5  artPreciomin
-        "IVA",//6   artIva
-        "Inventario",//7    artInv
-        "Categoría"//8    
-        */
+    public void updateTotales(){         
         TotalesMercaderia totalesMerc = mercaderiaDataModel.getTotales();
-        jTableFooter.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"TOTALES", 
-                    "", 
-                    "", 
-                    totalesMerc.getSumaPrecioCompra(),
-                    totalesMerc.getSumaPrecioVenta(),
-                    totalesMerc.getSumaPrecioVentaMin(),
-                    "",
-                    totalesMerc.getSumaInv(),
-                    ""}
-            },
-            new String [] {
-                "", "", "", "PRECIO COMPRA","PRECIO VENTA","PRECIO VENTA MIN","","INVENTARIO",""
-            }
-        ));
+        jTFTotalPC.setText(totalesMerc.getSumaPrecioCompra().toPlainString());
+        jTFTotalPV.setText(totalesMerc.getSumaPrecioVenta().toPlainString());
+        jTFTotalPM.setText(totalesMerc.getSumaPrecioVentaMin().toPlainString());
+        jTFTotalInv.setText(totalesMerc.getSumaInv().toPlainString());
     }
     
     public void reloadArts(){
@@ -182,6 +159,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
     }
     
     public void filtroFocus(){
+        System.out.println("Se ejecuta filtroFocus----------->");
         this.filtroTF.requestFocus();
     }
     
@@ -263,11 +241,24 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         jPanel7 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableArts = new javax.swing.JTable();
-        jTableFooter = new javax.swing.JTable();
+        jPanel8 = new javax.swing.JPanel();
+        jPanel9 = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        jTFTotalPC = new javax.swing.JTextField();
+        jPanel10 = new javax.swing.JPanel();
+        jLabel13 = new javax.swing.JLabel();
+        jTFTotalPV = new javax.swing.JTextField();
+        jPanel11 = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        jTFTotalPM = new javax.swing.JTextField();
+        jPanel12 = new javax.swing.JPanel();
+        jLabel15 = new javax.swing.JLabel();
+        jTFTotalInv = new javax.swing.JTextField();
         jPanelBtns = new javax.swing.JPanel();
         jGuardarBtn = new javax.swing.JButton();
         btnBorrar = new javax.swing.JButton();
         jMoverBtn = new javax.swing.JButton();
+        jUnidadesBtn = new javax.swing.JButton();
         jCerrarBtn = new javax.swing.JButton();
         jPanelSouth = new javax.swing.JPanel();
         jStatusLabel = new javax.swing.JLabel();
@@ -379,17 +370,69 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
 
         jPanel7.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
-        jTableFooter.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jTableFooter.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+        jPanel8.setLayout(new java.awt.GridLayout(1, 1));
+
+        jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        jLabel12.setText("TOTAL PRECIO COMPRA:");
+        jPanel9.add(jLabel12);
+
+        jTFTotalPC.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jTFTotalPC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTFTotalPCActionPerformed(evt);
             }
-        ));
-        jTableFooter.setRowHeight(30);
-        jPanel7.add(jTableFooter, java.awt.BorderLayout.PAGE_END);
+        });
+        jPanel9.add(jTFTotalPC);
+
+        jPanel8.add(jPanel9);
+
+        jPanel10.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        jLabel13.setText("TOTAL PRECIO VENTA:");
+        jPanel10.add(jLabel13);
+
+        jTFTotalPV.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jTFTotalPV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTFTotalPVActionPerformed(evt);
+            }
+        });
+        jPanel10.add(jTFTotalPV);
+
+        jPanel8.add(jPanel10);
+
+        jPanel11.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        jLabel14.setText("TOTAL PRECIO MIN:");
+        jPanel11.add(jLabel14);
+
+        jTFTotalPM.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jTFTotalPM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTFTotalPMActionPerformed(evt);
+            }
+        });
+        jPanel11.add(jTFTotalPM);
+
+        jPanel8.add(jPanel11);
+
+        jPanel12.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        jLabel15.setText("TOTAL INV:");
+        jPanel12.add(jLabel15);
+
+        jTFTotalInv.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jTFTotalInv.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTFTotalInvActionPerformed(evt);
+            }
+        });
+        jPanel12.add(jTFTotalInv);
+
+        jPanel8.add(jPanel12);
+
+        jPanel7.add(jPanel8, java.awt.BorderLayout.SOUTH);
 
         jPanel2.add(jPanel7, java.awt.BorderLayout.CENTER);
 
@@ -427,6 +470,15 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
             }
         });
         jPanelBtns.add(jMoverBtn);
+
+        jUnidadesBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-change.png"))); // NOI18N
+        jUnidadesBtn.setText("Unidades");
+        jUnidadesBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jUnidadesBtnActionPerformed(evt);
+            }
+        });
+        jPanelBtns.add(jUnidadesBtn);
 
         jCerrarBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jCerrarBtn.setText("Cerrar");
@@ -577,6 +629,28 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         newArtFrame.centerOnScreen();
         newArtFrame.setVisible(true);
     }//GEN-LAST:event_jCrearArtBtnActionPerformed
+
+    private void jTFTotalPCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFTotalPCActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTFTotalPCActionPerformed
+
+    private void jTFTotalPVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFTotalPVActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTFTotalPVActionPerformed
+
+    private void jTFTotalPMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFTotalPMActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTFTotalPMActionPerformed
+
+    private void jTFTotalInvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFTotalInvActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTFTotalInvActionPerformed
+
+    private void jUnidadesBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUnidadesBtnActionPerformed
+        UnidadesFrame unidadesFrame = new UnidadesFrame();
+        unidadesFrame.centerOnScreen();
+        unidadesFrame.setVisible(true);
+    }//GEN-LAST:event_jUnidadesBtnActionPerformed
     public void loadCats(){
         try{
             List<Categorias> auxCatsList = catsController.listar();
@@ -599,16 +673,25 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
     private javax.swing.JButton jEditCatBtn;
     private javax.swing.JButton jGuardarBtn;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JList<String> jListCategorias;
     private javax.swing.JButton jMoverBtn;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JPanel jPanelBtns;
     private javax.swing.JPanel jPanelCenter;
     private javax.swing.JPanel jPanelNorth;
@@ -616,8 +699,12 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel jStatusLabel;
+    private javax.swing.JTextField jTFTotalInv;
+    private javax.swing.JTextField jTFTotalPC;
+    private javax.swing.JTextField jTFTotalPM;
+    private javax.swing.JTextField jTFTotalPV;
     private javax.swing.JTable jTableArts;
-    private javax.swing.JTable jTableFooter;
+    private javax.swing.JButton jUnidadesBtn;
     // End of variables declaration//GEN-END:variables
 
    

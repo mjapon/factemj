@@ -22,7 +22,7 @@ import jj.entity.Cajas;
 import jj.entity.Facturas;
 import jj.util.ErrorValidException;
 import jj.util.FechasUtil;
-import jj.util.datamodels.FilaCajas;
+import jj.util.datamodels.rows.FilaCajas;
 
 /**
  *

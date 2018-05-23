@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
-import jj.util.FilaPago;
+import jj.util.datamodels.rows.FilaPago;
 import jj.util.NumbersUtil;
 
 /**

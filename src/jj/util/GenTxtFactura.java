@@ -5,6 +5,7 @@
  */
 package jj.util;
 
+import jj.util.datamodels.rows.FilaFactura;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;

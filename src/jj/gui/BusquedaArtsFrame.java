@@ -22,7 +22,7 @@ import jj.entity.Articulos;
 import jj.util.datamodels.ArticulosDataModel;
 import jj.util.ArticulosModelListener;
 import jj.util.EntityManagerUtil;
-import jj.util.FilaArticulo;
+import jj.util.datamodels.rows.FilaArticulo;
 import jj.util.ISearchArt;
 import jj.util.IVAComboBoxEditor;
 import jj.util.IVAComboBoxRenderer;

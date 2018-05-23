@@ -15,7 +15,7 @@ import javax.swing.table.AbstractTableModel;
 import jj.controller.MovtransaccJpaController;
 import jj.entity.Movtransacc;
 import jj.util.FechasUtil;
-import jj.util.FilaAbonos;
+import jj.util.datamodels.rows.FilaAbonos;
 import jj.util.NumbersUtil;
 import jj.util.TotalesCuentasXPC;
 

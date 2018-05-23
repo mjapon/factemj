@@ -8,7 +8,7 @@ package jj.util.datamodels;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import jj.util.CtesU;
-import jj.util.FilaVenta;
+import jj.util.datamodels.rows.FilaVenta;
 
 /**
  *

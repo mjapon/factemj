@@ -6,11 +6,13 @@
 package jj.gui.merc;
 
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import javax.swing.JOptionPane;
 import jj.controller.ArticulosJpaController;
 import jj.controller.CategoriasJpaController;
 import jj.controller.SecuenciasJpaController;
@@ -19,7 +21,7 @@ import jj.gui.BaseFrame;
 import jj.gui.FarmaAppMain;
 import jj.util.ArrayUtil;
 import jj.util.CtesU;
-import jj.util.FilaArticulo;
+import jj.util.datamodels.rows.FilaArticulo;
 
 /**
  *
@@ -149,6 +151,11 @@ public class NewArtFrame extends BaseFrame {
         jLabelTitle = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -169,6 +176,17 @@ public class NewArtFrame extends BaseFrame {
 
         jLabel2.setText("Código:");
         jPanel6.add(jLabel2);
+
+        jTFCodBarra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTFCodBarraActionPerformed(evt);
+            }
+        });
+        jTFCodBarra.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTFCodBarraKeyPressed(evt);
+            }
+        });
         jPanel6.add(jTFCodBarra);
 
         jLabel8.setText("Categoría:");
@@ -231,6 +249,11 @@ public class NewArtFrame extends BaseFrame {
         jPanel5.add(jButtonSave);
 
         jButtonUploadImg.setText("Imagen");
+        jButtonUploadImg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUploadImgActionPerformed(evt);
+            }
+        });
         jPanel5.add(jButtonUploadImg);
 
         jButtonClose.setText("Cerrar");
@@ -336,6 +359,34 @@ public class NewArtFrame extends BaseFrame {
     private void jCBTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBTipoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jCBTipoActionPerformed
+
+    private void jTFCodBarraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFCodBarraActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTFCodBarraActionPerformed
+
+    private void jTFCodBarraKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFCodBarraKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER){
+          String barcode = jTFCodBarra.getText();
+          if (barcode.trim().length()>0){
+              if (this.articulosController.yaExisteBarcode(barcode)){
+                  JOptionPane.showMessageDialog(null, "Ya esta registrado el artículo con código de barra:"+ barcode+", ingrese otro");
+              }
+              else{
+                  jTFNombre.requestFocus();
+              }
+          }
+        }
+    }//GEN-LAST:event_jTFCodBarraKeyPressed
+
+    private void jButtonUploadImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUploadImgActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonUploadImgActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        
+        jTFCodBarra.requestFocus();
+        
+    }//GEN-LAST:event_formWindowOpened
 
    
     // Variables declaration - do not modify//GEN-BEGIN:variables

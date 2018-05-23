@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import jj.util.FechasUtil;
-import jj.util.FilaCXCP;
+import jj.util.datamodels.rows.FilaCXCP;
 import jj.util.TotalesCuentasXPC;
 
 /**

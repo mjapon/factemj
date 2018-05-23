@@ -7,7 +7,7 @@ package jj.util.datamodels;
 
 import java.math.BigDecimal;
 import java.util.List;
-import jj.util.FilaFactura;
+import jj.util.datamodels.rows.FilaFactura;
 
 
 

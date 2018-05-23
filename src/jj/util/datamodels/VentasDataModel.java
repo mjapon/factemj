@@ -15,7 +15,7 @@ import javax.swing.table.AbstractTableModel;
 import jj.controller.FacturasJpaController;
 import jj.util.CtesU;
 import jj.util.FechasUtil;
-import jj.util.FilaVenta;
+import jj.util.datamodels.rows.FilaVenta;
 import jj.util.ParamsBusquedaTransacc;
 
 /**
