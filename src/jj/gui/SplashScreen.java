@@ -5,7 +5,6 @@
  */
 package jj.gui;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -13,13 +12,12 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
 /**
  *
  * @author manuel.japon
  */
-public class SplashScreen extends javax.swing.JFrame {
+public class SplashScreen extends BaseFrame {
 
     /**
      * Creates new form SplashScreen

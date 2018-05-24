@@ -20,8 +20,9 @@ public class FilaUnidadPrecio {
     private BigDecimal precioMin;
     private String articulo;
     private String unidad;
+    private boolean isIva;
 
-    public FilaUnidadPrecio(Integer filaId, Integer artId, Integer unidId, BigDecimal precioNormal, BigDecimal precioMin, String articulo, String unidad) {
+    public FilaUnidadPrecio(Integer filaId, Integer artId, Integer unidId, BigDecimal precioNormal, BigDecimal precioMin, String articulo, String unidad, Boolean isIva) {
         this.filaId = filaId;
         this.artId = artId;
         this.unidId = unidId;
@@ -29,9 +30,16 @@ public class FilaUnidadPrecio {
         this.precioMin = precioMin;
         this.articulo = articulo;
         this.unidad = unidad;
+        this.isIva = isIva;
     }
-
     
+    public FilaUnidadPrecio(Integer artId, Integer unidId, BigDecimal precioNormal, BigDecimal precioMin, Boolean isIva){
+        this.artId = artId;
+        this.unidId = unidId;
+        this.precioNormal = precioNormal;
+        this.precioMin = precioMin;
+        this.isIva = isIva;
+    }
 
     public Integer getFilaId() {
         return filaId;
@@ -40,8 +48,6 @@ public class FilaUnidadPrecio {
     public void setFilaId(Integer filaId) {
         this.filaId = filaId;
     }
-
-    
 
     public Integer getArtId() {
         return artId;
@@ -62,6 +68,13 @@ public class FilaUnidadPrecio {
     public BigDecimal getPrecioNormal() {
         return precioNormal;
     }
+    
+    public BigDecimal getPrecioNormalSinIva(){
+        return FilaArticulo.getPrecioSinIvaUtil(precioNormal);
+    }
+    public BigDecimal getPrecioNormalConIva(){
+        return FilaArticulo.getPrecioConIvaUtil(precioNormal);
+    }
 
     public void setPrecioNormal(BigDecimal precioNormal) {
         this.precioNormal = precioNormal;
@@ -69,6 +82,12 @@ public class FilaUnidadPrecio {
 
     public BigDecimal getPrecioMin() {
         return precioMin;
+    }
+    public BigDecimal getPrecioMinSinIva(){
+        return FilaArticulo.getPrecioSinIvaUtil(precioMin);
+    }
+    public BigDecimal getPrecioMinConIva(){
+        return FilaArticulo.getPrecioConIvaUtil(precioMin);
     }
 
     public void setPrecioMin(BigDecimal precioMin) {
@@ -90,7 +109,14 @@ public class FilaUnidadPrecio {
     public void setUnidad(String unidad) {
         this.unidad = unidad;
     }
-    
+
+    public boolean isIsIva() {
+        return isIva;
+    }
+
+    public void setIsIva(boolean isIva) {
+        this.isIva = isIva;
+    }
     
     
 }

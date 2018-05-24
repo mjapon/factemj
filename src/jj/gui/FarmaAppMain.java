@@ -12,9 +12,11 @@ import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -728,14 +730,6 @@ public class FarmaAppMain extends javax.swing.JFrame {
     
     public static void showSystemTrayMsg(String msg){
         try{
-            SystemTray tray = SystemTray.getSystemTray();
-            Image image = Toolkit.getDefaultToolkit().createImage("iconpet.png");
-            TrayIcon trayIcon = new TrayIcon(image, "");
-            //Let the system resizes the image if needed
-            trayIcon.setImageAutoSize(true);
-            //Set tooltip text for the tray icon
-            trayIcon.setToolTip("SmartFact");
-            tray.add(trayIcon);
             trayIcon.displayMessage(msg, "SmartFact", MessageType.INFO);
         }
         catch(Throwable ex){
@@ -744,26 +738,43 @@ public class FarmaAppMain extends javax.swing.JFrame {
         }
     }
     
+    public static void initSystemTray(){
+        try{
+            systemTray = SystemTray.getSystemTray();
+            URL resource = FarmaAppMain.class.getResource("/jj/gui/iconpet.png");
+            Image image  = new ImageIcon(ImageIO.read(resource)).getImage();            
+            trayIcon = new TrayIcon(image, "SmartFact");
+            trayIcon.setImageAutoSize(true);
+            trayIcon.setToolTip("SmartFact");
+            systemTray.add(trayIcon);
+        }
+        catch(Throwable ex){
+            System.out.println("Error al inicializar SystemTray:"+ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
         SplashScreen splashScreen = new SplashScreen();
-        splashScreen.setSize(500, 450);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        splashScreen.setLocation(dim.width/2-splashScreen.getSize().width/2, dim.height/2-splashScreen.getSize().height/2);
-        splashScreen.setVisible(true);                
+        splashScreen.setSize(500, 250);
+        splashScreen.centerOnScreen();
+        splashScreen.setVisible(true);   
+        
+        FarmaAppMain.initSystemTray();
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {                
+            public void run() {
                 try{
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 }
                 catch(Throwable ex){
                     System.out.println("Error al establecer look and fell:"+ ex.getMessage());
                     ex.printStackTrace();
-                }                
+                }
                 FarmaAppMain app = new FarmaAppMain();
                 app.setSplashScreen(splashScreen);
                 app.hideSplashScreen();
@@ -804,4 +815,6 @@ public class FarmaAppMain extends javax.swing.JFrame {
     //private FacturaVentaFrame facturaVentaFrame;
     //private ArticulosFrame articulosFrame;
     
+    private static TrayIcon trayIcon;
+    private static SystemTray systemTray;
 }

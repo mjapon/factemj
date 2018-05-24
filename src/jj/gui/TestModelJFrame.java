@@ -34,8 +34,8 @@ public class TestModelJFrame extends BaseFrame {
                 
         columns.add(
                 new JTableColumn<FilaArticulo>(
-                        "ID", 
                         0, 
+                        "ID", 
                         "art_id", 
                         Integer.class,
                         new DefGSVCol<FilaArticulo>() {
@@ -47,8 +47,8 @@ public class TestModelJFrame extends BaseFrame {
         );
         columns.add(
                 new JTableColumn<FilaArticulo>(
-                        "Nro", 
                         1, 
+                        "Nro", 
                         "art_codbar", 
                         String.class,
                         new DefGSVCol<FilaArticulo>() {
@@ -61,8 +61,8 @@ public class TestModelJFrame extends BaseFrame {
         
         columns.add(
                 new JTableColumn<FilaArticulo>(
-                        "Articulo", 
                         2, 
+                        "Articulo", 
                         "art_nombre", 
                         String.class,
                         new DefGSVCol<FilaArticulo>() {
@@ -75,8 +75,8 @@ public class TestModelJFrame extends BaseFrame {
         
         columns.add(
                 new JTableColumn<FilaArticulo>(
-                        "Prec. Compra sin Iva", 
                         3, 
+                        "Prec. Compra sin Iva",                         
                         "art_preciocompra", 
                         BigDecimal.class,
                         new DefGSVCol<FilaArticulo>() {
@@ -89,8 +89,8 @@ public class TestModelJFrame extends BaseFrame {
         
         columns.add(
                 new JTableColumn<FilaArticulo>(
-                        "Prec. Venta", 
                         4, 
+                        "Prec. Venta",                         
                         "art_precio", 
                         BigDecimal.class,
                         new DefGSVCol<FilaArticulo>() {
@@ -103,8 +103,8 @@ public class TestModelJFrame extends BaseFrame {
         
         columns.add(
                 new JTableColumn<FilaArticulo>(
-                        "Precio Mínimo", 
                         5, 
+                        "Precio Mínimo", 
                         "art_preciomin", 
                         BigDecimal.class,
                         new DefGSVCol<FilaArticulo>() {
@@ -117,8 +117,8 @@ public class TestModelJFrame extends BaseFrame {
         
         columns.add(
                 new JTableColumn<FilaArticulo>(
-                        "IVA", 
                         6, 
+                        "IVA", 
                         "art_iva", 
                         Boolean.class,
                         new DefGSVCol<FilaArticulo>() {
@@ -134,8 +134,8 @@ public class TestModelJFrame extends BaseFrame {
         
         columns.add(
                 new JTableColumn<FilaArticulo>(
-                        "Inventario", 
                         7, 
+                        "Inventario", 
                         "art_inv", 
                         BigDecimal.class,
                         new DefGSVCol<FilaArticulo>() {
@@ -148,8 +148,8 @@ public class TestModelJFrame extends BaseFrame {
         
         columns.add(
                 new JTableColumn<FilaArticulo>(
-                        "Categoría", 
                         8, 
+                        "Categoría", 
                         "cat_name", 
                         String.class,
                         new DefGSVCol<FilaArticulo>() {

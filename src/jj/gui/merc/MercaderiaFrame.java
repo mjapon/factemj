@@ -668,7 +668,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         if (row>-1){
             FilaArticulo filaArticulo = this.mercaderiaDataModel.getFila(row);
             if (filaArticulo!= null){
-                PreciosXUnidadFrame preciosXUnidadFrame = new PreciosXUnidadFrame(filaArticulo.getArtId());
+                PreciosXUnidadFrame preciosXUnidadFrame = new PreciosXUnidadFrame(filaArticulo);
                 preciosXUnidadFrame.centerOnScreen();
                 preciosXUnidadFrame.setVisible(true);
             }

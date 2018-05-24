@@ -17,7 +17,7 @@ public class JTableColumn<RType> {
     private String dbName;    
     private IGetSetValueJC gsValueDlg;    
 
-    public JTableColumn(String name, Integer index, String dbName, Class klassType, IGetSetValueJC<RType> gsValueDlg){
+    public JTableColumn(Integer index, String name, String dbName, Class klassType, IGetSetValueJC<RType> gsValueDlg){
         this.name = name;
         this.index = index;
         this.klassType = klassType;

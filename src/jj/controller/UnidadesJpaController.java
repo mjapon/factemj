@@ -131,6 +131,10 @@ public class UnidadesJpaController extends BaseJpaController<Unidades> implement
 //        destroy(catId);
 //    }
     
+    public boolean yaExistePrecio(Integer artId, Integer unidId){
+        return super.enUso(" select count(*) from unidadesprecio where  unidp_artid="+artId+" and unidp_unid ="+unidId);
+    }
+    
     public void registrarPrecio(FilaUnidadPrecio fila) throws Throwable{
         try{            
             beginTrans();
@@ -192,7 +196,8 @@ public class UnidadesJpaController extends BaseJpaController<Unidades> implement
                 (BigDecimal)row[3],
                 (BigDecimal)row[4],
                 (String)row[6],
-                (String)row[5]
+                (String)row[5],
+                (Boolean)row[7]
         );
         
         return filaUnidadPrecio;
@@ -227,7 +232,8 @@ public class UnidadesJpaController extends BaseJpaController<Unidades> implement
         "  up.unidp_precioventa," +
         "  up.unidp_preciomin," +
         "  u.uni_name," +
-        "  a.art_nombre " +
+        "  a.art_nombre, " +
+        "  a.art_iva " +       
         " from unidadesprecio up " +
         "  join unidades u ON up.unidp_unid = u.uni_id " +
         " join articulos a ON up.unidp_artid = a.art_id " +

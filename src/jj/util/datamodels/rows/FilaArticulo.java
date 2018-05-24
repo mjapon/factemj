@@ -46,20 +46,37 @@ public class FilaArticulo {
         this.catId = catid;
     }
     
+    
+    public static BigDecimal getPrecioSinIvaUtil(BigDecimal value){
+        BigDecimal div = new BigDecimal(1).add(new BigDecimal(CtesU.IVA));
+        BigDecimal factor = new BigDecimal(1).divide( div, 6, RoundingMode.HALF_UP );            
+        return value.multiply(factor);
+    }
+    
+    public static BigDecimal getPrecioConIvaUtil(BigDecimal value){
+        BigDecimal factor = new BigDecimal(1).add( new BigDecimal(CtesU.IVA) );
+         return value.multiply(factor);
+    }
+    
     public BigDecimal getPrecioSinIva(BigDecimal value){
         if (iva){
+            return getPrecioSinIvaUtil(value);
+            /*
             BigDecimal div = new BigDecimal(1).add(new BigDecimal(CtesU.IVA));
             BigDecimal factor = new BigDecimal(1).divide( div, 6, RoundingMode.HALF_UP );            
             return value.multiply(factor);
+            */
         }
         return value;
     }
     
     public BigDecimal getPrecioConIva(BigDecimal value){    
         if (iva){
+            return getPrecioConIvaUtil(value);
+            /*
             BigDecimal factor = new BigDecimal(1).add( new BigDecimal(CtesU.IVA) );
-            //System.out.println("getPrecioConIva factor:" + factor);
             return value.multiply(factor);
+            */
         }
         return value;
     }

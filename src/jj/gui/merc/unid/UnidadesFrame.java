@@ -77,8 +77,8 @@ public class UnidadesFrame extends BaseFrame {
                 
         columns.add(
                 new JTableColumn<FilaUnidad>(
-                        "ID", 
                         0, 
+                        "ID", 
                         "uni_id", 
                         Integer.class,
                         new DefGSVCol<FilaUnidad>() {
@@ -91,8 +91,8 @@ public class UnidadesFrame extends BaseFrame {
         
         columns.add(
                 new JTableColumn<FilaUnidad>(
-                        "Nombre", 
                         1, 
+                        "Nombre", 
                         "uni_name", 
                         String.class,
                         new DefGSVCol<FilaUnidad>() {
@@ -105,8 +105,8 @@ public class UnidadesFrame extends BaseFrame {
         
         columns.add(
                 new JTableColumn<FilaUnidad>(
-                        "Simbolo", 
                         2, 
+                        "Simbolo", 
                         "uni_simbolo", 
                         String.class,
                         new DefGSVCol<FilaUnidad>() {

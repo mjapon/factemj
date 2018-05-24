@@ -7,6 +7,7 @@ package jj.util.datamodels;
 
 import java.util.List;
 import jj.controller.UnidadesJpaController;
+import jj.gui.FarmaAppMain;
 import jj.util.datamodels.rows.FilaUnidadPrecio;
 
 /**
@@ -38,7 +39,13 @@ public class PreciosUnidadDataModel extends GenericDataModel<FilaUnidadPrecio>{
 
     @Override
     public void persistOnDb(FilaUnidadPrecio row) {
-        
+        try{
+            unidadesControler.updatePrecio(row);
+            FarmaAppMain.showSystemTrayMsg("Cambios registrados");
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }
     }
 
     @Override
