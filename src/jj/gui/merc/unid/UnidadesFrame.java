@@ -12,9 +12,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import jj.controller.UnidadesJpaController;
 import jj.gui.BaseFrame;
 import jj.gui.FarmaAppMain;
+import jj.util.StringUtil;
 import jj.util.datamodels.DefGSVCol;
 import jj.util.datamodels.JTableColumn;
 import jj.util.datamodels.TableHeadMouseAdapter;
@@ -46,7 +49,22 @@ public class UnidadesFrame extends BaseFrame {
         jTable1.setModel(unidadesDataModel);        
         jTable1.getTableHeader().addMouseListener(new TableHeadMouseAdapter(jTable1, unidadesDataModel));
         
+        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(!e.getValueIsAdjusting()) {
+                    updateStatusDeleteBtn();
+                }
+            }
+        });
     }
+    
+    
+    public void updateStatusDeleteBtn(){
+        int[] selectedRows = jTable1.getSelectedRows();
+        jButtonDelete.setEnabled( selectedRows.length>0 );
+    }
+    
     
     public void loadUnidades(){
         unidadesDataModel.loadFromDataBase();
@@ -116,10 +134,9 @@ public class UnidadesFrame extends BaseFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jButtonCrear = new javax.swing.JButton();
+        jButtonDelete = new javax.swing.JButton();
+        jButtonClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -151,38 +168,44 @@ public class UnidadesFrame extends BaseFrame {
 
         jPanel3.setLayout(new java.awt.GridLayout(6, 1));
 
-        jButton1.setText("Crear");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonCrear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/Plus_25px.png"))); // NOI18N
+        jButtonCrear.setText("Crear");
+        jButtonCrear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonCrearActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton1);
+        jPanel3.add(jButtonCrear);
 
-        jButton2.setText("Editar");
-        jPanel3.add(jButton2);
-
-        jButton4.setText("Borrar");
-        jPanel3.add(jButton4);
-
-        jButton3.setText("Cerrar");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        jButtonDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-trash.png"))); // NOI18N
+        jButtonDelete.setText("Borrar");
+        jButtonDelete.setEnabled(false);
+        jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                jButtonDeleteActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton3);
+        jPanel3.add(jButtonDelete);
+
+        jButtonClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
+        jButtonClose.setText("Cerrar");
+        jButtonClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCloseActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButtonClose);
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.EAST);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void jButtonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseActionPerformed
         setVisible(false);
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jButtonCloseActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCrearActionPerformed
         try{
             JTextField nombreField = new JTextField(10);
             JTextField abrField = new JTextField(5);
@@ -202,6 +225,12 @@ public class UnidadesFrame extends BaseFrame {
             if (result == JOptionPane.OK_OPTION) {
                 String nombre = nombreField.getText();
                 String abrev = abrField.getText();
+                
+                if (StringUtil.isEmpty(nombre) || StringUtil.isEmpty(abrev) ){
+                    showMsg("Debe ingresar el nombre y la abreviatura de la unidad");
+                    return;
+                }
+                
                 unidadesController.crear(new FilaUnidad(0, nombre, abrev));
                 loadUnidades();
                 FarmaAppMain.showSystemTrayMsg(" Registrado satisfactoriamente ");
@@ -211,15 +240,32 @@ public class UnidadesFrame extends BaseFrame {
             showMsgError(ex);
         }
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonCrearActionPerformed
+
+    private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
+        int[] rows = jTable1.getSelectedRows();
+        try{
+            if (showConfirmMsg("¿Segur@ que desea borrar estos registros?")){
+                for(int i=0;i<rows.length;i++){
+                    FilaUnidad row = unidadesDataModel.getValueAt(rows[i]);
+                    unidadesController.destroy(row.getUnidId());
+                }
+                FarmaAppMain.showSystemTrayMsg("Registros Borrados");
+                loadUnidades();
+            }
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }
+        
+    }//GEN-LAST:event_jButtonDeleteActionPerformed
 
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButtonClose;
+    private javax.swing.JButton jButtonCrear;
+    private javax.swing.JButton jButtonDelete;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

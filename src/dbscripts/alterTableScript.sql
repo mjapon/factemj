@@ -73,3 +73,9 @@ ALTER TABLE public.unidadesprecio ADD unidp_unid INT NOT NULL;
 ALTER TABLE public.unidadesprecio
 ADD CONSTRAINT unidadesprecio_unidades_uni_id_fk
 FOREIGN KEY (unidp_unid) REFERENCES unidades (uni_id);
+
+--Miercoles 23 de mayo noche
+INSERT INTO unidades(uni_id, uni_name, uni_simbolo) VALUES (1,'UNIDAD', 'un');
+update articulos set unid_id = 1;
+
+ALTER SEQUENCE public.unidades_uni_id_seq RESTART WITH 2;

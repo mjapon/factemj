@@ -22,6 +22,7 @@ import jj.controller.CategoriasJpaController;
 import jj.entity.Categorias;
 import jj.gui.BaseFrame;
 import jj.gui.FarmaAppMain;
+import jj.gui.merc.unid.PreciosXUnidadFrame;
 import jj.gui.merc.unid.UnidadesFrame;
 import jj.util.ArrayUtil;
 import jj.util.datamodels.rows.FilaArticulo;
@@ -259,6 +260,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         btnBorrar = new javax.swing.JButton();
         jMoverBtn = new javax.swing.JButton();
         jUnidadesBtn = new javax.swing.JButton();
+        jUnidadesBtn1 = new javax.swing.JButton();
         jCerrarBtn = new javax.swing.JButton();
         jPanelSouth = new javax.swing.JPanel();
         jStatusLabel = new javax.swing.JLabel();
@@ -471,7 +473,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         });
         jPanelBtns.add(jMoverBtn);
 
-        jUnidadesBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-change.png"))); // NOI18N
+        jUnidadesBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-categorize.png"))); // NOI18N
         jUnidadesBtn.setText("Unidades");
         jUnidadesBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -479,6 +481,15 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
             }
         });
         jPanelBtns.add(jUnidadesBtn);
+
+        jUnidadesBtn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-categorize.png"))); // NOI18N
+        jUnidadesBtn1.setText("Precios");
+        jUnidadesBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jUnidadesBtn1ActionPerformed(evt);
+            }
+        });
+        jPanelBtns.add(jUnidadesBtn1);
 
         jCerrarBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jCerrarBtn.setText("Cerrar");
@@ -651,6 +662,19 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         unidadesFrame.centerOnScreen();
         unidadesFrame.setVisible(true);
     }//GEN-LAST:event_jUnidadesBtnActionPerformed
+
+    private void jUnidadesBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUnidadesBtn1ActionPerformed
+        int row = this.jTableArts.getSelectedRow();
+        if (row>-1){
+            FilaArticulo filaArticulo = this.mercaderiaDataModel.getFila(row);
+            if (filaArticulo!= null){
+                PreciosXUnidadFrame preciosXUnidadFrame = new PreciosXUnidadFrame(filaArticulo.getArtId());
+                preciosXUnidadFrame.centerOnScreen();
+                preciosXUnidadFrame.setVisible(true);
+            }
+        }
+        
+    }//GEN-LAST:event_jUnidadesBtn1ActionPerformed
     public void loadCats(){
         try{
             List<Categorias> auxCatsList = catsController.listar();
@@ -705,6 +729,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
     private javax.swing.JTextField jTFTotalPV;
     private javax.swing.JTable jTableArts;
     private javax.swing.JButton jUnidadesBtn;
+    private javax.swing.JButton jUnidadesBtn1;
     // End of variables declaration//GEN-END:variables
 
    

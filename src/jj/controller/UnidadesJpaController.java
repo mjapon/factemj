@@ -7,22 +7,15 @@ package jj.controller;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import jj.entity.Unidadesprecio;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import jj.controller.exceptions.IllegalOrphanException;
 import jj.controller.exceptions.NonexistentEntityException;
 import jj.controller.exceptions.YaExisteRegistroException;
 import jj.entity.Articulos;
-import jj.entity.Categorias;
 import jj.entity.Unidades;
 import jj.util.datamodels.rows.FilaUnidad;
 import jj.util.datamodels.rows.FilaUnidadPrecio;
@@ -37,24 +30,31 @@ public class UnidadesJpaController extends BaseJpaController<Unidades> implement
         super(em);
     }
     
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws Throwable {
     
         try {
-            em.getTransaction().begin();
-            Categorias categorias;
+            beginTrans();
+            Unidades unidad;
             try {
-                categorias = em.getReference(Categorias.class, id);
-                categorias.getCatId();
+                unidad = em.getReference(Unidades.class, id);
+                unidad.getUniId();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The Unidades with id " + id + " no longer exists.", enfe);
             }
-            em.remove(categorias);
-            em.getTransaction().commit();
-        } finally {
-            if (em != null) {
-                //em.close();
+            
+            if (enUso(id)){
+                throw new Exception("Esta unidad está siendo usada, no se puede borrar");
             }
+            
+            em.remove(unidad);
+            commitTrans();
+        } catch(Throwable ex){
+            logErrorWithThrow(ex);
         }
+    }
+    
+    public boolean enUso(Integer unidId){
+        return super.enUso("select count(a) from Articulos a where a.unid_id= "+unidId);
     }
 
     public Unidades findUnidades(Integer id) {
@@ -115,21 +115,21 @@ public class UnidadesJpaController extends BaseJpaController<Unidades> implement
         }
     }
     
-    public void borrar(Integer catId) throws Exception{
-        Categorias cat = em.find(Categorias.class, catId);
-        if (cat == null){
-            throw  new Exception("No esta registrada la categoria con el id especificado");
-        }        
-        //Verificar si la categoria ya ha sido usado
-        String query = "select count(o) from Unidadesprecio o where o.unidpUnid.uniId="+catId;
-        
-        Long resCount = getCountResult(query);
-        if (resCount.intValue()>0){
-            throw new Exception("No se puede eliminar esta unidad, esta siendo usada(tiene precios asociados)");
-        }
-        
-        destroy(catId);
-    }
+//    public void borrar(Integer catId) throws Exception{
+//        Categorias cat = em.find(Categorias.class, catId);
+//        if (cat == null){
+//            throw  new Exception("No esta registrada la categoria con el id especificado");
+//        }        
+//        //Verificar si la categoria ya ha sido usado
+//        String query = "select count(o) from Unidadesprecio o where o.unidpUnid.uniId="+catId;
+//        
+//        Long resCount = getCountResult(query);
+//        if (resCount.intValue()>0){
+//            throw new Exception("No se puede eliminar esta unidad, esta siendo usada(tiene precios asociados)");
+//        }
+//        
+//        destroy(catId);
+//    }
     
     public void registrarPrecio(FilaUnidadPrecio fila) throws Throwable{
         try{            

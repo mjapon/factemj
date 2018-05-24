@@ -435,12 +435,23 @@
         <Component class="javax.swing.JButton" name="jUnidadesBtn">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/jj/gui/icons/icons8-change.png"/>
+              <Image iconType="3" name="/jj/gui/icons/icons8-categorize.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Unidades"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jUnidadesBtnActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jUnidadesBtn1">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/jj/gui/icons/icons8-categorize.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Precios"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jUnidadesBtn1ActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jCerrarBtn">

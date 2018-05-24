@@ -5,17 +5,116 @@
  */
 package jj.gui.merc.unid;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import jj.controller.UnidadesJpaController;
+import jj.entity.Unidades;
+import jj.gui.BaseFrame;
+import jj.util.NumbersUtil;
+import jj.util.datamodels.DefGSVCol;
+import jj.util.datamodels.JTableColumn;
+import jj.util.datamodels.PreciosUnidadDataModel;
+import jj.util.datamodels.TableHeadMouseAdapter;
+import jj.util.datamodels.rows.FilaUnidad;
+import jj.util.datamodels.rows.FilaUnidadPrecio;
+
 /**
  *
  * @author manuel.japon
  */
-public class PreciosXUnidadFrame extends javax.swing.JFrame {
-
+public class PreciosXUnidadFrame extends BaseFrame {
+    
+    private List<FilaUnidad> unidadesList;
+    private List<FilaUnidadPrecio> precios;
+    private UnidadesJpaController unidadesController;
+    private Integer artId;
+    private PreciosUnidadDataModel dataModel;
+    private List<JTableColumn> columns;
+    
     /**
      * Creates new form PreciosXUnidadFrame
      */
-    public PreciosXUnidadFrame() {
+    public PreciosXUnidadFrame( Integer artId ) {
         initComponents();
+        unidadesController = new UnidadesJpaController(em);
+        loadUnidades();
+        this.artId = artId;
+        
+        initColumns();
+        dataModel = new PreciosUnidadDataModel(columns, unidadesController, artId);
+        jTable1.setModel(dataModel);
+        loadPrecios();
+        
+        jTable1.getTableHeader().addMouseListener(new TableHeadMouseAdapter(jTable1, dataModel));
+        
+        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(!e.getValueIsAdjusting()) {
+                    System.out.println("do something-->");
+                }
+            }
+        });
+    }    
+    
+    public void initColumns(){
+        //a.uni_id, a.uni_name, a.uni_simbolo
+        columns = new ArrayList<JTableColumn>();
+        columns.add(
+                new JTableColumn<FilaUnidadPrecio>(
+                        "Unidad", 
+                        0, 
+                        "uni_name", 
+                        Integer.class,
+                        new DefGSVCol<FilaUnidadPrecio>() {
+                            public Object getValueAt(FilaUnidadPrecio row, int rowIndex) {
+                                return row.getUnidad();
+                            }
+                        }
+                )
+        );
+        
+        columns.add(
+                new JTableColumn<FilaUnidadPrecio>(
+                        "Precio Normal", 
+                        1, 
+                        "unidp_precioventa", 
+                        String.class,
+                        new DefGSVCol<FilaUnidadPrecio>() {
+                            public Object getValueAt(FilaUnidadPrecio row, int rowIndex) {
+                                BigDecimal precioNormal = row.getPrecioNormal();
+                                return NumbersUtil.round2(precioNormal);
+                            }
+                        }
+                )
+        );
+        
+        columns.add(
+                new JTableColumn<FilaUnidadPrecio>(
+                        "Precio Mínimo",
+                        2, 
+                        "unidp_preciomin", 
+                        String.class,
+                        new DefGSVCol<FilaUnidadPrecio>() {
+                            public Object getValueAt(FilaUnidadPrecio row, int rowIndex) {
+                                BigDecimal precioMin =  row.getPrecioMin();
+                                return NumbersUtil.round2(precioMin);
+                            }
+                        }
+                )
+        );
+    }
+    
+    public void loadUnidades(){
+        unidadesList = unidadesController.listar();
+    }
+    
+    public void loadPrecios(){
+        dataModel.loadFromDataBase();
+        dataModel.fireTableDataChanged();
     }
 
     /**
@@ -27,57 +126,76 @@ public class PreciosXUnidadFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel1.setText("Precios x Unidad");
+        jPanel1.add(jLabel1);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
+
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
+
+        jPanel3.setLayout(new java.awt.GridLayout(5, 1));
+
+        jButton1.setText("Borrar");
+        jPanel3.add(jButton1);
+
+        jButton2.setText("Salir");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButton2);
+
+        getContentPane().add(jPanel3, java.awt.BorderLayout.EAST);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PreciosXUnidadFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PreciosXUnidadFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PreciosXUnidadFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PreciosXUnidadFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        
+        setVisible(false);
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PreciosXUnidadFrame().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }

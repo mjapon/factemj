@@ -71,8 +71,13 @@ public class BaseJpaController<T> {
         }
     }
     
-    public Integer runCountQuery(String queryStr){        
-        Query query = newNativeQuery(queryStr);        
+    public boolean enUso(String nativeCountQuery){
+        Integer count = runCountQuery(nativeCountQuery);
+        return count>0;
+    }
+    
+    public Integer runCountQuery(String nativeQuery){        
+        Query query = newNativeQuery(nativeQuery);        
         List<Long> resultList = query.getResultList();
         Integer countResult = 0;
         if (resultList != null){
