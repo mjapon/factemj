@@ -6,21 +6,17 @@
 package jj.gui;
 
 import java.awt.BorderLayout;
-import javax.persistence.EntityManager;
-import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 
 /**
  *
  * @author mjapon
  */
-public class PlanCuentasFrame extends javax.swing.JFrame {
-    
-    private EntityManager em;
-    private JFrame rootFrame;   
-    //private JTree jtree1;
+public class PlanCuentasFrame extends BaseFrame {
     
     private JTree tree;
     private DefaultMutableTreeNode root, parent1, parent2, patrimonioNode, ingresoNode, gastoNode, child,child1, child2;    
@@ -29,17 +25,12 @@ public class PlanCuentasFrame extends javax.swing.JFrame {
      * Creates new form PlanCuentasFrame
      */
     public PlanCuentasFrame() {
-        
         initComponents();
-        
         initTree();
-        
     }
 
     
     public void initTree(){
-        
-        
         root = new DefaultMutableTreeNode("Cuentas");
         parent1 = new DefaultMutableTreeNode("ACTIVO");
         child = new DefaultMutableTreeNode("Vijayawada");
@@ -67,6 +58,16 @@ public class PlanCuentasFrame extends javax.swing.JFrame {
         // Adding root to JTree
         tree = new JTree(root);
         
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        
+        tree.addTreeSelectionListener((e) -> {
+           
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+            
+          
+            
+        });
+        
         jPanelCenter.add(new JScrollPane(tree), BorderLayout.CENTER);
         //jScrollPane1.add(tree);
         //getContentPane().add(new JScrollPane(tree));
@@ -90,7 +91,7 @@ public class PlanCuentasFrame extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jBtnCerrar = new javax.swing.JButton();
         jPanelSouth = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -122,16 +123,21 @@ public class PlanCuentasFrame extends javax.swing.JFrame {
 
         jPanelCenter.setLayout(new java.awt.BorderLayout());
 
-        jPanel1.setLayout(new java.awt.GridLayout(5, 1));
+        jPanel1.setLayout(new java.awt.GridLayout(8, 1));
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Agregar Hijo");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton1);
 
-        jButton2.setText("jButton1");
+        jButton2.setText("Editar");
         jPanel1.add(jButton2);
 
-        jButton3.setText("jButton1");
-        jPanel1.add(jButton3);
+        jBtnCerrar.setText("Cerrar");
+        jPanel1.add(jBtnCerrar);
 
         jPanelCenter.add(jPanel1, java.awt.BorderLayout.EAST);
 
@@ -152,20 +158,27 @@ public class PlanCuentasFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
-    public JFrame getRoot() {
-        return rootFrame;
-    }
 
-    public void setRoot(JFrame root) {
-        this.rootFrame = root;
-    }
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+        if (node != null){
+            String inputValue = JOptionPane.showInputDialog(" Ingrese el valor ");
+            DefaultMutableTreeNode newChild = new DefaultMutableTreeNode( inputValue );
+            node.add( newChild );
+            System.out.println("Nodo agregado-->");
+        }
+        else{
+            System.out.println("Node is null---->");
+        }
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jBtnCerrar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanelCenter;

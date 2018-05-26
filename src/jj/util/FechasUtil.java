@@ -87,6 +87,15 @@ public class FechasUtil {
         return null;
     }
     
+    public static Date sumarDia(Date fecha, int numdias){
+        Calendar calendar = Calendar.getInstance();
+         calendar.setTime(fecha);
+        
+        calendar.add(Calendar.DAY_OF_WEEK, numdias);
+        
+        return calendar.getTime();
+    }
+    
      public static String getDayName(Integer index){
         return diasMap.get(index);
     }

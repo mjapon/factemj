@@ -21,4 +21,8 @@ public class NumbersUtil {
     public static BigDecimal round2(BigDecimal value){
         return NumbersUtil.round(value, 2);
     }
+    
+    public static String round2ToStr(BigDecimal value){
+        return round2(value).toPlainString();
+    }
 }

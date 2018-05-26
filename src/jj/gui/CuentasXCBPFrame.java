@@ -5,12 +5,15 @@
  */
 package jj.gui;
 
+import jj.gui.facte.DetallesFacturaFrame;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -22,6 +25,7 @@ import jj.controller.FacturasJpaController;
 import jj.controller.MovtransaccJpaController;
 import jj.util.EntityManagerUtil;
 import jj.util.FechasUtil;
+import jj.util.NumbersUtil;
 import jj.util.datamodels.rows.FilaCXCP;
 import jj.util.ParamBusquedaCXCP;
 import jj.util.datamodels.AbonosDataModel;
@@ -110,6 +114,8 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
                 int row = table.rowAtPoint(point);
                 
                 if (mouseEvent.getClickCount() == 1) {
+                    
+                    /*
                     //Load Movimientos
                     try{                        
                         int rowCXCP = jTable1.getSelectedRow();
@@ -126,6 +132,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, "Error al listar abonos:"+ex.getMessage());
                     }
                     abonosDataModel.fireTableDataChanged();
+                    */
                 }
                 
                 if (mouseEvent.getClickCount() == 2) {
@@ -135,6 +142,13 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
                 }
             }
         });
+        
+        jTable1.getSelectionModel().addListSelectionListener((e) -> {
+            if (!e.getValueIsAdjusting()) {
+                updateStatusBtn();
+            }
+        });
+        
         
         this.desdeTF.setText( FechasUtil.getFechaActual() );
         this.hastaTF.setText( FechasUtil.getFechaActual() ); 
@@ -161,6 +175,31 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         abonosDataModel.fireTableDataChanged();        
     }
     
+    public void updateStatusBtn(){
+        boolean isEnabled = jTable1.getSelectedRows().length>0;
+        
+        jButtonVerFact.setEnabled(isEnabled);
+        jButtonAbonar.setEnabled(isEnabled);
+        
+        try{      
+            if (isEnabled){
+                int rowCXCP = jTable1.getSelectedRow();
+                if (rowCXCP>-1){
+                    FilaCXCP filaCXCP = cPDataModel.getValueAt(rowCXCP);
+                    abonosDataModel.setPgfId(filaCXCP.getCodPago());
+                    jLabelHeadAbon.setText("LISTA DE ABONOS DE LA FACTURA:"+filaCXCP.getNumFactura());
+                    abonosDataModel.loadFromDataBase(); 
+                }
+            }
+            
+        }
+        catch(Throwable ex){
+            System.out.println("Error al listar abonos:"+ex.getMessage());
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al listar abonos:"+ex.getMessage());
+        }
+    }
+    
     public void setupTransacc(){
         if(this.tra_codigo == 3){
             this.jLabelTitulo.setText("CUENTAS X COBRAR");
@@ -183,6 +222,22 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     
     
     public void updateLabelTotales(){        
+        
+        List<FilaCXCP> items =  cPDataModel.getItems();
+        
+        BigDecimal sumaMonto = BigDecimal.ZERO;
+        BigDecimal sumaValorPend = BigDecimal.ZERO;
+        
+        for (FilaCXCP fila: items){
+            sumaMonto = sumaMonto.add (fila.getMonto());
+            sumaValorPend = sumaValorPend.add (fila.getDeuda());
+        }
+            
+        jTFSumaMonto.setColumns(NumbersUtil.round2ToStr( sumaMonto ).length());
+        jTFSumaMonto.setText(NumbersUtil.round2ToStr( sumaMonto ) );
+        
+        jTFSumaValorPend.setColumns( NumbersUtil.round2ToStr( sumaValorPend ).length() );
+        jTFSumaValorPend.setText( NumbersUtil.round2ToStr( sumaValorPend ) );
        
     }
     
@@ -223,13 +278,19 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         jTextFieldFiltro = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabelHeadAbon = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
+        jPanel7 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jTFSumaMonto = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jTFSumaValorPend = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
@@ -323,23 +384,6 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
 
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        jTable1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jTable1.setRowHeight(20);
-        jScrollPane1.setViewportView(jTable1);
-
-        jSplitPane1.setLeftComponent(jScrollPane1);
-
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         jPanel6.setLayout(new java.awt.GridLayout(1, 1));
@@ -349,7 +393,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
 
         jPanel5.add(jPanel6, java.awt.BorderLayout.NORTH);
 
-        jTable2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jTable2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -361,12 +405,51 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jTable2.setRowHeight(20);
+        jTable2.setRowHeight(30);
         jScrollPane2.setViewportView(jTable2);
 
         jPanel5.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         jSplitPane1.setBottomComponent(jPanel5);
+
+        jPanel7.setLayout(new java.awt.BorderLayout());
+
+        jTable1.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTable1.setRowHeight(30);
+        jScrollPane1.setViewportView(jTable1);
+
+        jPanel7.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        jLabel2.setText("SUMA  MONTO:");
+        jPanel8.add(jLabel2);
+
+        jTFSumaMonto.setEditable(false);
+        jTFSumaMonto.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jPanel8.add(jTFSumaMonto);
+
+        jLabel5.setText("SUMA VALOR PEND:");
+        jPanel8.add(jLabel5);
+
+        jTFSumaValorPend.setEditable(false);
+        jTFSumaValorPend.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jPanel8.add(jTFSumaValorPend);
+
+        jPanel7.add(jPanel8, java.awt.BorderLayout.SOUTH);
+
+        jSplitPane1.setTopComponent(jPanel7);
 
         jPanel2.add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
@@ -402,6 +485,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         jButtonVerFact.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonVerFact.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-visible.png"))); // NOI18N
         jButtonVerFact.setText("Ver Factura");
+        jButtonVerFact.setEnabled(false);
         jButtonVerFact.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonVerFactActionPerformed(evt);
@@ -412,6 +496,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         jButtonAbonar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonAbonar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-cash_in_hand.png"))); // NOI18N
         jButtonAbonar.setText("Abonar");
+        jButtonAbonar.setEnabled(false);
         jButtonAbonar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonAbonarActionPerformed(evt);
@@ -624,8 +709,10 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jCmbEstado;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabelHeadAbon;
     private javax.swing.JLabel jLabelTitulo;
     private javax.swing.JPanel jPanel1;
@@ -635,9 +722,13 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTextField jTFSumaMonto;
+    private javax.swing.JTextField jTFSumaValorPend;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextFieldFiltro;

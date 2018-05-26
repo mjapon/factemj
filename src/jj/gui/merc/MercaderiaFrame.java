@@ -87,10 +87,12 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
                 if (e.getFirstIndex()>=0){
                     btnBorrar.setEnabled(true);
                     jMoverBtn.setEnabled(true);
+                    jBtnPrecios.setEnabled(true);
                 }
                 else{
                     btnBorrar.setEnabled(false);
                     jMoverBtn.setEnabled(false);
+                    jBtnPrecios.setEnabled(false);
                 }
             }
         });        
@@ -260,7 +262,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         btnBorrar = new javax.swing.JButton();
         jMoverBtn = new javax.swing.JButton();
         jUnidadesBtn = new javax.swing.JButton();
-        jUnidadesBtn1 = new javax.swing.JButton();
+        jBtnPrecios = new javax.swing.JButton();
         jCerrarBtn = new javax.swing.JButton();
         jPanelSouth = new javax.swing.JPanel();
         jStatusLabel = new javax.swing.JLabel();
@@ -482,14 +484,15 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         });
         jPanelBtns.add(jUnidadesBtn);
 
-        jUnidadesBtn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-categorize.png"))); // NOI18N
-        jUnidadesBtn1.setText("Precios");
-        jUnidadesBtn1.addActionListener(new java.awt.event.ActionListener() {
+        jBtnPrecios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-price_tag_euro.png"))); // NOI18N
+        jBtnPrecios.setText("Precios");
+        jBtnPrecios.setEnabled(false);
+        jBtnPrecios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jUnidadesBtn1ActionPerformed(evt);
+                jBtnPreciosActionPerformed(evt);
             }
         });
-        jPanelBtns.add(jUnidadesBtn1);
+        jPanelBtns.add(jBtnPrecios);
 
         jCerrarBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jCerrarBtn.setText("Cerrar");
@@ -663,18 +666,18 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         unidadesFrame.setVisible(true);
     }//GEN-LAST:event_jUnidadesBtnActionPerformed
 
-    private void jUnidadesBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUnidadesBtn1ActionPerformed
+    private void jBtnPreciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPreciosActionPerformed
         int row = this.jTableArts.getSelectedRow();
         if (row>-1){
             FilaArticulo filaArticulo = this.mercaderiaDataModel.getFila(row);
             if (filaArticulo!= null){
-                PreciosXUnidadFrame preciosXUnidadFrame = new PreciosXUnidadFrame(filaArticulo);
+                PreciosXUnidadFrame preciosXUnidadFrame = new PreciosXUnidadFrame(filaArticulo,1);
                 preciosXUnidadFrame.centerOnScreen();
                 preciosXUnidadFrame.setVisible(true);
             }
         }
         
-    }//GEN-LAST:event_jUnidadesBtn1ActionPerformed
+    }//GEN-LAST:event_jBtnPreciosActionPerformed
     public void loadCats(){
         try{
             List<Categorias> auxCatsList = catsController.listar();
@@ -691,6 +694,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBorrar;
     private javax.swing.JTextField filtroTF;
+    private javax.swing.JButton jBtnPrecios;
     private javax.swing.JButton jCerrarBtn;
     private javax.swing.JButton jCrearArtBtn;
     private javax.swing.JButton jCrearCatBtn;
@@ -729,7 +733,6 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
     private javax.swing.JTextField jTFTotalPV;
     private javax.swing.JTable jTableArts;
     private javax.swing.JButton jUnidadesBtn;
-    private javax.swing.JButton jUnidadesBtn1;
     // End of variables declaration//GEN-END:variables
 
    

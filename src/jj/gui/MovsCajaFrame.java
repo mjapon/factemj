@@ -5,6 +5,7 @@
  */
 package jj.gui;
 
+import jj.gui.facte.DetallesFacturaFrame;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;

@@ -37,6 +37,10 @@ public class BaseFrame extends javax.swing.JFrame {
     
     public void showMsgError(Throwable ex){
         JOptionPane.showMessageDialog(null, "Algo salio mal :-( "+ex.getMessage());
+        logError(ex);
+    }
+    
+    public void logError(Throwable ex){
         System.out.println("Excepcion:"+ex.getMessage());
         ex.printStackTrace();
     }

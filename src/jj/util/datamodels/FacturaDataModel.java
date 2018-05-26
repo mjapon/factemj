@@ -11,9 +11,9 @@ import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import jj.entity.Articulos;
-import jj.gui.FacturaVentaFrame;
+import jj.gui.facte.FacturaVentaFrame;
 import jj.util.CtesU;
-import jj.util.DescComboBoxEditor;
+import jj.util.ErrorValidException;
 import jj.util.datamodels.rows.FilaFactura;
 import jj.util.TotalesFactura;
 /**
@@ -130,6 +130,7 @@ public class FacturaDataModel extends AbstractTableModel{
         
         if (columnIndex == ColumnaFacturaEnum.VDESC.index){
             
+            /*
             DescComboBoxEditor editor = (DescComboBoxEditor)this.jtable.getCellEditor(rowIndex, columnIndex);
             FilaFactura filafactura = (FilaFactura)this.items.get(rowIndex);
 
@@ -146,17 +147,25 @@ public class FacturaDataModel extends AbstractTableModel{
               maxDescuento = BigDecimal.ZERO;
             }
             maxDescuento = maxDescuento.setScale(2, 4);
-
-            String[] colvalues = new String[2];
-            colvalues[0] = "0.0";
-            colvalues[1] = maxDescuento.toPlainString();
-            editor.updateCombo(colvalues);
             
+            String[] colvalues;
+            if (maxDescuento.compareTo(BigDecimal.ZERO)==0){
+                colvalues = new String[0];
+            }
+            else{
+                colvalues = new String[1];
+                colvalues[0] = maxDescuento.toPlainString();
+            }
+            
+            System.out.println("Actualizando valores del combo de descuentos------>");
+            editor.updateCombo(colvalues);
+            */
+            System.out.println("Col valor de descuento se retura editable true-->" );
             return true;
         }
         else{
             return (columnIndex == ColumnaFacturaEnum.IVA.index)
-               ||(columnIndex == ColumnaFacturaEnum.PRECIOU.index)
+               //||(columnIndex == ColumnaFacturaEnum.PRECIOU.index)
                ||(columnIndex == ColumnaFacturaEnum.CANTIDAD.index)
                ||(columnIndex == ColumnaFacturaEnum.VDESC.index)
                ||(columnIndex == ColumnaFacturaEnum.PDESC.index);
@@ -173,14 +182,22 @@ public class FacturaDataModel extends AbstractTableModel{
                 filafactura.setCantidad(Double.valueOf(aValue.toString()));
             }
             else if (columnIndex == ColumnaFacturaEnum.IVA.index){
+                
                 filafactura.setIsIva("SI".equalsIgnoreCase(aValue.toString()));
+                
+                //filafactura.setIsIva((Boolean)aValue);
             }
             else if(columnIndex == ColumnaFacturaEnum.PRECIOU.index){
                 filafactura.setPrecioUnitario(new BigDecimal(aValue.toString()));
             }
             else if(columnIndex == ColumnaFacturaEnum.VDESC.index) {
-                System.out.println("Valor para descuento es:"+ aValue.toString());
-                filafactura.setDescuento(new BigDecimal(aValue.toString()));
+                if (aValue!= null && aValue.toString().trim().length()>0){
+                    System.out.println("Valor para descuento es----->:"+ aValue.toString());
+                    filafactura.setDescuento(new BigDecimal(aValue.toString()));
+                }
+                else{
+                    filafactura.setDescuento(BigDecimal.ZERO);
+                }
             }
             else if (columnIndex == ColumnaFacturaEnum.PDESC.index){
                 filafactura.setDescuentoPorc(new BigDecimal(aValue.toString()));
@@ -228,6 +245,7 @@ public class FacturaDataModel extends AbstractTableModel{
             }
             else if (columnIndex==ColumnaFacturaEnum.IVA.index){
                 return filafactura.isIsIva()?"SI":"NO";
+                //return filafactura.isIsIva();
             }
             else if (columnIndex==ColumnaFacturaEnum.TOTAL.index){                
                 BigDecimal total = filafactura.getTotal();                    
@@ -266,6 +284,20 @@ public class FacturaDataModel extends AbstractTableModel{
         totalesFactura.setIva(totalesFactura.getIva().setScale(2, BigDecimal.ROUND_HALF_UP) );
         totalesFactura.setTotal( totalesFactura.getTotal().setScale(2, BigDecimal.ROUND_HALF_UP) );
         totalesFactura.setDescuento(totalesFactura.getDescuento().setScale(2, BigDecimal.ROUND_HALF_UP) );
+        
+        //Restar el descuento general
+        BigDecimal globalDiscount = frame.getDescuentoGlobal();
+        BigDecimal totalFactura = totalesFactura.getTotal();
+        
+        if (totalFactura.compareTo(globalDiscount)>=0){
+            totalesFactura.setDescuentoGlobal(globalDiscount);
+            BigDecimal newTotal = totalFactura.subtract(globalDiscount);
+            totalesFactura.setTotal(newTotal);
+        }
+        else{
+            totalesFactura.setDescuentoGlobal(BigDecimal.ZERO);
+            throw  new ErrorValidException("El valor del descuente global es incorrecto");
+        }
         
         frame.updateLabelsTotales();
     }

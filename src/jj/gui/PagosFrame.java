@@ -5,6 +5,7 @@
  */
 package jj.gui;
 
+import jj.gui.facte.FacturaVentaFrame;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;

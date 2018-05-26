@@ -227,11 +227,11 @@ public class NewArtFrame extends BaseFrame {
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 216, Short.MAX_VALUE)
+            .addGap(0, 284, Short.MAX_VALUE)
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 253, Short.MAX_VALUE)
+            .addGap(0, 249, Short.MAX_VALUE)
         );
 
         jPanel4.add(jPanel7);
@@ -240,6 +240,7 @@ public class NewArtFrame extends BaseFrame {
 
         jPanel5.setLayout(new java.awt.GridLayout(5, 1));
 
+        jButtonSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-save.png"))); // NOI18N
         jButtonSave.setText("Guardar");
         jButtonSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -256,6 +257,7 @@ public class NewArtFrame extends BaseFrame {
         });
         jPanel5.add(jButtonUploadImg);
 
+        jButtonClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jButtonClose.setText("Cerrar");
         jButtonClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -270,6 +272,7 @@ public class NewArtFrame extends BaseFrame {
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
+        jLabelTitle.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabelTitle.setText("NUEVO ARTÍCULO");
         jPanel2.add(jLabelTitle);
 

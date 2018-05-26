@@ -239,5 +239,24 @@ public class FilaFactura {
     public void setPrecioCompra(BigDecimal precioCompra) {
         this.precioCompra = precioCompra;
     }
+    
+    public FilaFactura clonar(){        
+        FilaFactura clone = new FilaFactura();        
+        clone.setNumFila(numFila);
+        clone.setCodigoArt(codigoArt);
+        clone.setCodBarra(codBarra);
+        clone.setNombreArt(nombreArt);
+        clone.setCantidad(cantidad);
+        clone.setPrecioUnitario(precioUnitario);
+        clone.setIsIva(isIva);
+        clone.setSubtotal(subtotal);
+        clone.setTotal(total);
+        clone.setValorIva(valorIva);
+        clone.setPrecioMinimo(precioMinimo);
+        clone.setDescuento(descuento);
+        clone.setDescuentoPorc(descuentoPorc);
+        clone.setPrecioCompra(precioCompra);
+        return clone;
+    }
 
 }

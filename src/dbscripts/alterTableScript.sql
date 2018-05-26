@@ -79,3 +79,15 @@ INSERT INTO unidades(uni_id, uni_name, uni_simbolo) VALUES (1,'UNIDAD', 'un');
 update articulos set unid_id = 1;
 
 ALTER SEQUENCE public.unidades_uni_id_seq RESTART WITH 2;
+
+--cambios viernes 25de mayo
+ALTER TABLE public.facturas ADD fact_utilidad NUMERIC(15,4) DEFAULT 0.0 NULL;
+
+
+update facturas set fact_utilidad = subquery.utl from
+(
+  SELECT child.fact_id, sum((child.detf_precio - child.detf_preciocm) * child.detf_cant) AS utl
+  FROM detallesfact child
+  GROUP BY child.fact_id
+) as subquery
+where facturas.fact_id = subquery.fact_id

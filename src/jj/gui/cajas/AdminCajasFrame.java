@@ -177,7 +177,7 @@ public class AdminCajasFrame extends BaseFrame {
         jButtonAnular = new javax.swing.JButton();
         jButtonCerrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 

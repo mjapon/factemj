@@ -15,13 +15,9 @@ import javax.swing.JComboBox;
 public class DescComboBoxEditor extends DefaultCellEditor {    
     private JComboBox combobox;
     public DescComboBoxEditor(String[] items) {
-      //JComboBox combo = new JComboBox(items);
         super( new JComboBox(items) );
         combobox = (JComboBox)this.editorComponent;
-        
         combobox.setEditable(true);
-        System.out.println("Seting editable combobox---->");
-        
     }
   
     public DescComboBoxEditor(JComboBox combo) {
@@ -36,12 +32,7 @@ public class DescComboBoxEditor extends DefaultCellEditor {
     }
     
     public void setSelectedItem(Object value){
-        
-        System.out.println("Set selected item-->" + value);        
-        
         this.combobox.setSelectedItem(value);
-        
-        //this.combobox.getItemAt(clickCountToStart)
         
     }
 }

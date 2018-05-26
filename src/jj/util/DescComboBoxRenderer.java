@@ -15,20 +15,23 @@ import javax.swing.table.TableCellRenderer;
  * @author mjapon
  */
 public class DescComboBoxRenderer extends JComboBox implements TableCellRenderer {
-  public DescComboBoxRenderer(String[] items) {
-    super(items);
-  }
-  
-  public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-      boolean hasFocus, int row, int column) {
-    if (isSelected) {
-      setForeground(table.getSelectionForeground());
-      super.setBackground(table.getSelectionBackground());
-    } else {
-      setForeground(table.getForeground());
-      setBackground(table.getBackground());
+    private JComboBox jComboBox;
+    public DescComboBoxRenderer(String[] items) {
+        super(items);
+        setEditable(true);
     }
-    setSelectedItem(value);
-    return this;
-  }
+  
+    public Component getTableCellRendererComponent(JTable table, Object value, 
+            boolean isSelected,
+            boolean hasFocus, int row, int column) {
+        if (isSelected) {
+          setForeground(table.getSelectionForeground());
+          super.setBackground(table.getSelectionBackground());
+        } else {
+          setForeground(table.getForeground());
+          setBackground(table.getBackground());
+        }
+        setSelectedItem(value);
+        return this;
+      }
 }

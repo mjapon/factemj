@@ -16,7 +16,7 @@ import jj.controller.CajasJpaController;
 import jj.controller.FacturasJpaController;
 import jj.entity.Cajas;
 import jj.gui.BaseFrame;
-import jj.gui.DetallesFacturaFrame;
+import jj.gui.facte.DetallesFacturaFrame;
 import jj.util.FechasUtil;
 import jj.util.datamodels.rows.FilaCXCP;
 import jj.util.datamodels.rows.FilaVenta;
@@ -157,106 +157,126 @@ public class CierreCajaFrame extends BaseFrame {
         abonosCobrados = BigDecimal.ZERO;
         abonosPagados = BigDecimal.ZERO;
         saldoCaja = BigDecimal.ZERO;
+        
+        this.jTFFechaApertura.setText( FechasUtil.getFechaActual() );
+        
     }
     
     public void loadInfoCaja(){
         try{
-            dia = new Date();
-            if (!cajasController.existeCajaAbierta(dia)){
-                showMsg("No existe apertura de caja para hoy:"+ FechasUtil.getDayNameOfDate(dia));
-                this.setVisible(false);
-                return;
+            dia = FechasUtil.parse(jTFFechaApertura.getText());
+            
+            caja = null;
+            boolean hayCajaAbierta = false;
+            
+            if (cajasController.existeCajaAbierta(dia)){
+                caja = cajasController.getCajaDia(dia);
+                hayCajaAbierta = true;
+            }
+            else{
+                if (cajasController.existeCajaAbiertaMenorFecha(dia)){
+                    caja = cajasController.getCajaAbiertaMenorFecha(dia);
+                    hayCajaAbierta = true;
+                }
+                else{
+                    hayCajaAbierta = false;
+                }
             }
             
-            caja = cajasController.getCajaDia(dia);
-            saldoInicial = caja.getCjSaldoant()!=null?caja.getCjSaldoant():BigDecimal.ZERO;
-            
-            this.jTFFechaApertura.setText( FechasUtil.formatDateHour(caja.getCjFecaper()) );
-            this.jTFSaldoInicial.setText( NumbersUtil.round2(saldoInicial).toPlainString() );
-            this.jTAObsApertura.setText( caja.getCjObsaper() );
-            
-            Date desde = caja.getCjFecaper();
-            Date hasta = new Date();
-            
-            //Ventas
-            ParamsBusquedaTransacc paramsVentas = new ParamsBusquedaTransacc();
-            paramsVentas.setDesde(desde);
-            paramsVentas.setHasta(hasta);
-            paramsVentas.setTraCodigo(1);            
-            paramsVentas.setArtId(0);
-            paramsVentas.setCliId(0);
-            
-            movsVentasDataModel.setParams(paramsVentas);
-            movsVentasDataModel.loadFromDataBase();
-            jTableVentas.updateUI();
-            movsVentasDataModel.fireTableDataChanged();      
-            jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ventas("+movsVentasDataModel.getItems().size() +")"  , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
-                        
-            //Compras
-            ParamsBusquedaTransacc paramsCompras = new ParamsBusquedaTransacc();
-            paramsCompras.setDesde(desde);
-            paramsCompras.setHasta(hasta);
-            paramsCompras.setTraCodigo(2);
-            paramsCompras.setArtId(0);
-            paramsCompras.setCliId(0);
-            
-            /*
-            movsComprasDataModel.setParams(paramsCompras);
-            movsComprasDataModel.loadFromDataBase();
-            jTableCompras.updateUI();
-            movsComprasDataModel.fireTableDataChanged();            
-            jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Compras("+movsComprasDataModel.getItems().size() +")" , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
-            */
-            
-            //Cuentas x cobrar
-            ParamBusquedaCXCP paramsCXC = new ParamBusquedaCXCP();
-            paramsCXC.setDesde(desde);
-            paramsCXC.setHasta(hasta);
-            paramsCXC.setTra_codigo(3);
-            paramsCXC.setArtId(0);
-            paramsCXC.setCliId(0);
-            movsCXCDataModel.setParams(paramsCXC);
-            movsCXCDataModel.loadFromDataBase();
-            jTableCxC.updateUI();
-            movsCXCDataModel.fireTableDataChanged();
-            jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Abonos Cobrados("+movsCXCDataModel.getItems().size() +")" , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
-            
-            
-            //Cuentas x pagar
-            ParamBusquedaCXCP paramsCXP = new ParamBusquedaCXCP();
-            paramsCXP.setDesde(desde);
-            paramsCXP.setHasta(hasta);
-            paramsCXP.setTra_codigo(4);
-            paramsCXP.setArtId(0);
-            paramsCXP.setCliId(0);
-            movsCXPDataModel.setParams(paramsCXP);
-            movsCXPDataModel.loadFromDataBase();
-            jTableCxP.updateUI();
-            movsCXPDataModel.fireTableDataChanged();
-            jPanelCxP.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Abonos Pagados("+movsCXPDataModel.getItems().size() +")" , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
-            
-            //updateLabelTotales();         
-            
-            //Sumatora de ventas
-            TotalesVentasModel totalesVentas =  movsVentasDataModel.getTotalesVentasModel();
-            TotalesCuentasXPC totalesCXP = movsCXPDataModel.getTotalesFactura();
-            TotalesCuentasXPC totalesCXC = movsCXCDataModel.getTotalesFactura();
-            
-            totalVentas = totalesVentas.getSumaEfectivo();
-            abonosCobrados = totalesCXC.getSumaMonto();
-            abonosPagados = totalesCXP.getSumaMonto();
-            
-            saldoCaja =  saldoInicial.add(totalVentas).add(abonosCobrados).subtract(abonosPagados);
-            
-            jTFVentas.setText( NumbersUtil.round2(totalVentas).toPlainString() );
-            jTFCuentasXCobrar.setText( NumbersUtil.round2(abonosCobrados).toPlainString() );
-            jTFCuentasXPagar.setText( NumbersUtil.round2(abonosPagados).toPlainString() );
-            jTFSaldo.setText(NumbersUtil.round2(saldoCaja).toPlainString());
-            
-            jTFTotalVGrid.setText(NumbersUtil.round2(totalVentas).toPlainString());
-            jTFTotalACGrid.setText(NumbersUtil.round2(abonosCobrados).toPlainString());
-            jTFTotalAPGrid.setText(NumbersUtil.round2(abonosPagados).toPlainString());
-        
+            if (!hayCajaAbierta){
+                showMsg("No existe caja abierta");
+            }
+            else{
+                this.jTFFechaApertura.setText( FechasUtil.formatDateHour(caja.getCjFecaper()) );
+                saldoInicial = caja.getCjSaldoant()!=null?caja.getCjSaldoant():BigDecimal.ZERO;
+
+                this.jTFFechaApertura.setText( FechasUtil.formatDateHour(caja.getCjFecaper()) );
+                this.jTFSaldoInicial.setText( NumbersUtil.round2(saldoInicial).toPlainString() );
+                this.jTAObsApertura.setText( caja.getCjObsaper() );
+
+                Date desde = caja.getCjFecaper();
+                Date hasta = new Date();
+
+                //Ventas
+                ParamsBusquedaTransacc paramsVentas = new ParamsBusquedaTransacc();
+                paramsVentas.setDesde(desde);
+                paramsVentas.setHasta(hasta);
+                paramsVentas.setTraCodigo(1);            
+                paramsVentas.setArtId(0);
+                paramsVentas.setCliId(0);
+                paramsVentas.setUsarFechaHora(true);
+
+                movsVentasDataModel.setParams(paramsVentas);
+                movsVentasDataModel.loadFromDataBase();
+                jTableVentas.updateUI();
+                movsVentasDataModel.fireTableDataChanged();      
+                jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ventas("+movsVentasDataModel.getItems().size() +")"  , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
+
+                //Compras
+                ParamsBusquedaTransacc paramsCompras = new ParamsBusquedaTransacc();
+                paramsCompras.setDesde(desde);
+                paramsCompras.setHasta(hasta);
+                paramsCompras.setTraCodigo(2);
+                paramsCompras.setArtId(0);
+                paramsCompras.setCliId(0);
+
+                /*
+                movsComprasDataModel.setParams(paramsCompras);
+                movsComprasDataModel.loadFromDataBase();
+                jTableCompras.updateUI();
+                movsComprasDataModel.fireTableDataChanged();            
+                jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Compras("+movsComprasDataModel.getItems().size() +")" , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
+                */
+
+                //Cuentas x cobrar
+                ParamBusquedaCXCP paramsCXC = new ParamBusquedaCXCP();
+                paramsCXC.setDesde(desde);
+                paramsCXC.setHasta(hasta);
+                paramsCXC.setTra_codigo(3);
+                paramsCXC.setArtId(0);
+                paramsCXC.setCliId(0);
+                movsCXCDataModel.setParams(paramsCXC);
+                movsCXCDataModel.loadFromDataBase();
+                jTableCxC.updateUI();
+                movsCXCDataModel.fireTableDataChanged();
+                jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Abonos Cobrados("+movsCXCDataModel.getItems().size() +")" , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
+
+
+                //Cuentas x pagar
+                ParamBusquedaCXCP paramsCXP = new ParamBusquedaCXCP();
+                paramsCXP.setDesde(desde);
+                paramsCXP.setHasta(hasta);
+                paramsCXP.setTra_codigo(4);
+                paramsCXP.setArtId(0);
+                paramsCXP.setCliId(0);
+                movsCXPDataModel.setParams(paramsCXP);
+                movsCXPDataModel.loadFromDataBase();
+                jTableCxP.updateUI();
+                movsCXPDataModel.fireTableDataChanged();
+                jPanelCxP.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Abonos Pagados("+movsCXPDataModel.getItems().size() +")" , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
+
+                //updateLabelTotales();         
+
+                //Sumatora de ventas
+                TotalesVentasModel totalesVentas =  movsVentasDataModel.getTotalesVentasModel();
+                TotalesCuentasXPC totalesCXP = movsCXPDataModel.getTotalesFactura();
+                TotalesCuentasXPC totalesCXC = movsCXCDataModel.getTotalesFactura();
+
+                totalVentas = totalesVentas.getSumaEfectivo();
+                abonosCobrados = totalesCXC.getSumaMonto();
+                abonosPagados = totalesCXP.getSumaMonto();
+
+                saldoCaja =  saldoInicial.add(totalVentas).add(abonosCobrados).subtract(abonosPagados);
+
+                jTFVentas.setText( NumbersUtil.round2(totalVentas).toPlainString() );
+                jTFCuentasXCobrar.setText( NumbersUtil.round2(abonosCobrados).toPlainString() );
+                jTFCuentasXPagar.setText( NumbersUtil.round2(abonosPagados).toPlainString() );
+                jTFSaldo.setText(NumbersUtil.round2(saldoCaja).toPlainString());
+
+                jTFTotalVGrid.setText(NumbersUtil.round2(totalVentas).toPlainString());
+                jTFTotalACGrid.setText(NumbersUtil.round2(abonosCobrados).toPlainString());
+                jTFTotalAPGrid.setText(NumbersUtil.round2(abonosPagados).toPlainString());
+            }
         }
         catch(Throwable ex){
             showMsgError(ex);

@@ -576,19 +576,19 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                                                             "f.factId.cliId.cliNombres,\n" +
                                                             "f.factId.cliId.cliCi,"+
                                                             "f.detfPreciocm,"+
-                                                            "0.0 as efectivo, 0.0 as credito, 0.0 as saldo from Detallesfact f");
+                                                            "0.0 as efectivo, 0.0 as credito, 0.0 as saldo, 0.0 as utilidad from Detallesfact f");
 
             //Columnas de la consulta
             StringBuilder baseQueryFact = new StringBuilder("select f.factId, \n" +
                                                         "f.factNum,\n" +
                                                         "f.factSubt,  \n" +
                                                         "f.factIva,\n" +
-                                                        "f.factDesc,   \n" +
+                                                        "COALESCE(f.factDesc,0.0)+COALESCE(f.factDescg,0.0) as factDesc,   \n" +
                                                         "f.factTotal,\n" +
                                                         "f.factFecreg,\n" +
                                                         "f.cliId.cliNombres,\n" +
                                                         "f.cliId.cliCi,"+
-                                                        "0.0 as pc, 0.0 as efectivo, 0.0 as credito, 0.0 as saldo from Facturas f ");     
+                                                        "0.0 as pc, 0.0 as efectivo, 0.0 as credito, 0.0 as saldo, f.factUtilidad from Facturas f ");     
             
             String baseQuery = baseQueryFact.toString();
             String prefijo = "f";
@@ -605,10 +605,20 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
             paramsList.add(prefijo+".traId.traId= "+params.getTraCodigo());
             
             if (params.getDesde() != null){
-                paramsList.add(prefijo+".factFecha >= :paramDesde ");
+                if (params.isUsarFechaHora()){
+                    paramsList.add(prefijo+".factFecreg >= :paramDesde ");
+                }
+                else{
+                    paramsList.add(prefijo+".factFecha >= :paramDesde ");
+                }
             }
             if (params.getHasta() != null){
-                paramsList.add(prefijo+".factFecha <= :paramHasta ");
+                if (params.isUsarFechaHora()){
+                    paramsList.add(prefijo+".factFecreg <= :paramHasta ");
+                }
+                else{
+                    paramsList.add(prefijo+".factFecha <= :paramHasta ");
+                }
             }
             
             if (params.getCliId() != null && params.getCliId()>0){
@@ -644,11 +654,21 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
             Query query = this.newQuery(queryStr.toString());
             
             if (params.getDesde() != null){
-                query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
+                if (params.isUsarFechaHora()){
+                    query = query.setParameter("paramDesde", params.getDesde(), TemporalType.TIMESTAMP);
+                }
+                else{
+                    query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
+                }
             }
             
             if (params.getHasta() != null){
-                query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
+                if (params.isUsarFechaHora()){
+                    query = query.setParameter("paramHasta", params.getHasta(), TemporalType.TIMESTAMP);
+                }
+                else{
+                    query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
+                }
             }
             
             if (params.getCliId() != null && params.getCliId()>0){
@@ -957,6 +977,17 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         return null;
     }
     
+    public BigDecimal getUtilidadVenta(List<FilaFactura> detalles){
+        BigDecimal utilidad = BigDecimal.ZERO;
+        
+        for(FilaFactura fila: detalles){
+            utilidad = utilidad.add( fila.getPrecioUnitario().subtract(fila.getPrecioCompra()).multiply(new BigDecimal( fila.getCantidad() )) );
+        }
+        
+        return utilidad;
+        
+    }
+    
     public void crearFactura(
             DatosCabeceraFactura datosCabecera, 
             TotalesFactura totalesFact, 
@@ -1041,6 +1072,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
             factura.setFactIva(totalesFact.getIva());
             factura.setFactTotal(totalesFact.getTotal());
             factura.setFactDesc(totalesFact.getDescuento());
+            factura.setFactDescg(totalesFact.getDescuentoGlobal());
 
             factura.setFactFecha(new Date());
             factura.setFactFecreg(new Date());
@@ -1052,6 +1084,10 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
             factura.setTraId(transacc);
 
             factura.setUserId(1);
+                        
+            //Utilidades
+            factura.setFactUtilidad(getUtilidadVenta(detalles));
+            
             em.persist(factura);
 
             //Registro de detalles de factura
@@ -1123,11 +1159,6 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
             System.out.println("Erro al tratar de registrar factura:"+ ex.getMessage());
             ex.printStackTrace();
             throw  new Exception("Erro al tratar de registrar factura:"+ ex.getMessage());
-        }
-        finally{
-            if (em != null) {
-                //em.close();
-            }
         }
     }
 }

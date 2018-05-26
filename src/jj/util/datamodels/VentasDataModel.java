@@ -118,14 +118,16 @@ public class VentasDataModel extends AbstractTableModel{
         BigDecimal sumaEfectivo = BigDecimal.ZERO;
         BigDecimal sumaCredito = BigDecimal.ZERO;
         BigDecimal sumaSaldo = BigDecimal.ZERO;
+        BigDecimal sumaUtilidades = BigDecimal.ZERO;
         
-        for (FilaVenta filaVenta: this.items){            
+        for (FilaVenta filaVenta: this.items){
             sumaIva = sumaIva.add(filaVenta.getIva());
             sumaDesc = sumaDesc.add(filaVenta.getDescuento());
             sumaTotal = sumaTotal.add(filaVenta.getTotal());
             sumaEfectivo = sumaEfectivo.add(filaVenta.getEfectivo());
             sumaCredito = sumaCredito.add(filaVenta.getCredito());
             sumaSaldo = sumaSaldo.add(filaVenta.getSaldo());
+            sumaUtilidades = sumaUtilidades.add(filaVenta.getUtilidad());
         }
         
         if (this.totalesVentasModel == null){
@@ -138,6 +140,7 @@ public class VentasDataModel extends AbstractTableModel{
         totalesVentasModel.setSumaEfectivo(sumaEfectivo);
         totalesVentasModel.setSumaCredito(sumaCredito);
         totalesVentasModel.setSumaSaldo(sumaSaldo);
+        totalesVentasModel.setUtilidades(sumaUtilidades);
     }
     
     public VentasDataModel(){
@@ -247,6 +250,7 @@ public class VentasDataModel extends AbstractTableModel{
             BigDecimal efectivo = (BigDecimal)art[10];
             BigDecimal credito = (BigDecimal)art[11];
             BigDecimal saldo = (BigDecimal)art[12];
+            BigDecimal utilidad = (BigDecimal)art[13];
             
             if (efectivo.compareTo(BigDecimal.ZERO)==0 && credito.compareTo(BigDecimal.ZERO)==0){
                 efectivo = total;
@@ -254,22 +258,12 @@ public class VentasDataModel extends AbstractTableModel{
             
             FilaVenta fila = new FilaVenta(ventaId, nro, cliente, ciruc, iva, 
                     descuento, total, subtotal, 
-                    FechasUtil.format(fechaReg), efectivo, credito);
+                    FechasUtil.format(fechaReg), efectivo, credito, utilidad);
             fila.setSaldo(saldo);
             items.add(fila);
         }
         
         totalizar();        
-        totalesVentasModel.setUtilidades(BigDecimal.ZERO);
-        try{
-            BigDecimal utilidades = controller.getUtilidades(params);
-            totalesVentasModel.setUtilidades(utilidades);
-        }
-        catch(Throwable ex){
-            System.out.println("Error al obtener las utilidades:"+ex.getMessage());
-            ex.printStackTrace();
-        }
-        
         fireTableDataChanged();
     }
     

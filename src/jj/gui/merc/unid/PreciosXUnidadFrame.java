@@ -36,12 +36,15 @@ public class PreciosXUnidadFrame extends BaseFrame {
     private FilaArticulo selectedArt;
     private PreciosUnidadDataModel dataModel;
     private List<JTableColumn> columns;
+    private Integer modo;//1-Administracion, 2-Seleccion
+    private IListenerSelectUnity listenerSelectUnity;
     
     /**
      * Creates new form PreciosXUnidadFrame
      */
-    public PreciosXUnidadFrame( FilaArticulo selectedArt ) {
+    public PreciosXUnidadFrame( FilaArticulo selectedArt, Integer modo ) {
         initComponents();
+        this.modo = modo;
         unidadesController = new UnidadesJpaController(em);
         this.selectedArt = selectedArt;
         loadUnidades();
@@ -60,7 +63,34 @@ public class PreciosXUnidadFrame extends BaseFrame {
                 }
             }
         });
+        
+        jLabelTitle.setText("Precios por unidad para:"+selectedArt.getNombre());
+        
+        if (modo==1){
+            jPanelNewForm.setVisible(true);
+            jBtnCrear.setEnabled(true);
+            jBtnSelect.setEnabled(false);
+            jBtnBorrar.setEnabled(true);
+        }
+        else{
+            jPanelNewForm.setVisible(false);
+            jBtnCrear.setEnabled(false);
+            jBtnSelect.setEnabled(true);
+            jBtnBorrar.setEnabled(false);
+        }
+        
     }    
+
+    public IListenerSelectUnity getListenerSelectUnity() {
+        return listenerSelectUnity;
+    }
+
+    public void setListenerSelectUnity(IListenerSelectUnity listenerSelectUnity) {
+        this.listenerSelectUnity = listenerSelectUnity;
+    }
+
+   
+    
     
     public void endisBtns(){
         boolean isEnable = jTable1.getSelectedRows().length>0;
@@ -171,12 +201,13 @@ public class PreciosXUnidadFrame extends BaseFrame {
         jTable1 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jBtnBorrar = new javax.swing.JButton();
+        jBtnSelect = new javax.swing.JButton();
         jBtnSalir = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelTitle = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
+        jPanelNewForm = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -210,6 +241,7 @@ public class PreciosXUnidadFrame extends BaseFrame {
 
         jPanel3.setLayout(new java.awt.GridLayout(5, 1));
 
+        jBtnBorrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-trash.png"))); // NOI18N
         jBtnBorrar.setText("Borrar");
         jBtnBorrar.setEnabled(false);
         jBtnBorrar.addActionListener(new java.awt.event.ActionListener() {
@@ -219,6 +251,17 @@ public class PreciosXUnidadFrame extends BaseFrame {
         });
         jPanel3.add(jBtnBorrar);
 
+        jBtnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-checked.png"))); // NOI18N
+        jBtnSelect.setText("Elegir");
+        jBtnSelect.setEnabled(false);
+        jBtnSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnSelectActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jBtnSelect);
+
+        jBtnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jBtnSalir.setText("Cerrar");
         jBtnSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -233,30 +276,32 @@ public class PreciosXUnidadFrame extends BaseFrame {
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel1.setText("Precios x Unidad");
-        jPanel1.add(jLabel1);
+        jLabelTitle.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLabelTitle.setText("Precios por unidad para:");
+        jPanel1.add(jLabelTitle);
 
         jPanel4.add(jPanel1);
 
         jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jPanel6.setLayout(new java.awt.GridLayout(2, 3));
+        jPanelNewForm.setLayout(new java.awt.GridLayout(2, 3));
 
         jLabel2.setText("Unidad");
-        jPanel6.add(jLabel2);
+        jPanelNewForm.add(jLabel2);
 
         jLabel3.setText("Precio Venta");
-        jPanel6.add(jLabel3);
+        jPanelNewForm.add(jLabel3);
 
         jLabel4.setText("Precio Min.");
-        jPanel6.add(jLabel4);
+        jPanelNewForm.add(jLabel4);
 
-        jPanel6.add(jCBUnidad);
-        jPanel6.add(jTFPrecioVenta);
-        jPanel6.add(jTFPrecioMin);
+        jPanelNewForm.add(jCBUnidad);
+        jPanelNewForm.add(jTFPrecioVenta);
+        jPanelNewForm.add(jTFPrecioMin);
 
-        jPanel5.add(jPanel6, java.awt.BorderLayout.CENTER);
+        jPanel5.add(jPanelNewForm, java.awt.BorderLayout.CENTER);
 
+        jBtnCrear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/Plus_25px.png"))); // NOI18N
         jBtnCrear.setText("Agregar");
         jBtnCrear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -343,22 +388,37 @@ public class PreciosXUnidadFrame extends BaseFrame {
         
     }//GEN-LAST:event_jBtnBorrarActionPerformed
 
+    private void jBtnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSelectActionPerformed
+        try{
+            int indexRow = jTable1.getSelectedRow();
+            listenerSelectUnity.doSelect( dataModel.getValueAt(indexRow) );
+            setVisible(false);
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }
+        
+        
+        
+    }//GEN-LAST:event_jBtnSelectActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnBorrar;
     private javax.swing.JButton jBtnCrear;
     private javax.swing.JButton jBtnSalir;
+    private javax.swing.JButton jBtnSelect;
     private javax.swing.JComboBox<String> jCBUnidad;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabelTitle;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanelNewForm;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTFPrecioMin;
     private javax.swing.JTextField jTFPrecioVenta;

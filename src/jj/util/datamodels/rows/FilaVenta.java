@@ -25,11 +25,13 @@ public class FilaVenta {
     private BigDecimal credito;
     private BigDecimal saldo;
     
+    private BigDecimal utilidad;
+    
     private String fechaReg;
 
     public FilaVenta(Integer ventaId, String nro, String cliente, String ciruc, 
             BigDecimal iva, BigDecimal descuento, BigDecimal total, 
-            BigDecimal subtotal, String fechaReg, BigDecimal efectivo, BigDecimal credito) {
+            BigDecimal subtotal, String fechaReg, BigDecimal efectivo, BigDecimal credito, BigDecimal utilidad) {
         this.ventaId = ventaId;
         this.nro = nro;
         this.cliente = cliente;
@@ -41,6 +43,7 @@ public class FilaVenta {
         this.subtotal = subtotal;
         this.efectivo = efectivo;
         this.credito = credito;
+        this.utilidad = utilidad;
     }
 
     public Integer getVentaId() {
@@ -138,5 +141,14 @@ public class FilaVenta {
     public void setSaldo(BigDecimal saldo) {
         this.saldo = saldo;
     }
+
+    public BigDecimal getUtilidad() {
+        return utilidad;
+    }
+
+    public void setUtilidad(BigDecimal utilidad) {
+        this.utilidad = utilidad;
+    }
+    
     
 }

@@ -22,6 +22,7 @@ public class ParamsBusquedaTransacc {
     private String sortOrder;
     private Integer traCodigo;
     private String filtro;
+    private boolean usarFechaHora;
 
     public ParamsBusquedaTransacc() {
     }
@@ -103,4 +104,14 @@ public class ParamsBusquedaTransacc {
     public void setFiltro(String filtro) {
         this.filtro = filtro;
     }
+
+    public boolean isUsarFechaHora() {
+        return usarFechaHora;
+    }
+
+    public void setUsarFechaHora(boolean usarFechaHora) {
+        this.usarFechaHora = usarFechaHora;
+    }
+    
+    
 }

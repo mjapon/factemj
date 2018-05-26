@@ -36,11 +36,52 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
     }
     
     public boolean existeCajaAbierta(Date dia){
-        
         String query = String.format("select count(*) from cajas where cj_fecaper::date = to_date('%s','DD/MM/YYYY') and cj_estado = 0", FechasUtil.format(dia));
+        Integer count = runCountQuery(query);
+        return count>0;
+    }
+    
+    public boolean existeCajaAbiertaMenorFecha(Date dia){
+        String query = String.format("select count(*) from cajas where cj_fecaper::date < to_date('%s','DD/MM/YYYY') and cj_estado = 0", FechasUtil.format(dia));
+        Integer count = runCountQuery(query);
+        return count>0;
+    }
+    
+    public Cajas getCajaAbiertaMenorFecha(Date dia){
+        String nativeQuery = String.format("select cj_id from cajas where cj_fecaper::date < to_date('%s','DD/MM/YYYY') and cj_estado = 0 ", FechasUtil.format(dia));
+        Integer cajaId = (Integer)newNativeQuery(nativeQuery).getSingleResult();
+        if (cajaId != null){
+            return em.find(Cajas.class, cajaId);
+        }
+        return null;
+    }
+    
+    public Cajas getCajaCerradaMenorFecha(Date dia){
+        String nativeQuery = String.format("select cj_id from cajas where cj_fecaper::date < to_date('%s','DD/MM/YYYY') and cj_estado = 1 order by cj_feccierre desc ", FechasUtil.format(dia));
+        List<Integer> rs = newNativeQuery(nativeQuery).getResultList();
+        if (rs.size()>0){
+            Integer cajaId = (Integer)rs.get(0);
+            if (cajaId != null){
+                return em.find(Cajas.class, cajaId);
+            }
+        }
+        
+        return null;
+    }
+    
+    public boolean hayCajaNoCerradaAyer(Date hoy){
+        Date ayer =FechasUtil.sumarDia(hoy, -1);
+        return existeCajaAbierta(ayer);
+    }
+    
+    public boolean existeCajaAbierta(){
+        String query = String.format("select count(*) from cajas where cj_estado = 0");
         Integer count = runCountQuery(query);        
         return count>0;
-        
+    }
+    
+    public Cajas getUltimaCajaCerrada(Date dia){
+        return getCajaCerradaMenorFecha(dia);
     }
     
     public Cajas getCajaDiaAnterior(Date dia){
@@ -61,6 +102,7 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
          }
     }
     
+    
     public Cajas getCajaDia(Date dia){        
          String nativeQuery = String.format("select cj_id, cj_fecaper  from cajas where cj_fecaper::date = to_date('%s','DD/MM/YYYY') and cj_estado != 2", FechasUtil.format(dia));
          
@@ -75,24 +117,31 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
          }        
     }
     
-    public void crearCaja(Date fechaApertura, BigDecimal saldoAnterior, String obs){
+    public void crearCaja(Date fechaApertura, BigDecimal saldoAnterior, String obs) throws Throwable{
         
         if (existeCajaAbierta(fechaApertura)){
            throw new ErrorValidException("Ya ha sido registrado la apertura de caja");
         }
         
-        beginTrans();
+        try{
+            beginTrans();
         
-        Cajas cajas = new Cajas();
+            Cajas cajas = new Cajas();
+
+            cajas.setCjFecaper(fechaApertura);
+            cajas.setCjSaldoant(saldoAnterior);
+            cajas.setCjObsaper(obs);
+            cajas.setCjEstado(0);
+
+            em.persist(cajas);
+
+            commitTrans();
+            
+        }
+        catch(Throwable ex){
+            logErrorWithThrow(ex);
+        }
         
-        cajas.setCjFecaper(fechaApertura);
-        cajas.setCjSaldoant(saldoAnterior);
-        cajas.setCjObsaper(obs);
-        cajas.setCjEstado(0);
-        
-        em.persist(cajas);
-        
-        commitTrans();
     }
     
     public void cerrarCaja(Integer cjId,
