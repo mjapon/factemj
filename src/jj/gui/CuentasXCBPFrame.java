@@ -633,12 +633,8 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
 
     private void jTextFieldFiltroKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldFiltroKeyReleased
         
-        String filtro = jTextFieldFiltro.getText().trim();
-        if (filtro.length()>3){
-            System.out.println("Busqueda por filtro --->");
-            logicaBuscar();
-            
-        }
+        logicaBuscar();
+        
         
     }//GEN-LAST:event_jTextFieldFiltroKeyReleased
      

@@ -10,7 +10,6 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -278,6 +277,11 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
             }
         });
 
+        jTextFieldFiltro.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextFieldFiltroFocusGained(evt);
+            }
+        });
         jTextFieldFiltro.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jTextFieldFiltroMouseReleased(evt);
@@ -658,7 +662,6 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
     }//GEN-LAST:event_jBtnQuitarArtActionPerformed
 
     private void btnDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetallesActionPerformed
-        
         showDetallesFrame();
     }//GEN-LAST:event_btnDetallesActionPerformed
 
@@ -667,13 +670,15 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
     }//GEN-LAST:event_jTextFieldFiltroMouseReleased
 
     private void jTextFieldFiltroKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldFiltroKeyReleased
-        
         System.out.println("key released");
-        
-        
-        
-        
     }//GEN-LAST:event_jTextFieldFiltroKeyReleased
+
+    private void jTextFieldFiltroFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldFiltroFocusGained
+        
+        System.out.println("Se ejecuta el evento focus gained----------->");
+        this.jTextFieldFiltro.selectAll();
+        
+    }//GEN-LAST:event_jTextFieldFiltroFocusGained
 
     
     public void showDetallesFrame(){

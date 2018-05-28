@@ -30,7 +30,7 @@ public class MercaderiaDataModel extends AbstractTableModel{
     private String[] columNames={
         "Nro", //0 artId
         "Codbar",//1 artCodbar
-        "Articulo",//2  artNombre
+        "Articulo",//2  artNombre  
         "Prec. Compra sin Iva",//3   artPrecioCompra
         "Prec. Venta",//4  artPrecio
         "Precio Mínimo",//5  artPreciomin
@@ -219,15 +219,15 @@ public class MercaderiaDataModel extends AbstractTableModel{
     
     public void updateTotales(){
         BigDecimal sumaPrecioVenta = items.stream()
-                .map(FilaArticulo::getPrecioVentaConIva)
+                .map(FilaArticulo::getPrecioVentaIvaMult)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         BigDecimal sumaPrecioCompra = items.stream()
-                .map(FilaArticulo::getPrecioCompra)
+                .map(FilaArticulo::getPrecioCompraMult)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         BigDecimal sumaPrecioVentaMin = items.stream()
-                .map(FilaArticulo::getPrecioMinConIva)
+                .map(FilaArticulo::getPrecioVentaMinIvaMult)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         BigDecimal sumaInv = items.stream()

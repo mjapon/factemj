@@ -40,7 +40,7 @@ public class AperturaCajaFrame extends BaseFrame {
             dayName.setText(FechasUtil.getDayNameOfDate(dia));
             jTFFecha.setText( FechasUtil.format(dia) );
             saldoInicial = BigDecimal.ZERO;
-            Cajas cajaAyer = cajasController.getUltimaCajaCerrada(dia);
+            Cajas cajaAyer = cajasController.getCajaCerradaMenorFechaCierre(dia);
             if (cajaAyer != null){
                 saldoInicial = cajaAyer.getCjSaldo();
             }
@@ -60,7 +60,6 @@ public class AperturaCajaFrame extends BaseFrame {
         else{
             if (cajasController.existeCajaAbiertaMenorFecha(dia)){
                 showMsg("No se puede abrir Caja, existe una caja anterior que no ha sido cerrada aún, cierre esa caja para poder aperturar otra" );
-                setVisible(false);
             }
         }
     }

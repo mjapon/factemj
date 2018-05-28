@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -25,6 +26,7 @@ import jj.gui.FarmaAppMain;
 import jj.gui.merc.unid.PreciosXUnidadFrame;
 import jj.gui.merc.unid.UnidadesFrame;
 import jj.util.ArrayUtil;
+import jj.util.SelectingEditor;
 import jj.util.datamodels.rows.FilaArticulo;
 import jj.util.datamodels.rows.CatRow;
 import jj.util.datamodels.CatsListModel;
@@ -84,18 +86,20 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         jTableArts.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (e.getFirstIndex()>=0){
-                    btnBorrar.setEnabled(true);
-                    jMoverBtn.setEnabled(true);
-                    jBtnPrecios.setEnabled(true);
-                }
-                else{
-                    btnBorrar.setEnabled(false);
-                    jMoverBtn.setEnabled(false);
-                    jBtnPrecios.setEnabled(false);
-                }
+                boolean enabled = e.getFirstIndex()>=0;
+                btnBorrar.setEnabled(enabled);
+                jMoverBtn.setEnabled(enabled);
+                jBtnPrecios.setEnabled(enabled);
             }
         });        
+        
+        SelectingEditor selectingEditor = new SelectingEditor(new JTextField());
+        //2,3,4,5,7
+        jTableArts.getColumnModel().getColumn(2).setCellEditor(selectingEditor);
+        jTableArts.getColumnModel().getColumn(3).setCellEditor(selectingEditor);
+        jTableArts.getColumnModel().getColumn(4).setCellEditor(selectingEditor);
+        jTableArts.getColumnModel().getColumn(5).setCellEditor(selectingEditor);
+        jTableArts.getColumnModel().getColumn(7).setCellEditor(selectingEditor);
         
         reloadArts();
         

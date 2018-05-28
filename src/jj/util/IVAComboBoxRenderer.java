@@ -17,6 +17,7 @@ import javax.swing.table.TableCellRenderer;
 public class IVAComboBoxRenderer extends JComboBox implements TableCellRenderer {
   public IVAComboBoxRenderer(String[] items) {
     super(items);
+    
   }
   
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,

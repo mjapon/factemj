@@ -69,6 +69,20 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
         return null;
     }
     
+    
+    public Cajas getCajaCerradaMenorFechaCierre(Date dia){
+        String nativeQuery = String.format("select cj_id from cajas where cj_feccierre < to_date('%s','DD/MM/YYYY HH24:MI') and cj_estado = 1 order by cj_feccierre desc ", FechasUtil.formatDateHour(dia));
+        List<Integer> rs = newNativeQuery(nativeQuery).getResultList();
+        if (rs.size()>0){
+            Integer cajaId = (Integer)rs.get(0);
+            if (cajaId != null){
+                return em.find(Cajas.class, cajaId);
+            }
+        }
+        
+        return null;
+    }
+    
     public boolean hayCajaNoCerradaAyer(Date hoy){
         Date ayer =FechasUtil.sumarDia(hoy, -1);
         return existeCajaAbierta(ayer);

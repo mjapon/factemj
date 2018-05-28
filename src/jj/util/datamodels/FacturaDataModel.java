@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import jj.entity.Articulos;
+import jj.gui.FarmaAppMain;
 import jj.gui.facte.FacturaVentaFrame;
 import jj.util.CtesU;
 import jj.util.ErrorValidException;
@@ -182,17 +183,13 @@ public class FacturaDataModel extends AbstractTableModel{
                 filafactura.setCantidad(Double.valueOf(aValue.toString()));
             }
             else if (columnIndex == ColumnaFacturaEnum.IVA.index){
-                
                 filafactura.setIsIva("SI".equalsIgnoreCase(aValue.toString()));
-                
-                //filafactura.setIsIva((Boolean)aValue);
             }
             else if(columnIndex == ColumnaFacturaEnum.PRECIOU.index){
                 filafactura.setPrecioUnitario(new BigDecimal(aValue.toString()));
             }
             else if(columnIndex == ColumnaFacturaEnum.VDESC.index) {
                 if (aValue!= null && aValue.toString().trim().length()>0){
-                    System.out.println("Valor para descuento es----->:"+ aValue.toString());
                     filafactura.setDescuento(new BigDecimal(aValue.toString()));
                 }
                 else{
@@ -202,8 +199,9 @@ public class FacturaDataModel extends AbstractTableModel{
             else if (columnIndex == ColumnaFacturaEnum.PDESC.index){
                 filafactura.setDescuentoPorc(new BigDecimal(aValue.toString()));
             }
-            
+           
             filafactura.updateTotales();
+            filafactura.calcDescFromPorc();
             totalizarFactura();
             fireTableCellUpdated(rowIndex, columnIndex);
             
@@ -296,7 +294,9 @@ public class FacturaDataModel extends AbstractTableModel{
         }
         else{
             totalesFactura.setDescuentoGlobal(BigDecimal.ZERO);
-            throw  new ErrorValidException("El valor del descuente global es incorrecto");
+            frame.setValueDescGlobal(totalesFactura.getDescuentoGlobal());
+            FarmaAppMain.showSystemTrayMsg("El valor del descuente global es incorrecto");
+            //throw  new ErrorValidException("El valor del descuente global es incorrecto");
         }
         
         frame.updateLabelsTotales();

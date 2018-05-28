@@ -137,6 +137,11 @@ public class PlanCuentasFrame extends BaseFrame {
         jPanel1.add(jButton2);
 
         jBtnCerrar.setText("Cerrar");
+        jBtnCerrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnCerrarActionPerformed(evt);
+            }
+        });
         jPanel1.add(jBtnCerrar);
 
         jPanelCenter.add(jPanel1, java.awt.BorderLayout.EAST);
@@ -173,6 +178,12 @@ public class PlanCuentasFrame extends BaseFrame {
         }
         
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jBtnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCerrarActionPerformed
+        
+        closeFrame();
+        
+    }//GEN-LAST:event_jBtnCerrarActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

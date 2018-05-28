@@ -41,7 +41,11 @@ public class AdminCajasFrame extends BaseFrame {
     
     public void setupFechas(){
         desdeTF = new JFormattedTextField(createFormatter("##/##/####"));
+        desdeTF.setFont(new java.awt.Font("Arial", 0, 16));
+        
         hastaTF = new JFormattedTextField(createFormatter("##/##/####"));
+        hastaTF.setFont(new java.awt.Font("Arial", 0, 16));
+        
         jPanel12.add( desdeTF );
         jPanel12.add( hastaTF );
     }
@@ -79,25 +83,21 @@ public class AdminCajasFrame extends BaseFrame {
         jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                //System.out.println("List selection changed--->");
                 if (e.getFirstIndex()>=0){
                     jButtonAnular.setEnabled(false);
-                    //Verificar que el registro seleccionado no este anulado
                     try{
                         int row = jTable1.getSelectedRow();
-                        if (row>=-1){
-                            FilaCajas filart = cajasDataModel.getValueAt(row);        
+                        if (row>-1){
+                            FilaCajas filart = cajasDataModel.getValueAt(row);
                             if (filart.getCj_estado() != 2){
                                 jButtonAnular.setEnabled(true);
                             }
                         }
-                        
                     }
                     catch(Throwable ex){
                         System.out.println("Error en selection listener:"+ex.getMessage());
                         ex.printStackTrace();
                     }
-                    
                 }
                 else{
                     jButtonAnular.setEnabled(false);
@@ -107,9 +107,6 @@ public class AdminCajasFrame extends BaseFrame {
         
         jTable1.updateUI();
         cajasDataModel.fireTableDataChanged();
-        
-        //setup select event
-        
     }
     
     public void doAnular(){
@@ -131,9 +128,7 @@ public class AdminCajasFrame extends BaseFrame {
         }
     }
     
-    
     public void logicaBuscar(){
-        
         try{
             Date fechaDesde = FechasUtil.parse(desdeTF.getText());
             Date fechaHasta = FechasUtil.parse(hastaTF.getText());
@@ -145,12 +140,12 @@ public class AdminCajasFrame extends BaseFrame {
             params.setHasta(fechaHasta);
             
             cajasDataModel.setParams(params);
-            cajasDataModel.loadFromDataBase();
-            
+            cajasDataModel.loadFromDataBase();            
         }
         catch(Throwable ex){
             showMsgError(ex);
-        }    }
+        }    
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -169,11 +164,11 @@ public class AdminCajasFrame extends BaseFrame {
         jPanel12 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jButtonBuscar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
-        jButtonBuscar = new javax.swing.JButton();
         jButtonAnular = new javax.swing.JButton();
         jButtonCerrar = new javax.swing.JButton();
 
@@ -197,13 +192,25 @@ public class AdminCajasFrame extends BaseFrame {
             }
         });
 
+        jPanel12.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jPanel12.setLayout(new java.awt.GridLayout(2, 2));
 
+        jLabel2.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
         jLabel2.setText("Desde:");
         jPanel12.add(jLabel2);
 
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
         jLabel3.setText("Hasta:");
         jPanel12.add(jLabel3);
+
+        jButtonBuscar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-search.png"))); // NOI18N
+        jButtonBuscar.setText("Buscar");
+        jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBuscarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -214,16 +221,23 @@ public class AdminCajasFrame extends BaseFrame {
                 .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(392, Short.MAX_VALUE))
+                .addGap(63, 63, 63)
+                .addComponent(jButtonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(191, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButtonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel6, java.awt.BorderLayout.SOUTH);
@@ -251,17 +265,9 @@ public class AdminCajasFrame extends BaseFrame {
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        jPanel3.setLayout(new java.awt.GridLayout(7, 1));
+        jPanel3.setLayout(new java.awt.GridLayout(5, 1));
 
-        jButtonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-search.png"))); // NOI18N
-        jButtonBuscar.setText("Buscar");
-        jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonBuscarActionPerformed(evt);
-            }
-        });
-        jPanel3.add(jButtonBuscar);
-
+        jButtonAnular.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonAnular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-cancel_subscription.png"))); // NOI18N
         jButtonAnular.setText("Anular");
         jButtonAnular.setEnabled(false);
@@ -272,6 +278,7 @@ public class AdminCajasFrame extends BaseFrame {
         });
         jPanel3.add(jButtonAnular);
 
+        jButtonCerrar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jButtonCerrar.setText("Cerrar");
         jButtonCerrar.addActionListener(new java.awt.event.ActionListener() {

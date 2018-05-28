@@ -57,11 +57,13 @@ public class DetallesFacturaFrame extends javax.swing.JFrame {
         
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("NUM ARTÍCULOS:"+detalles.size()));
         
+        NumbersUtil.round2ToStr(BigDecimal.ONE);
+        
         this.jLabel1.setText(" Detalles del Comprobante Nro: "+ factura.getFactNum());
         this.labelFecha.setText(FechasUtil.format(factura.getFactFecha()));
         this.labelNro.setText( factura.getFactNum() );
-        this.labelSubtotal.setText( factura.getFactSubt().toPlainString() );
-        this.labelDescuento.setText( factura.getFactDesc().toPlainString() );
+        this.labelSubtotal.setText( NumbersUtil.round2ToStr(factura.getFactSubt()) );
+        this.labelDescuento.setText( NumbersUtil.round2ToStr(factura.getFactDesc()) );
         this.labelDescuentoG.setText( factura.getFactDescg().toPlainString() );
         this.labelIva.setText( factura.getFactIva().toPlainString() );
         this.labelTotal.setText( factura.getFactTotal().toPlainString() );

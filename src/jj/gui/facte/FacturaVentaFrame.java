@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -54,6 +55,7 @@ import jj.util.datamodels.rows.FilaFactura;
 import jj.util.datamodels.rows.FilaPago;
 import jj.util.NumbersUtil;
 import jj.util.PrintFactUtil;
+import jj.util.SelectingEditor;
 import jj.util.StringUtil;
 import jj.util.TotalesFactura;
 import jj.util.datamodels.ArticulosDataModel;
@@ -123,36 +125,22 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         colIva.setCellRenderer(new IVAComboBoxRenderer(values));        
         
         
-        //String[] valuesDesc = new String[]{"0.0"};
+        TableColumn colCantidad = jTableFactura.getColumnModel().getColumn( FacturaDataModel.ColumnaFacturaEnum.CANTIDAD.index );
+        SelectingEditor selectingEditor = new SelectingEditor(new JTextField());
+        colCantidad.setCellEditor(selectingEditor);
         
-        //TableColumn colDesc = jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.VDESC.index);
+        TableColumn colDescuento = jTableFactura.getColumnModel().getColumn( FacturaDataModel.ColumnaFacturaEnum.VDESC.index );
+        TableColumn colPDescuento = jTableFactura.getColumnModel().getColumn( FacturaDataModel.ColumnaFacturaEnum.PDESC.index );
         
-        /*
-        String[] items = {"1","2","3"};
-        JComboBox discountComboBox = new JComboBox(items);
-        discountComboBox.setEditable(true);
-        
-        colDesc.setCellEditor(new DefaultCellEditor(discountComboBox));
-        
-        IVAComboBoxRenderer comboBoxRenderer = new IVAComboBoxRenderer(items);
-        comboBoxRenderer.setEditable(true);
-        
-        colDesc.setCellRenderer(comboBoxRenderer);
-        */
-        
-        //DefaultTableCellRenderer discountRenderer = new DefaultTableCellRenderer();
-        //colDesc.setCellRenderer(discountRenderer);
-        
-        
-        //colDesc.setCellEditor(new DescComboBoxEditor(valuesDesc));
-        //colDesc.setCellRenderer(new DescComboBoxRenderer(valuesDesc));
+        colDescuento.setCellEditor(selectingEditor);
+        colPDescuento.setCellEditor(selectingEditor);
         
          //EStablecer los anchos de las columnas
         jTableFactura.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);        
         jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.CODBAR.index).setPreferredWidth(80);
         jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.ARTICULO.index).setPreferredWidth(200);
         jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.CANTIDAD.index).setPreferredWidth(40);        
-        jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.IVA.index).setPreferredWidth(80);        
+        jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.IVA.index).setPreferredWidth(80);   
         
         jTableFactura.updateUI();
         facturaDataModel.fireTableDataChanged();
@@ -219,6 +207,7 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
                 JTable table =(JTable) mouseEvent.getSource();
                 Point point = mouseEvent.getPoint();
                 int row = table.rowAtPoint(point);
+                int col = table.columnAtPoint(point);
                 if (mouseEvent.getClickCount() == 2) {
                     doSelectionAction();                    
                 }
@@ -1522,6 +1511,10 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
                 ex.printStackTrace();
             }
         }
+    }
+    
+    public void setValueDescGlobal(BigDecimal value){
+        this.jTFDescGlobal.setText(value.toPlainString());
     }
     
     public void updateLabelsTotales(){

@@ -23,6 +23,10 @@ public class NumbersUtil {
     }
     
     public static String round2ToStr(BigDecimal value){
-        return round2(value).toPlainString();
+        if (value != null){
+            return round2(value).toPlainString();
+        }
+        return "";
+        
     }
 }

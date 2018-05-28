@@ -103,6 +103,20 @@ public class FilaArticulo {
         return getPrecioConIva(this.precioVenta);
     }
     
+    private BigDecimal multipleWithAmount(BigDecimal value){
+        return value.multiply(this.inventario);
+    }
+    
+    public BigDecimal getPrecioCompraMult(){
+        return multipleWithAmount(this.precioCompra);
+    }
+    public BigDecimal getPrecioVentaIvaMult(){
+        return multipleWithAmount(this.getPrecioVentaConIva());
+    }
+    public BigDecimal getPrecioVentaMinIvaMult(){
+        return multipleWithAmount(this.getPrecioMinConIva());
+    }
+    
     public BigDecimal getPrecioMinConIva(){
         return getPrecioConIva(this.precioMin);
     }

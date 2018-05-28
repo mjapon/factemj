@@ -134,6 +134,8 @@ public class FilaFactura {
         this.total = total;
     }
 
+    
+    
     public void updateTotales() {
         //Se calcula el total de cada fila        
         this.subtotal = new BigDecimal(this.cantidad).multiply(this.precioUnitario);
@@ -210,7 +212,7 @@ public class FilaFactura {
 
     public void setDescuento(BigDecimal descuento) {
         this.descuento = descuento;        
-        System.out.println("Se calcula el porcentaje en funcion del valor");
+        //System.out.println("Se calcula el porcentaje en funcion del valor");
         this.calcPorcDescFromValue();
     }
 
@@ -228,7 +230,7 @@ public class FilaFactura {
 
     public void setDescuentoPorc(BigDecimal descuentoPorc) {
         this.descuentoPorc = descuentoPorc;
-        System.out.println("Se calcula el valor en funcion del porcentaje");
+    //    System.out.println("Se calcula el valor en funcion del porcentaje");
         this.calcDescFromPorc();
     }
 

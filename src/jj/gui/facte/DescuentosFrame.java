@@ -39,11 +39,17 @@ public class DescuentosFrame extends BaseFrame {
         jTFPrecioCompra.setText( NumbersUtil.round2(filaFactura.getPrecioCompra()).toPlainString() );
         jTFPrecioMin.setText( NumbersUtil.round2(filaFactura.getPrecioMinimo()).toPlainString() );
         
+        FilaFactura filaSinDesc = filaFactura.clonar();
+        filaSinDesc.setDescuento(BigDecimal.ZERO);
+        filaSinDesc.setDescuentoPorc(BigDecimal.ZERO);
+        filaSinDesc.updateTotales();
+        
+        
         BigDecimal descuentoSugerido = NumbersUtil.round2(filaFactura.getPrecioUnitario().subtract(filaFactura.getPrecioMinimo()));
         jTFDescSugerido.setText( descuentoSugerido.toPlainString() );
         jTFDescAplicado.setText( this.filaFactura.getDescuento().toPlainString() );
         
-        BigDecimal precioSinDesc = filaFactura.getTotal();
+        BigDecimal precioSinDesc = filaSinDesc.getTotal();
         jTFPrecioSinDesc.setText( NumbersUtil.round2(precioSinDesc).toPlainString() );
         
     }

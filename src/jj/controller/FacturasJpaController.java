@@ -471,7 +471,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         
         boolean searchByDate = true;
         
-        if (params.getFiltro()!= null && params.getFiltro().trim().length()>4){
+        if (params.getFiltro()!= null && params.getFiltro().trim().length()>3){
             searchByDate = false;
         }
         
