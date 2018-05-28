@@ -131,3 +131,5 @@ update facturas set fact_utilidad = subquery.utl from
   GROUP BY child.fact_id
 ) as subquery
 where facturas.fact_id = subquery.fact_id
+
+--http://calculo.cc/temas/temas_e.s.o/sucesiones/teoria/formulas.htmlçç
