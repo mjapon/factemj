@@ -18,6 +18,46 @@ ALTER TABLE public.facturas ADD fact_descg NUMERIC(15,4) DEFAULT 0.0 NULL;
 
 --Cambios 19 de mayo de 2018
 
+-- auto-generated definition
+CREATE TABLE cajas
+(
+  cj_id        SERIAL NOT NULL
+    CONSTRAINT cajas_pkey
+    PRIMARY KEY,
+  cj_user      INTEGER        DEFAULT 0,
+  cj_saldoant  NUMERIC(15, 4) DEFAULT 0.0,
+  cj_ventas    NUMERIC(15, 4) DEFAULT 0.0,
+  cj_abonoscxc NUMERIC(15, 4) DEFAULT 0.0,
+  cj_abonoscxp NUMERIC(15, 4) DEFAULT 0.0,
+  cj_anulados  NUMERIC(15, 4) DEFAULT 0.0,
+  cj_obsaper   VARCHAR(1000),
+  cj_obscierre VARCHAR(1000),
+  cj_fecaper   TIMESTAMP,
+  cj_feccierre TIMESTAMP,
+  cj_estado    INTEGER        DEFAULT 0,
+  cj_obsanul   VARCHAR(1000),
+  cj_useranul  INTEGER,
+  cj_saldo     NUMERIC(15, 4) DEFAULT 0.0
+);
+
+CREATE UNIQUE INDEX cajas_cj_id_uindex
+  ON cajas (cj_id);
+
+COMMENT ON COLUMN cajas.cj_estado IS '0:abierto, 1:cerrado, 2:anulado';
+
+CREATE TABLE categorias
+(
+  cat_id   SERIAL NOT NULL
+    CONSTRAINT categorias_pkey
+    PRIMARY KEY,
+  cat_name VARCHAR(80)
+);
+
+CREATE UNIQUE INDEX categorias_cat_id_uindex
+  ON categorias (cat_id);
+
+
+
 ALTER TABLE public.transacciones ADD tra_mask TEXT NULL
 COMMENT ON COLUMN public.transacciones.tra_mask IS 'configuracion para las columnas que se visualizan en la factura'
 

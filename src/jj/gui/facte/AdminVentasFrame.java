@@ -380,6 +380,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jLabelSumaIva.setText("IVA:");
         jPanel8.add(jLabelSumaIva);
 
+        jTFSumaIva.setEditable(false);
         jTFSumaIva.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jPanel8.add(jTFSumaIva);
 

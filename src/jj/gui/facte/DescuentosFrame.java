@@ -107,6 +107,11 @@ public class DescuentosFrame extends BaseFrame {
         jBtnClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -143,7 +148,6 @@ public class DescuentosFrame extends BaseFrame {
         jTFDescSugerido.setEditable(false);
         jTFDescSugerido.setEnabled(false);
         jTFDescSugerido.setPreferredSize(new java.awt.Dimension(10, 40));
-        jTFDescSugerido.setSize(new java.awt.Dimension(80, 40));
 
         jLabel5.setText("Descuento Aplicado:");
 
@@ -311,6 +315,13 @@ public class DescuentosFrame extends BaseFrame {
         setVisible(false);
         
     }//GEN-LAST:event_jBtnOKActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        
+        jTFDescAplicado.requestFocus();
+        jTFDescAplicado.selectAll();
+        
+    }//GEN-LAST:event_formWindowOpened
 
     public IListenerSelectUnity getListener() {
         return listener;
