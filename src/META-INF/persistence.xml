@@ -27,7 +27,9 @@
       <property name="javax.persistence.jdbc.password" value="root"/>
       
       <!--Clave maquina trabajo -->
-      <!--<property name="javax.persistence.jdbc.password" value="postgres"/>-->
+      <!--
+      <property name="javax.persistence.jdbc.password" value="postgres"/>
+      -->
       
     </properties>
   </persistence-unit>

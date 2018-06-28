@@ -229,7 +229,13 @@ public class VentasDataModel extends AbstractTableModel{
         this.params.setSortColumn(sortcolumn);
         this.params.setSortOrder(sortord);
         
-        List<Object[]> ventas = controller.listar(this.params);
+        List<Object[]> ventas;
+        if (this.params.isByCat()){
+            ventas = controller.listarByCat(this.params);
+        }
+        else{
+            ventas = controller.listar(this.params);
+        }        
         
         items.clear();
         
@@ -248,9 +254,31 @@ public class VentasDataModel extends AbstractTableModel{
             }            
             
             BigDecimal efectivo = (BigDecimal)art[10];
-            BigDecimal credito = (BigDecimal)art[11];
-            BigDecimal saldo = (BigDecimal)art[12];
-            BigDecimal utilidad = (BigDecimal)art[13];
+            
+            BigDecimal credito;
+            if (art[11] instanceof Double){
+                credito = new BigDecimal( (Double)art[11] );
+            }
+            else{
+                credito = (BigDecimal)art[11];
+            }
+            
+            BigDecimal saldo;
+            if (art[12] instanceof Double){
+                saldo = new BigDecimal( (Double)art[12] );
+            }
+            else{
+                saldo = (BigDecimal)art[12];
+            }
+            
+            BigDecimal utilidad;
+            if (art[13] instanceof Double){
+                utilidad = new BigDecimal( (Double)art[13] );
+            }
+            else{
+                utilidad = (BigDecimal)art[13];
+            }
+            
             
             if (efectivo.compareTo(BigDecimal.ZERO)==0 && credito.compareTo(BigDecimal.ZERO)==0){
                 efectivo = total;

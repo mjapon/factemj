@@ -27,8 +27,8 @@ public class SplashScreen extends BaseFrame {
         
         Image img = null;        
         try {
-            //URL resource = FarmaAppMain.class.getResource("MarcaVG.png");
-            URL resource = FarmaAppMain.class.getResource("MarcaFinal.png");
+            URL resource = FarmaAppMain.class.getResource("MarcaVG.png");
+            //URL resource = FarmaAppMain.class.getResource("MarcaFinal.png");
             img = ImageIO.read(resource);
             ImageIcon imageIcon = new ImageIcon(img);
             jLabel1.setIcon(imageIcon);

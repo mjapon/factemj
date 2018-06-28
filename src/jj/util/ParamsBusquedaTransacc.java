@@ -23,6 +23,7 @@ public class ParamsBusquedaTransacc {
     private Integer traCodigo;
     private String filtro;
     private boolean usarFechaHora;
+    private boolean byCat;
 
     public ParamsBusquedaTransacc() {
     }
@@ -112,6 +113,13 @@ public class ParamsBusquedaTransacc {
     public void setUsarFechaHora(boolean usarFechaHora) {
         this.usarFechaHora = usarFechaHora;
     }
-    
+
+    public boolean isByCat() {
+        return byCat;
+    }
+
+    public void setByCat(boolean byCat) {
+        this.byCat = byCat;
+    }
     
 }

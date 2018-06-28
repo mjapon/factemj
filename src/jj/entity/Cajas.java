@@ -57,8 +57,12 @@ public class Cajas implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "cj_saldoant")
     private BigDecimal cjSaldoant;
+    @Column(name = "cj_saldoantchanca")
+    private BigDecimal cjSaldoantchanca;
     @Column(name = "cj_ventas")
     private BigDecimal cjVentas;
+    @Column(name = "cj_ventchanca")
+    private BigDecimal cjventchanca;
     @Column(name = "cj_abonoscxc")
     private BigDecimal cjAbonoscxc;
     @Column(name = "cj_abonoscxp")
@@ -83,6 +87,8 @@ public class Cajas implements Serializable {
     private Integer cjUseranul;    
     @Column(name = "cj_saldo")
     private BigDecimal cjSaldo;
+    @Column(name = "cj_saldochanca")
+    private BigDecimal cjSaldoChanca;
 
     public Cajas() {
     }
@@ -210,7 +216,30 @@ public class Cajas implements Serializable {
     public void setCjSaldo(BigDecimal cjSaldo) {
         this.cjSaldo = cjSaldo;
     }    
-    
+
+    public BigDecimal getCjSaldoantchanca() {
+        return cjSaldoantchanca;
+    }
+
+    public void setCjSaldoantchanca(BigDecimal cjSaldoantchanca) {
+        this.cjSaldoantchanca = cjSaldoantchanca;
+    }
+
+    public BigDecimal getCjventchanca() {
+        return cjventchanca;
+    }
+
+    public void setCjventchanca(BigDecimal cjventchanca) {
+        this.cjventchanca = cjventchanca;
+    }
+
+    public BigDecimal getCjSaldoChanca() {
+        return cjSaldoChanca;
+    }
+
+    public void setCjSaldoChanca(BigDecimal cjSaldoChanca) {
+        this.cjSaldoChanca = cjSaldoChanca;
+    }    
 
     @Override
     public int hashCode() {

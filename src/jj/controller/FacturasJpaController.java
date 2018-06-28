@@ -562,136 +562,249 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
     }
      
     public List<Object[]> listar(ParamsBusquedaTransacc params){
-        
-        boolean searchByArt = params.getArtId() != null && params.getArtId()>0;        
-        
-        
-            StringBuilder baseQueryArts = new StringBuilder("select f.factId.factId,\n" +
-                                                            "f.factId.factNum,\n" +
-                                                            "f.detfCant*f.detfPrecio as subtotal,\n" +
-                                                            "case  when f.detfIva=true then (f.detfCant*f.detfPrecio)*0.12 else 0.0 end as iva,\n" +
-                                                            "f.detfCant*f.detfPrecio*f.detfDesc as descuento,\n" +
-                                                            "0.0 as total,"+
-                                                            "f.factId.factFecreg,\n" +
-                                                            "f.factId.cliId.cliNombres,\n" +
-                                                            "f.factId.cliId.cliCi,"+
-                                                            "f.detfPreciocm,"+
-                                                            "0.0 as efectivo, 0.0 as credito, 0.0 as saldo, 0.0 as utilidad from Detallesfact f");
+        boolean searchByArt = params.getArtId() != null && params.getArtId()>0;      
+        StringBuilder baseQueryArts = new StringBuilder("select f.factId.factId,\n" +
+                                                        "f.factId.factNum,\n" +
+                                                        "f.detfCant*f.detfPrecio as subtotal,\n" +
+                                                        "case  when f.detfIva=true then (f.detfCant*f.detfPrecio)*0.12 else 0.0 end as iva,\n" +
+                                                        "f.detfCant*f.detfPrecio*f.detfDesc as descuento,\n" +
+                                                        "0.0 as total,"+
+                                                        "f.factId.factFecreg,\n" +
+                                                        "f.factId.cliId.cliNombres,\n" +
+                                                        "f.factId.cliId.cliCi,"+
+                                                        "f.detfPreciocm,"+
+                                                        "0.0 as efectivo, 0.0 as credito, 0.0 as saldo, 0.0 as utilidad from Detallesfact f");
 
-            //Columnas de la consulta
-            StringBuilder baseQueryFact = new StringBuilder("select f.factId, \n" +
-                                                        "f.factNum,\n" +
-                                                        "f.factSubt,  \n" +
-                                                        "f.factIva,\n" +
-                                                        "COALESCE(f.factDesc,0.0)+COALESCE(f.factDescg,0.0) as factDesc,   \n" +
-                                                        "f.factTotal,\n" +
-                                                        "f.factFecreg,\n" +
-                                                        "f.cliId.cliNombres,\n" +
-                                                        "f.cliId.cliCi,"+
-                                                        "0.0 as pc, 0.0 as efectivo, 0.0 as credito, 0.0 as saldo, f.factUtilidad from Facturas f ");     
-            
-            String baseQuery = baseQueryFact.toString();
-            String prefijo = "f";
-            if (searchByArt){
-                prefijo = "f.factId";
-                baseQuery = baseQueryArts.toString();
+        //Columnas de la consulta
+        StringBuilder baseQueryFact = new StringBuilder("select f.factId, \n" +
+                                                    "f.factNum,\n" +
+                                                    "f.factSubt,  \n" +
+                                                    "f.factIva,\n" +
+                                                    "COALESCE(f.factDesc,0.0)+COALESCE(f.factDescg,0.0) as factDesc,   \n" +
+                                                    "f.factTotal,\n" +
+                                                    "f.factFecreg,\n" +
+                                                    "f.cliId.cliNombres,\n" +
+                                                    "f.cliId.cliCi,"+
+                                                    "0.0 as pc, 0.0 as efectivo, 0.0 as credito, 0.0 as saldo, f.factUtilidad from Facturas f ");     
+
+        String baseQuery = baseQueryFact.toString();
+        String prefijo = "f";
+        if (searchByArt){
+            prefijo = "f.factId";
+            baseQuery = baseQueryArts.toString();
+        }
+
+        //Parametros            
+        List<String> paramsList = new ArrayList<String>();                        
+
+        paramsList.add(prefijo+".factValido=0 ");
+
+        paramsList.add(prefijo+".traId.traId= "+params.getTraCodigo());
+
+        if (params.getDesde() != null){
+            if (params.isUsarFechaHora()){
+                paramsList.add(prefijo+".factFecreg >= :paramDesde ");
             }
-            
-            //Parametros            
-            List<String> paramsList = new ArrayList<String>();                        
-            
-            paramsList.add(prefijo+".factValido=0 ");
-            
-            paramsList.add(prefijo+".traId.traId= "+params.getTraCodigo());
-            
-            if (params.getDesde() != null){
-                if (params.isUsarFechaHora()){
-                    paramsList.add(prefijo+".factFecreg >= :paramDesde ");
-                }
-                else{
-                    paramsList.add(prefijo+".factFecha >= :paramDesde ");
-                }
+            else{
+                paramsList.add(prefijo+".factFecha >= :paramDesde ");
             }
-            if (params.getHasta() != null){
-                if (params.isUsarFechaHora()){
-                    paramsList.add(prefijo+".factFecreg <= :paramHasta ");
-                }
-                else{
-                    paramsList.add(prefijo+".factFecha <= :paramHasta ");
-                }
+        }
+        if (params.getHasta() != null){
+            if (params.isUsarFechaHora()){
+                paramsList.add(prefijo+".factFecreg <= :paramHasta ");
             }
-            
-            if (params.getCliId() != null && params.getCliId()>0){
-                paramsList.add(prefijo+".cliId.cliId = :paramCliId");
+            else{
+                paramsList.add(prefijo+".factFecha <= :paramHasta ");
             }
-            if (params.getArtId() != null && params.getArtId()>0){
-                //Se debe realizar la busqueda por el codigo del articulo
-                paramsList.add("f.artId = :paramArtId");
-            }       
-            
-            
-            String delimiter = " and ";
-            String where = "";
-            
-            if (paramsList.size()>0){
-                StringJoiner joiner = new StringJoiner(delimiter);
-                for(String param: paramsList){
-                    joiner.add(param);
-                }
-                
-                where = " where " + joiner.toString();
+        }
+
+        if (params.getCliId() != null && params.getCliId()>0){
+            paramsList.add(prefijo+".cliId.cliId = :paramCliId");
+        }
+        if (params.getArtId() != null && params.getArtId()>0){
+            //Se debe realizar la busqueda por el codigo del articulo
+            paramsList.add("f.artId = :paramArtId");
+        }       
+
+
+        String delimiter = " and ";
+        String where = "";
+
+        if (paramsList.size()>0){
+            StringJoiner joiner = new StringJoiner(delimiter);
+            for(String param: paramsList){
+                joiner.add(param);
             }
-            
-            StringBuilder orderSB = new StringBuilder("order by ");
-            orderSB.append(prefijo + "."+params.getSortColumn());
-            orderSB.append(" ");
-            orderSB.append(params.getSortOrder());
-            
-            String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
-            
-            System.out.println("query--->listar:"+queryStr);
-            
-            Query query = this.newQuery(queryStr.toString());
-            
-            if (params.getDesde() != null){
-                if (params.isUsarFechaHora()){
-                    query = query.setParameter("paramDesde", params.getDesde(), TemporalType.TIMESTAMP);
-                }
-                else{
-                    query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
-                }
+
+            where = " where " + joiner.toString();
+        }
+
+        StringBuilder orderSB = new StringBuilder("order by ");
+        orderSB.append(prefijo + "."+params.getSortColumn());
+        orderSB.append(" ");
+        orderSB.append(params.getSortOrder());
+
+        String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
+
+        System.out.println("query--->listar:"+queryStr);
+
+        Query query = this.newQuery(queryStr.toString());
+
+        if (params.getDesde() != null){
+            if (params.isUsarFechaHora()){
+                query = query.setParameter("paramDesde", params.getDesde(), TemporalType.TIMESTAMP);
             }
-            
-            if (params.getHasta() != null){
-                if (params.isUsarFechaHora()){
-                    query = query.setParameter("paramHasta", params.getHasta(), TemporalType.TIMESTAMP);
-                }
-                else{
-                    query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
-                }
+            else{
+                query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
             }
-            
-            if (params.getCliId() != null && params.getCliId()>0){
-                query = query.setParameter("paramCliId", params.getCliId());
+        }
+
+        if (params.getHasta() != null){
+            if (params.isUsarFechaHora()){
+                query = query.setParameter("paramHasta", params.getHasta(), TemporalType.TIMESTAMP);
             }
-            
-            if (params.getArtId() != null && params.getArtId()>0){
-                query = query.setParameter("paramArtId", params.getArtId());
+            else{
+                query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
             }
-            
-            List<Object[]> resultList = query.getResultList();
-            
-            for (Object[] fila:  resultList){      
-                Map<Integer, BigDecimal> efeccredmap =getEfectCreditVal((Integer)fila[0]);
-                
-                fila[10] = efeccredmap.get(1);
-                fila[11] = efeccredmap.get(2);
-                fila[12] = efeccredmap.get(3);
-            }
-            
-            return resultList;
-            
+        }
+
+        if (params.getCliId() != null && params.getCliId()>0){
+            query = query.setParameter("paramCliId", params.getCliId());
+        }
+
+        if (params.getArtId() != null && params.getArtId()>0){
+            query = query.setParameter("paramArtId", params.getArtId());
+        }
+
+        List<Object[]> resultList = query.getResultList();
+
+        for (Object[] fila:  resultList){      
+            Map<Integer, BigDecimal> efeccredmap =getEfectCreditVal((Integer)fila[0]);
+
+            fila[10] = efeccredmap.get(1);
+            fila[11] = efeccredmap.get(2);
+            fila[12] = efeccredmap.get(3);
+        }
+
+        return resultList;
     }
+        
+    
+    public List<Object[]> listarByCat(ParamsBusquedaTransacc params){
+        
+        boolean searchByArt = params.getArtId() != null && params.getArtId()>0;
+        
+        StringBuilder baseQueryArts = new StringBuilder("select f.factId.factId,\n" +
+                                                        "f.factId.factNum,\n" +
+                                                        "f.detfCant*f.detfPrecio as subtotal,\n" +
+                                                        "case when f.detfIva=true then (f.detfCant*f.detfPrecio)*0.12 else 0.0 end as iva,\n" +
+                                                        "f.detfCant*f.detfPrecio*f.detfDesc as descuento,\n" +
+                                                        "f.detfCant*f.detfPrecio as total,"+
+                                                        "f.factId.factFecreg,\n" +
+                                                        "f.factId.cliId.cliNombres,\n" +
+                                                        "f.factId.cliId.cliCi,"+
+                                                        "f.detfPreciocm,"+
+                                                        "f.detfCant*f.detfPrecio as efectivo, 0.0 as credito, 0.0 as saldo, 0.0 as utilidad from Detallesfact f join Articulos a on f.artId = a.artId");
+        
+        String prefijo = "f.factId";
+        String baseQuery = baseQueryArts.toString();
+
+        //Parametros            
+        List<String> paramsList = new ArrayList<String>();                        
+
+        paramsList.add(prefijo+".factValido=0 ");
+
+        paramsList.add(prefijo+".traId.traId= "+params.getTraCodigo());
+
+        if (params.getDesde() != null){
+            if (params.isUsarFechaHora()){
+                paramsList.add(prefijo+".factFecreg >= :paramDesde ");
+            }
+            else{
+                paramsList.add(prefijo+".factFecha >= :paramDesde ");
+            }
+        }
+        if (params.getHasta() != null){
+            if (params.isUsarFechaHora()){
+                paramsList.add(prefijo+".factFecreg <= :paramHasta ");
+            }
+            else{
+                paramsList.add(prefijo+".factFecha <= :paramHasta ");
+            }
+        }
+
+        if (params.getCliId() != null && params.getCliId()>0){
+            paramsList.add(prefijo+".cliId.cliId = :paramCliId");
+        }
+        if (params.getArtId() != null && params.getArtId()>0){
+            //Se debe realizar la busqueda por el codigo del articulo
+            paramsList.add("a.catId = :paramArtId");
+        }       
+
+
+        String delimiter = " and ";
+        String where = "";
+
+        if (paramsList.size()>0){
+            StringJoiner joiner = new StringJoiner(delimiter);
+            for(String param: paramsList){
+                joiner.add(param);
+            }
+
+            where = " where " + joiner.toString();
+        }
+
+        StringBuilder orderSB = new StringBuilder("order by ");
+        orderSB.append(prefijo + "."+params.getSortColumn());
+        orderSB.append(" ");
+        orderSB.append(params.getSortOrder());
+
+        String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
+
+        System.out.println("query--->listarByCat:"+queryStr);
+
+        Query query = this.newQuery(queryStr.toString());
+
+        if (params.getDesde() != null){
+            if (params.isUsarFechaHora()){
+                query = query.setParameter("paramDesde", params.getDesde(), TemporalType.TIMESTAMP);
+            }
+            else{
+                query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
+            }
+        }
+
+        if (params.getHasta() != null){
+            if (params.isUsarFechaHora()){
+                query = query.setParameter("paramHasta", params.getHasta(), TemporalType.TIMESTAMP);
+            }
+            else{
+                query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
+            }
+        }
+
+        if (params.getCliId() != null && params.getCliId()>0){
+            query = query.setParameter("paramCliId", params.getCliId());
+        }
+
+        if (params.getArtId() != null && params.getArtId()>0){
+            query = query.setParameter("paramArtId", params.getArtId());
+        }
+
+        List<Object[]> resultList = query.getResultList();
+
+        /*
+        for (Object[] fila:  resultList){      
+            Map<Integer, BigDecimal> efeccredmap =getEfectCreditVal((Integer)fila[0]);
+
+            fila[10] = efeccredmap.get(1);
+            fila[11] = efeccredmap.get(2);
+            fila[12] = efeccredmap.get(3);
+        }
+        */
+
+        return resultList;
+    }    
     
     public BigDecimal getUtilidades(ParamsBusquedaTransacc params){
         
@@ -704,82 +817,82 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                  + "f.detfCant*f.detfPrecio*f.detfDesc as descuento from Detallesfact f");
          
          
-            List<String> paramsList = new ArrayList<String>();
-            
-            String prefijo = "f";
-            
-            paramsList.add(prefijo+".factId.factValido=0 ");
-            
-            if (params.getDesde() != null){
-                paramsList.add(prefijo+".factId.factFecha >= :paramDesde ");
+        List<String> paramsList = new ArrayList<String>();
+
+        String prefijo = "f";
+
+        paramsList.add(prefijo+".factId.factValido=0 ");
+
+        if (params.getDesde() != null){
+            paramsList.add(prefijo+".factId.factFecha >= :paramDesde ");
+        }
+        if (params.getHasta() != null){
+            paramsList.add(prefijo+".factId.factFecha <= :paramHasta ");
+        }
+
+        if (params.getCliId() != null && params.getCliId()>0){
+            paramsList.add(prefijo+".factId.cliId.cliId = :paramCliId");
+        }
+        if (params.getArtId() != null && params.getArtId()>0){
+            //Se debe realizar la busqueda por el codigo del articulo
+            paramsList.add("f.artId = :paramArtId");
+        }            
+
+        String delimiter = " and ";
+        String where = "";
+
+        if (paramsList.size()>0){
+            StringJoiner joiner = new StringJoiner(delimiter);
+            for(String param: paramsList){
+                joiner.add(param);
             }
-            if (params.getHasta() != null){
-                paramsList.add(prefijo+".factId.factFecha <= :paramHasta ");
-            }
-            
-            if (params.getCliId() != null && params.getCliId()>0){
-                paramsList.add(prefijo+".factId.cliId.cliId = :paramCliId");
-            }
-            if (params.getArtId() != null && params.getArtId()>0){
-                //Se debe realizar la busqueda por el codigo del articulo
-                paramsList.add("f.artId = :paramArtId");
-            }            
-            
-            String delimiter = " and ";
-            String where = "";
-            
-            if (paramsList.size()>0){
-                StringJoiner joiner = new StringJoiner(delimiter);
-                for(String param: paramsList){
-                    joiner.add(param);
-                }
-                
-                where = " where " + joiner.toString();
-            }
-            
-            String orderSB = "";
-            
-            String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
-            
-            Query query = this.newQuery(queryStr.toString());
-            
-            if (params.getDesde() != null){
-                query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
-            }
-            
-            if (params.getHasta() != null){
-                query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
-            }
-            
-            if (params.getCliId() != null && params.getCliId()>0){
-                query = query.setParameter("paramCliId", params.getCliId());
-            }
-            
-            if (params.getArtId() != null && params.getArtId()>0){
-                query = query.setParameter("paramArtId", params.getArtId());
-            }
-            
-            List<Object[]> result = query.getResultList();
-            
-            BigDecimal utilidades = BigDecimal.ZERO;
-            
-            for (Object[] fila: result){
-                BigDecimal cant = (BigDecimal)fila[0];
-                BigDecimal precio = (BigDecimal)fila[1];
-                BigDecimal preciocm = (BigDecimal)fila[2];
-                BigDecimal subtotal = (BigDecimal)fila[3];
-                Double iva = (Double)fila[4];
-                BigDecimal descuento = (BigDecimal)fila[5];
-                BigDecimal costoFila = (cant.multiply(preciocm)).subtract(descuento);
-                BigDecimal utilidadFila = subtotal.add(new BigDecimal(iva)).subtract(descuento).subtract(costoFila);
-                
-                utilidades = utilidades.add(utilidadFila);
-            }
-            
-            System.out.println("Utilidades es:");
-            System.out.println(utilidades.toPlainString());
-            
-            return utilidades.setScale(2, RoundingMode.HALF_UP);        
+
+            where = " where " + joiner.toString();
+        }
+
+        String orderSB = "";
+
+        String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
+
+        Query query = this.newQuery(queryStr.toString());
+
+        if (params.getDesde() != null){
+            query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
+        }
+
+        if (params.getHasta() != null){
+            query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
+        }
+
+        if (params.getCliId() != null && params.getCliId()>0){
+            query = query.setParameter("paramCliId", params.getCliId());
+        }
+
+        if (params.getArtId() != null && params.getArtId()>0){
+            query = query.setParameter("paramArtId", params.getArtId());
+        }
+
+        List<Object[]> result = query.getResultList();
+
+        BigDecimal utilidades = BigDecimal.ZERO;
+
+        for (Object[] fila: result){
+            BigDecimal cant = (BigDecimal)fila[0];
+            BigDecimal precio = (BigDecimal)fila[1];
+            BigDecimal preciocm = (BigDecimal)fila[2];
+            BigDecimal subtotal = (BigDecimal)fila[3];
+            Double iva = (Double)fila[4];
+            BigDecimal descuento = (BigDecimal)fila[5];
+            BigDecimal costoFila = (cant.multiply(preciocm)).subtract(descuento);
+            BigDecimal utilidadFila = subtotal.add(new BigDecimal(iva)).subtract(descuento).subtract(costoFila);
+
+            utilidades = utilidades.add(utilidadFila);
+        }
+
+        System.out.println("Utilidades es:");
+        System.out.println(utilidades.toPlainString());
+
+        return utilidades.setScale(2, RoundingMode.HALF_UP);        
     }
     
     public List<Object[]> listarDetalles(Integer factId){

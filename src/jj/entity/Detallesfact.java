@@ -43,6 +43,7 @@ public class Detallesfact implements Serializable {
     @Basic(optional = false)
     @Column(name = "detf_id")
     private Integer detfId;
+    
     @Basic(optional = false)
     @Column(name = "art_id")
     private int artId;

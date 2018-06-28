@@ -48,7 +48,7 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
     }
     
     public Cajas getCajaAbiertaMenorFecha(Date dia){
-        String nativeQuery = String.format("select cj_id from cajas where cj_fecaper::date < to_date('%s','DD/MM/YYYY') and cj_estado = 0 ", FechasUtil.format(dia));
+        String nativeQuery = String.format("select cj_id from cajas where cj_fecaper::date < to_date('%s','DD/MM/YYYY') and cj_estado = 0 order by cj_fecaper desc  ", FechasUtil.format(dia));
         Integer cajaId = (Integer)newNativeQuery(nativeQuery).getSingleResult();
         if (cajaId != null){
             return em.find(Cajas.class, cajaId);
@@ -118,7 +118,7 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
     
     
     public Cajas getCajaDia(Date dia){        
-         String nativeQuery = String.format("select cj_id, cj_fecaper  from cajas where cj_fecaper::date = to_date('%s','DD/MM/YYYY') and cj_estado != 2", FechasUtil.format(dia));
+         String nativeQuery = String.format("select cj_id, cj_fecaper  from cajas where cj_fecaper::date = to_date('%s','DD/MM/YYYY') and cj_estado != 2 order by cj_fecaper desc ", FechasUtil.format(dia));
          
          Object[] resultObj = getResultFirstNQ(nativeQuery);
          if (resultObj != null){
@@ -131,7 +131,7 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
          }        
     }
     
-    public void crearCaja(Date fechaApertura, BigDecimal saldoAnterior, String obs) throws Throwable{
+    public void crearCaja(Date fechaApertura, BigDecimal saldoAnterior, BigDecimal saldoAntChanca, String obs) throws Throwable{
         
         if (existeCajaAbierta(fechaApertura)){
            throw new ErrorValidException("Ya ha sido registrado la apertura de caja");
@@ -144,6 +144,7 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
 
             cajas.setCjFecaper(fechaApertura);
             cajas.setCjSaldoant(saldoAnterior);
+            cajas.setCjSaldoantchanca(saldoAntChanca);
             cajas.setCjObsaper(obs);
             cajas.setCjEstado(0);
 
@@ -160,10 +161,12 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
     
     public void cerrarCaja(Integer cjId,
             BigDecimal ventas,
+            BigDecimal ventasChanca,
             BigDecimal abonosCxC,
             BigDecimal abonosCxP,
             BigDecimal ventasAnuladas,
             BigDecimal saldo,
+            BigDecimal saldoChanca,
             String obsCierre
             ){
         
@@ -180,10 +183,12 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
         
         caja.setCjFeccierre(new Date());
         caja.setCjVentas(ventas);
+        caja.setCjventchanca(ventasChanca);
         caja.setCjAbonoscxc(abonosCxC);
         caja.setCjAbonoscxp(abonosCxP);
         caja.setCjAnulados(ventasAnuladas);
         caja.setCjSaldo(saldo);
+        caja.setCjSaldoChanca(saldoChanca);
         caja.setCjObscierre(obsCierre);
         caja.setCjEstado(1);
         
@@ -206,7 +211,10 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
                            "            when 1 then 'Cerrado'"+
                            "            when 2 then 'Anulado' end as estado,"+
                         "cj_obsanul,"+
-                        "cj_saldo from cajas where date(cj_fecaper) >= date(?paramDesde)"+
+                        "cj_saldo,"+
+                        "cj_ventchanca," +
+                        "cj_saldoantchanca," +
+                        "cj_saldochanca    from cajas where date(cj_fecaper) >= date(?paramDesde)"+
                         "AND date(cj_fecaper) <= date(?paramHasta)";
         
         Query query = this.newNativeQuery(sql);
@@ -232,10 +240,15 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
             String cj_obsanul = (String)obj[11];
             BigDecimal cj_saldo = (BigDecimal)obj[12];
             
+            BigDecimal cj_ventaChanca = (BigDecimal)obj[13];
+            BigDecimal cj_saldoAntChanca = (BigDecimal)obj[14];
+            BigDecimal cj_saldoChanca = (BigDecimal)obj[15];
+            
             String fecAper = cj_fecaper!=null?FechasUtil.format(cj_fecaper):"";
             String fecCierre = cj_feccierre!=null?FechasUtil.format(cj_feccierre):"";
          
-            FilaCajas filaCaja = new FilaCajas(cj_id, cj_saldoant, cj_ventas, cj_abonoscxc, cj_abonoscxp, cj_obsaper, cj_obscierre, fecAper, fecCierre, cj_estado, estado, cj_obsanul, cj_saldo);
+            FilaCajas filaCaja = new FilaCajas(cj_id, cj_saldoant, cj_ventas, cj_abonoscxc, cj_abonoscxp, cj_obsaper, cj_obscierre, fecAper, fecCierre, cj_estado, estado, cj_obsanul, cj_saldo,
+            cj_saldoAntChanca, cj_ventaChanca, cj_saldoChanca);
             
             resultList.add(filaCaja);
         }

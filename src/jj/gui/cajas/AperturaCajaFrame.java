@@ -21,6 +21,7 @@ public class AperturaCajaFrame extends BaseFrame {
     
     private Date dia;
     private BigDecimal saldoInicial;
+    private BigDecimal saldoInicialChanca;
     
     CajasJpaController cajasController;    
     
@@ -40,11 +41,14 @@ public class AperturaCajaFrame extends BaseFrame {
             dayName.setText(FechasUtil.getDayNameOfDate(dia));
             jTFFecha.setText( FechasUtil.format(dia) );
             saldoInicial = BigDecimal.ZERO;
+            saldoInicialChanca = BigDecimal.ZERO;
             Cajas cajaAyer = cajasController.getCajaCerradaMenorFechaCierre(dia);
             if (cajaAyer != null){
                 saldoInicial = cajaAyer.getCjSaldo();
+                saldoInicialChanca = cajaAyer.getCjSaldoChanca();
             }
             jTFSaldoAnterior.setText( NumbersUtil.round2(saldoInicial).toPlainString() );
+            jTFSaldoAnteriorChanca.setText( NumbersUtil.round2(saldoInicialChanca).toPlainString() );
             jTAObs.setText("");
         }
         catch(Throwable ex){
@@ -85,6 +89,8 @@ public class AperturaCajaFrame extends BaseFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTAObs = new javax.swing.JTextArea();
         dayName = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jTFSaldoAnteriorChanca = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jButtonGuardar = new javax.swing.JButton();
         jButtonCerrar = new javax.swing.JButton();
@@ -133,6 +139,10 @@ public class AperturaCajaFrame extends BaseFrame {
 
         dayName.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
 
+        jLabel5.setText("Saldo Inicial Chancado (anterior):");
+
+        jTFSaldoAnteriorChanca.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -142,15 +152,17 @@ public class AperturaCajaFrame extends BaseFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTFSaldoAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jTFFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dayName)))
+                        .addComponent(dayName))
+                    .addComponent(jTFSaldoAnteriorChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(65, 65, 65))
         );
         jPanel2Layout.setVerticalGroup(
@@ -165,11 +177,15 @@ public class AperturaCajaFrame extends BaseFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jTFSaldoAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTFSaldoAnteriorChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -206,7 +222,8 @@ public class AperturaCajaFrame extends BaseFrame {
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
         try{
             saldoInicial = new BigDecimal(jTFSaldoAnterior.getText());
-            cajasController.crearCaja(dia, saldoInicial, jTAObs.getText());
+            saldoInicialChanca =new BigDecimal(jTFSaldoAnteriorChanca.getText());
+            cajasController.crearCaja(dia, saldoInicial, saldoInicialChanca, jTAObs.getText());
             String dayName = FechasUtil.getDayNameOfDate(dia);
             showMsg("CAJA APERTURA PARA EL DIA DE HOY:" + dayName);
             setVisible(false);
@@ -234,6 +251,7 @@ public class AperturaCajaFrame extends BaseFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
@@ -241,5 +259,6 @@ public class AperturaCajaFrame extends BaseFrame {
     private javax.swing.JTextArea jTAObs;
     private javax.swing.JFormattedTextField jTFFecha;
     private javax.swing.JTextField jTFSaldoAnterior;
+    private javax.swing.JTextField jTFSaldoAnteriorChanca;
     // End of variables declaration//GEN-END:variables
 }

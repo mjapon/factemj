@@ -36,14 +36,17 @@ public class CajasDataModel extends AbstractTableModel{
     public enum ColumnaCAJASEnum{        
         NRO(0, "Nro", Integer.class, "cj_id"),
         SALDOANT(1, "Saldo Anterior", BigDecimal.class, "cj_saldoant"),
-        FECHAAPER(2, "Fecha Apertura", String.class, "cj_fecaper"),
-        ESTADO(3, "Estado", String.class, "cj_estado"),
-        FECHACIERRE(4, "Fecha Cierre", String.class, "cj_feccierre"),
-        OBSAPER(5, "Obs Apertura", String.class, "cj_obsaper"),
-        TOTVENTAS(6, "Total Ventas", BigDecimal.class, "cj_ventas"),
-        ABCOBRA(7, "Abonos Cobrados", BigDecimal.class, "cj_abonoscxc"),
-        ABPAGA(8, "Abonos Pagados", BigDecimal.class, "cj_abonoscxp"),
-        SALDO(9, "Saldo", BigDecimal.class, "cj_saldo");
+        SALDOCHANCAANT(2, "Saldo Ant Chanca", BigDecimal.class, "cj_saldoantchanca"),
+        FECHAAPER(3, "Fecha Apertura", String.class, "cj_fecaper"),
+        ESTADO(4, "Estado", String.class, "cj_estado"),
+        FECHACIERRE(5, "Fecha Cierre", String.class, "cj_feccierre"),
+        OBSAPER(6, "Obs Apertura", String.class, "cj_obsaper"),
+        TOTVENTAS(7, "Total Ventas", BigDecimal.class, "cj_ventas"),
+        TOTVENTASCHANCA(8, "Ventas Chanca", BigDecimal.class, "cj_ventchanca"),
+        ABCOBRA(9, "Abonos Cobrados", BigDecimal.class, "cj_abonoscxc"),
+        ABPAGA(10, "Abonos Pagados", BigDecimal.class, "cj_abonoscxp"),
+        SALDO(11, "Saldo", BigDecimal.class, "cj_saldo"),
+        SALDOCHANCA(12, "Saldo Chanca", BigDecimal.class, "cj_saldochanca");
         
         public final int index;
         public String desc;
@@ -162,6 +165,9 @@ public class CajasDataModel extends AbstractTableModel{
             else if (columnIndex==ColumnaCAJASEnum.SALDOANT.index){
                 return fila.getCj_saldoant();
             }
+            else if (columnIndex==ColumnaCAJASEnum.SALDOCHANCAANT.index){
+                return fila.getCj_saldoantchanca();
+            }
             else if (columnIndex==ColumnaCAJASEnum.FECHAAPER.index){
                 return fila.getCj_fecaper();
             }
@@ -177,6 +183,9 @@ public class CajasDataModel extends AbstractTableModel{
             else if (columnIndex==ColumnaCAJASEnum.TOTVENTAS.index){
                 return fila.getCj_ventas();
             }
+            else if (columnIndex==ColumnaCAJASEnum.TOTVENTASCHANCA.index){
+                return fila.getCj_ventaschanca();
+            }
             else if (columnIndex==ColumnaCAJASEnum.ABCOBRA.index){
                 return fila.getCj_abonoscxc();
             }
@@ -185,6 +194,9 @@ public class CajasDataModel extends AbstractTableModel{
             }
             else if (columnIndex==ColumnaCAJASEnum.SALDO.index){
                 return fila.getCj_saldo();
+            }
+            else if (columnIndex==ColumnaCAJASEnum.SALDOCHANCA.index){
+                return fila.getCj_saldochanca();
             }
             else{
                 return "";
