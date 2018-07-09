@@ -56,7 +56,7 @@ CREATE TABLE categorias
 CREATE UNIQUE INDEX categorias_cat_id_uindex
   ON categorias (cat_id);
 
-
+insert into categorias(cat_id, cat_name) values (-1, 'SIN CATEGORIA');
 
 ALTER TABLE public.transacciones ADD tra_mask TEXT NULL
 COMMENT ON COLUMN public.transacciones.tra_mask IS 'configuracion para las columnas que se visualizan en la factura'
@@ -132,4 +132,4 @@ update facturas set fact_utilidad = subquery.utl from
 ) as subquery
 where facturas.fact_id = subquery.fact_id
 
---http://calculo.cc/temas/temas_e.s.o/sucesiones/teoria/formulas.htmlçç
+--http://calculo.cc/temas/temas_e.s.o/sucesiones/teoria/formulas.html

@@ -10,9 +10,11 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -20,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.text.MaskFormatter;
 import jj.controller.ArticulosJpaController;
+import jj.controller.CtesJpaController;
 import jj.controller.FacturasJpaController;
 import jj.entity.Articulos;
 import jj.gui.BusquedaArtsFrame;
@@ -51,6 +54,11 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
      private Articulos articuloSel;
      private Integer tra_codigo;
      
+     private Integer codCatChanca;
+     private Integer codCatSP;
+     private Integer codCatOtros = -1;
+     private CtesJpaController ctesCntrl;
+     private Map<Integer, BigDecimal> mapUtilidades;
     /**
      * Creates new form AdminVentasFrame
      */
@@ -77,6 +85,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         ventasDataModel = new VentasDataModel();
         facturasJpaController = new FacturasJpaController(em);
         articulosJpaController = new ArticulosJpaController(em);
+        ctesCntrl = new CtesJpaController(em);
         ventasDataModel.setController(facturasJpaController);
         
         jTable2.setModel(ventasDataModel);
@@ -134,7 +143,11 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         });
         
         this.desdeTF.setText( FechasUtil.getFechaActual() );
-        this.hastaTF.setText( FechasUtil.getFechaActual() );        
+        this.hastaTF.setText( FechasUtil.getFechaActual() );
+
+        codCatChanca = Integer.valueOf(ctesCntrl.findValueByClave("COD_CAT_CHANCADO"));
+        codCatSP = Integer.valueOf(ctesCntrl.findValueByClave("COD_CAT_SP"));
+        
     }
     
     public void checkStatusBtn(){
@@ -223,6 +236,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jPanel11 = new javax.swing.JPanel();
         btnAnular = new javax.swing.JButton();
         btnDetalles = new javax.swing.JButton();
+        btnUtilidades = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -349,9 +363,9 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         jPanel2.setLayout(new java.awt.BorderLayout());
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("(Count)"));
-        jScrollPane1.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        jScrollPane1.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
 
-        jTable2.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
+        jTable2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -494,6 +508,16 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         });
         jPanel11.add(btnDetalles);
 
+        btnUtilidades.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnUtilidades.setText("Utilidades");
+        btnUtilidades.setEnabled(false);
+        btnUtilidades.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUtilidadesActionPerformed(evt);
+            }
+        });
+        jPanel11.add(btnUtilidades);
+
         btnClose.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         btnClose.setText("Cerrar");
@@ -537,11 +561,15 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
             
             ventasDataModel.setParams(params);
             ventasDataModel.loadFromDataBase();
+            
+            mapUtilidades = facturasJpaController.getUtilidadesByCat(codCatChanca, codCatSP, ventasDataModel.getUtilidadesList());
                         
             Integer numItems = ventasDataModel.getItems().size();
             jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("("+numItems+")"));
             
             updateLabelTotales();
+            
+            this.btnUtilidades.setEnabled(true);
             
         }
         catch(Throwable ex){
@@ -681,6 +709,16 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
         
     }//GEN-LAST:event_jTextFieldFiltroFocusGained
 
+    private void btnUtilidadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUtilidadesActionPerformed
+        UtilidadesFrame frame = new UtilidadesFrame(mapUtilidades, codCatChanca, codCatSP);
+        
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setSize(900, 500);
+        frame.setLocation((dim.width/2)-(frame.getSize().width/2), (dim.height/2)-(frame.getSize().height/2));
+            
+        frame.setVisible(true);        
+    }//GEN-LAST:event_btnUtilidadesActionPerformed
+
     
     public void showDetallesFrame(){
         System.out.println("Select action");
@@ -722,6 +760,7 @@ public class AdminVentasFrame extends javax.swing.JFrame implements ISearchArt{
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnDetalles;
+    private javax.swing.JButton btnUtilidades;
     private javax.swing.JButton jBtnQuitarArt;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;

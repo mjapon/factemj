@@ -226,6 +226,7 @@ public class MovtransaccJpaController  extends BaseJpaController<Facturas> imple
             movtransacc.setMovValido(0);
             movtransacc.setMovFechareg(new Date());
             movtransacc.setPgfId(form.getPagoId());
+            movtransacc.setCjId(form.getCajaId());
             
             Transacciones traAbono = em.find(Transacciones.class, form.getTraId());
             movtransacc.setTraId(traAbono);

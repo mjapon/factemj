@@ -331,7 +331,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
 
         jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jListCategorias.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
+        jListCategorias.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jScrollPane1.setViewportView(jListCategorias);
 
         jPanel5.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -361,7 +361,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
 
         jPanel7.setLayout(new java.awt.BorderLayout());
 
-        jTableArts.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
+        jTableArts.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jTableArts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

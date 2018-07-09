@@ -29,6 +29,7 @@ public class FilaFactura {
     private BigDecimal descuento;
     private BigDecimal descuentoPorc;
     private BigDecimal precioMinimo;
+    private String tipo;
 
     public FilaFactura(
             Integer numFila,
@@ -41,7 +42,8 @@ public class FilaFactura {
             BigDecimal subtotal,
             BigDecimal total,
             BigDecimal precioMinimo,
-            BigDecimal precioCompra) {
+            BigDecimal precioCompra,
+            String tipo) {
         this.numFila = numFila;
         this.codigoArt = codigoArt;
         this.codBarra = codBarra;
@@ -56,6 +58,7 @@ public class FilaFactura {
         this.descuento = BigDecimal.ZERO;
         this.descuentoPorc = BigDecimal.ZERO;
         this.precioCompra = precioCompra;
+        this.tipo = tipo;
     }
 
     public FilaFactura() {
@@ -241,6 +244,16 @@ public class FilaFactura {
     public void setPrecioCompra(BigDecimal precioCompra) {
         this.precioCompra = precioCompra;
     }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+    
+    
     
     public FilaFactura clonar(){        
         FilaFactura clone = new FilaFactura();        
@@ -258,6 +271,7 @@ public class FilaFactura {
         clone.setDescuento(descuento);
         clone.setDescuentoPorc(descuentoPorc);
         clone.setPrecioCompra(precioCompra);
+        clone.setTipo(tipo);
         return clone;
     }
 

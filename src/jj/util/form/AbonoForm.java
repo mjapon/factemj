@@ -18,14 +18,17 @@ public class AbonoForm {
     private String observacion;
     private Integer factId;
     private Integer traId;
+    private Integer cajaId;
+    
 
     public AbonoForm(Integer pagoId, BigDecimal monto, String observacion, 
-            Integer factId, Integer traId) {
+            Integer factId, Integer traId, Integer cajaId) {
         this.pagoId = pagoId;
         this.monto = monto;
         this.observacion = observacion;
         this.factId = factId;
         this.traId = traId;
+        this.cajaId = cajaId;
     }
 
     public Integer getPagoId() {
@@ -67,8 +70,13 @@ public class AbonoForm {
     public void setTraId(Integer traId) {
         this.traId = traId;
     }
-    
-    
-    
+
+    public Integer getCajaId() {
+        return cajaId;
+    }
+
+    public void setCajaId(Integer cajaId) {
+        this.cajaId = cajaId;
+    }
     
 }

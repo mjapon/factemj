@@ -131,16 +131,18 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         
         TableColumn colDescuento = jTableFactura.getColumnModel().getColumn( FacturaDataModel.ColumnaFacturaEnum.VDESC.index );
         TableColumn colPDescuento = jTableFactura.getColumnModel().getColumn( FacturaDataModel.ColumnaFacturaEnum.PDESC.index );
+        TableColumn colPrecioUnitario = jTableFactura.getColumnModel().getColumn( FacturaDataModel.ColumnaFacturaEnum.PRECIOU.index );
         
         colDescuento.setCellEditor(selectingEditor);
         colPDescuento.setCellEditor(selectingEditor);
+        colPrecioUnitario.setCellEditor(selectingEditor);
         
          //EStablecer los anchos de las columnas
-        jTableFactura.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);        
+        jTableFactura.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.CODBAR.index).setPreferredWidth(80);
         jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.ARTICULO.index).setPreferredWidth(200);
-        jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.CANTIDAD.index).setPreferredWidth(40);        
-        jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.IVA.index).setPreferredWidth(80);   
+        jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.CANTIDAD.index).setPreferredWidth(40);
+        jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.IVA.index).setPreferredWidth(80);
         
         jTableFactura.updateUI();
         facturaDataModel.fireTableDataChanged();
@@ -155,8 +157,7 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         consFinal = clientesController.findById(-1); 
         if (consFinal == null){
             JOptionPane.showMessageDialog(null, "EL CONSUMIDOR FINAL NO HA SIDO REGISTRADO");
-        }
-        
+        }        
         
         pagosMap = new HashMap<Integer, FilaPago>();
         pagosMap.put(1, new FilaPago(1, "EFECTIVO", BigDecimal.ZERO, ""));
@@ -783,6 +784,9 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
 
         jTFEfectivo.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jTFEfectivo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTFEfectivoFocusGained(evt);
+            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jTFEfectivoFocusLost(evt);
             }
@@ -796,6 +800,9 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
 
         jTFCredito.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jTFCredito.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTFCreditoFocusGained(evt);
+            }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jTFCreditoFocusLost(evt);
             }
@@ -1033,7 +1040,7 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
 
         jPanel14.add(jPanel15, java.awt.BorderLayout.NORTH);
 
-        jScrollPane2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jScrollPane2.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
 
         jTableArts.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jTableArts.setModel(new javax.swing.table.DefaultTableModel(
@@ -1067,8 +1074,19 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         farmaApp.logicaClosePane(this.getClass().getName()+this.tra_codigo);
     }//GEN-LAST:event_jButtonSalirActionPerformed
     
-    public void addArticulo(Articulos articulo){
-        facturaDataModel.addItem(articulo);
+    public void addArticulo(Articulos articulo){        
+        if (this.tra_codigo == 1 &&  "B".equalsIgnoreCase(articulo.getArtTipo())){
+            //Si es factura y el articulo es bien verificar inventario
+            if (articulo.getArtInv().compareTo(BigDecimal.ZERO)>0){
+                 facturaDataModel.addItem(articulo);
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "No hay inventarios para este artículo!");
+            }
+        }
+        else{
+            facturaDataModel.addItem(articulo);
+        }
     }
     
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -1464,7 +1482,8 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
             String codBarra = "";
             String nombre = filaFactura.getNombreArt();
             BigDecimal precioCompra = BigDecimal.ZERO;
-            BigDecimal precioVenta= BigDecimal.ZERO;
+            //BigDecimal precioVenta= BigDecimal.ZERO;
+            BigDecimal precioVenta= filaFactura.getPrecioUnitario();
             BigDecimal precioMin= BigDecimal.ZERO;
             boolean iva = filaFactura.isIsIva();
             BigDecimal inventario = BigDecimal.ZERO; 
@@ -1497,6 +1516,26 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
             showMsgError(ex);
         }
     }//GEN-LAST:event_jBtnDescuentosActionPerformed
+
+    private void jTFEfectivoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTFEfectivoFocusGained
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            public void run()
+            {
+                jTFEfectivo.selectAll();
+            }
+        });
+    }//GEN-LAST:event_jTFEfectivoFocusGained
+
+    private void jTFCreditoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTFCreditoFocusGained
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            public void run()
+            {
+                jTFCredito.selectAll();
+            }
+        });
+    }//GEN-LAST:event_jTFCreditoFocusGained
     
     public void doFilter(){
         String filtro = this.filtroTF.getText().trim();
@@ -1571,6 +1610,25 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         
         this.facturaDataModel.fireTableDataChanged();
         this.facturaDataModel.totalizarFactura();
+        
+    }
+    
+    @Override
+    public void doChangePrecio(BigDecimal newPrecio){
+        
+        try{
+            System.out.println("Fila unidad precio do changeprecio action-->");
+            //this.filaUnidadPrecioSel = filaUnidadPrecio;
+            int indexrow = this.jTableFactura.getSelectedRow();
+            FilaFactura filaFactura = facturaDataModel.getItems().get(indexrow);
+            filaFactura.setPrecioUnitario( newPrecio );
+            filaFactura.updateTotales();
+            facturaDataModel.fireTableDataChanged();
+            facturaDataModel.totalizarFactura();
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }        
         
     }
     

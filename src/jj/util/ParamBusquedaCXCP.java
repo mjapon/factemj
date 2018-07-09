@@ -24,6 +24,8 @@ public class ParamBusquedaCXCP {
     private Integer tra_codigo;
     
     private String filtro;
+    private Integer cajaId;
+    private boolean findByCaja;
 
     public ParamBusquedaCXCP() {
         
@@ -113,6 +115,24 @@ public class ParamBusquedaCXCP {
     public void setFiltro(String filtro) {
         this.filtro = filtro;
     }
+
+    public Integer getCajaId() {
+        return cajaId;
+    }
+
+    public void setCajaId(Integer cajaId) {
+        this.cajaId = cajaId;
+    }
+
+    public boolean isFindByCaja() {
+        return findByCaja;
+    }
+
+    public void setFindByCaja(boolean findByCaja) {
+        this.findByCaja = findByCaja;
+    }
+    
+    
     
     
 }

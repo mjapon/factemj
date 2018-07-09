@@ -6,7 +6,6 @@
 package jj.gui;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import jj.controller.MovtransaccJpaController;
@@ -20,7 +19,6 @@ import jj.util.form.AbonoForm;
  * @author mjapon
  */
 public class AbonosFrame extends javax.swing.JFrame {
-
     
     private FilaCXCP fila;
     private CuentasXCBPFrame parentFrame;
@@ -62,6 +60,8 @@ public class AbonosFrame extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextAreaObs = new javax.swing.JTextArea();
+        jLabel5 = new javax.swing.JLabel();
+        jCBCajaId = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         jButtonGuardar = new javax.swing.JButton();
         jButtonCerrar = new javax.swing.JButton();
@@ -92,6 +92,11 @@ public class AbonosFrame extends javax.swing.JFrame {
         jTextAreaObs.setRows(5);
         jScrollPane1.setViewportView(jTextAreaObs);
 
+        jLabel5.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLabel5.setText("CAJA AFECTADA:");
+
+        jCBCajaId.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "GENERAL", "CHANCADO", "SERVICIOS PROF." }));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -100,17 +105,23 @@ public class AbonosFrame extends javax.swing.JFrame {
                 .addGap(16, 16, 16)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel4)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jLabel3)
-                            .addGap(31, 31, 31)
-                            .addComponent(jTFValorAbono, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jLabel2)
-                            .addGap(31, 31, 31)
-                            .addComponent(jTFValorPend, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1))
-                .addContainerGap(18, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jTFValorPend, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(31, 31, 31))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(58, 58, 58)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTFValorAbono, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                            .addComponent(jCBCajaId, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(83, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,11 +134,15 @@ public class AbonosFrame extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jTFValorAbono, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jCBCajaId, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addGap(116, 116, 116))
         );
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -170,7 +185,10 @@ public class AbonosFrame extends javax.swing.JFrame {
             BigDecimal monto = new BigDecimal(this.jTFValorAbono.getText());
             String observacion = this.jTextAreaObs.getText();
             Integer factId = this.fila.getCodFactura();
-            AbonoForm form = new AbonoForm(pagoId, monto, observacion, factId, this.tra_codigo);
+            
+            //0-general, 1-chancado, 2-servicios prof
+            Integer cajaId = this.jCBCajaId.getSelectedIndex();
+            AbonoForm form = new AbonoForm(pagoId, monto, observacion, factId, this.tra_codigo, cajaId);
         
             controller.guardarAbono(form);
             this.parentFrame.logicaBuscar();
@@ -213,10 +231,12 @@ public class AbonosFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCerrar;
     private javax.swing.JButton jButtonGuardar;
+    private javax.swing.JComboBox<String> jCBCajaId;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

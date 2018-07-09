@@ -246,7 +246,7 @@ public class AdminCajasFrame extends BaseFrame {
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 
-        jTable1.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
+        jTable1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

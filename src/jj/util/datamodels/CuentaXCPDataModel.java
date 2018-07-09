@@ -291,7 +291,7 @@ public class CuentaXCPDataModel extends AbstractTableModel{
     }    
     
     public void totalizar(){
-        BigDecimal sumaAbonos = BigDecimal.ZERO;        
+        BigDecimal sumaAbonos = BigDecimal.ZERO;
         for (FilaCXCP fila: this.items){
             sumaAbonos = sumaAbonos.add( fila.getMonto() );
         }

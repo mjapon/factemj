@@ -63,7 +63,6 @@ public class PreciosXUnidadFrame extends BaseFrame {
                 }
             }
         });
-        
         jLabelTitle.setText("Precios por unidad para:"+selectedArt.getNombre());
         
         if (modo==1){
@@ -71,15 +70,24 @@ public class PreciosXUnidadFrame extends BaseFrame {
             jBtnCrear.setEnabled(true);
             jBtnSelect.setEnabled(false);
             jBtnBorrar.setEnabled(true);
+            jPanelPrecioCred.setVisible(false);
         }
         else{
             jPanelNewForm.setVisible(false);
             jBtnCrear.setEnabled(false);
+            jBtnCrear.setVisible(false);
             jBtnSelect.setEnabled(true);
             jBtnBorrar.setEnabled(false);
+            jPanelPrecioCred.setVisible(true);
+            //System.out.println("Valor del predio es:"+ selectedArt.getPrecioVentaConIva().toPlainString());            
+            System.out.println("El valor del precio de venta es:");
+            jTFPCred.setText(NumbersUtil.round2ToStr(selectedArt.getPrecioVenta()));
+            
+            System.out.println("El precio actual del articulo es:");
+            System.out.println(selectedArt.getPrecioVentaConIva());
+            //Aqui se debe mostrar para poder cambiar el precio 
         }
-        
-    }    
+    }
 
     public IListenerSelectUnity getListenerSelectUnity() {
         return listenerSelectUnity;
@@ -215,6 +223,10 @@ public class PreciosXUnidadFrame extends BaseFrame {
         jTFPrecioVenta = new javax.swing.JTextField();
         jTFPrecioMin = new javax.swing.JTextField();
         jBtnCrear = new javax.swing.JButton();
+        jPanelPrecioCred = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jTFPCred = new javax.swing.JTextField();
+        jBtnOkPrecioCred = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -272,7 +284,7 @@ public class PreciosXUnidadFrame extends BaseFrame {
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.EAST);
 
-        jPanel4.setLayout(new java.awt.GridLayout(2, 1));
+        jPanel4.setLayout(new java.awt.BorderLayout());
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -280,7 +292,7 @@ public class PreciosXUnidadFrame extends BaseFrame {
         jLabelTitle.setText("Precios por unidad para:");
         jPanel1.add(jLabelTitle);
 
-        jPanel4.add(jPanel1);
+        jPanel4.add(jPanel1, java.awt.BorderLayout.NORTH);
 
         jPanel5.setLayout(new java.awt.BorderLayout());
 
@@ -310,7 +322,49 @@ public class PreciosXUnidadFrame extends BaseFrame {
         });
         jPanel5.add(jBtnCrear, java.awt.BorderLayout.EAST);
 
-        jPanel4.add(jPanel5);
+        jLabel1.setText("PRECIO HA CRÉDITO:");
+
+        jTFPCred.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTFPCredActionPerformed(evt);
+            }
+        });
+
+        jBtnOkPrecioCred.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-checked.png"))); // NOI18N
+        jBtnOkPrecioCred.setText("Aceptar");
+        jBtnOkPrecioCred.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnOkPrecioCredActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelPrecioCredLayout = new javax.swing.GroupLayout(jPanelPrecioCred);
+        jPanelPrecioCred.setLayout(jPanelPrecioCredLayout);
+        jPanelPrecioCredLayout.setHorizontalGroup(
+            jPanelPrecioCredLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelPrecioCredLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTFPCred, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jBtnOkPrecioCred)
+                .addContainerGap())
+        );
+        jPanelPrecioCredLayout.setVerticalGroup(
+            jPanelPrecioCredLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelPrecioCredLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(jPanelPrecioCredLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTFPCred, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(jBtnOkPrecioCred))
+                .addGap(2, 2, 2))
+        );
+
+        jPanel5.add(jPanelPrecioCred, java.awt.BorderLayout.SOUTH);
+
+        jPanel4.add(jPanel5, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(jPanel4, java.awt.BorderLayout.NORTH);
 
@@ -402,13 +456,30 @@ public class PreciosXUnidadFrame extends BaseFrame {
         
     }//GEN-LAST:event_jBtnSelectActionPerformed
 
+    private void jBtnOkPrecioCredActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOkPrecioCredActionPerformed
+        try{
+            listenerSelectUnity.doChangePrecio(new BigDecimal(this.jTFPCred.getText()));
+            setVisible(false);
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }
+        
+    }//GEN-LAST:event_jBtnOkPrecioCredActionPerformed
+
+    private void jTFPCredActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFPCredActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTFPCredActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnBorrar;
     private javax.swing.JButton jBtnCrear;
+    private javax.swing.JButton jBtnOkPrecioCred;
     private javax.swing.JButton jBtnSalir;
     private javax.swing.JButton jBtnSelect;
     private javax.swing.JComboBox<String> jCBUnidad;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -419,7 +490,9 @@ public class PreciosXUnidadFrame extends BaseFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanelNewForm;
+    private javax.swing.JPanel jPanelPrecioCred;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jTFPCred;
     private javax.swing.JTextField jTFPrecioMin;
     private javax.swing.JTextField jTFPrecioVenta;
     private javax.swing.JTable jTable1;

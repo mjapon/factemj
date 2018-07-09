@@ -76,19 +76,46 @@ public class Cajas implements Serializable {
     @Column(name = "cj_fecaper")
     @Temporal(TemporalType.TIMESTAMP)
     private Date cjFecaper;
+    
     @Column(name = "cj_feccierre")
     @Temporal(TemporalType.TIMESTAMP)
     private Date cjFeccierre;
+    
     @Column(name = "cj_estado")
     private Integer cjEstado;
+    
     @Column(name = "cj_obsanul")
     private String cjObsanul;
+    
     @Column(name = "cj_useranul")
-    private Integer cjUseranul;    
+    private Integer cjUseranul;  
+    
     @Column(name = "cj_saldo")
     private BigDecimal cjSaldo;
+    
     @Column(name = "cj_saldochanca")
     private BigDecimal cjSaldoChanca;
+    
+    @Column(name = "cj_saldosp")
+    private BigDecimal cjSaldoSP;
+    
+    @Column(name = "cj_ventsp")
+    private BigDecimal cjVentsp;
+    
+    @Column(name = "cj_saldoantsp")
+    private BigDecimal cjSaldoantsp;
+    
+    @Column(name = "cj_abonoscxcchanca")
+    private BigDecimal cjAbonoscxcchanca;
+    
+    @Column(name = "cj_abonoscxpchanca")
+    private BigDecimal cjAbonoscxpchanca;
+    
+    @Column(name = "cj_abonoscxcsp")
+    private BigDecimal cjAbonoscxcsp;
+    
+    @Column(name = "cj_abonoscxpsp")
+    private BigDecimal cjAbonoscxpsp;
 
     public Cajas() {
     }
@@ -240,6 +267,62 @@ public class Cajas implements Serializable {
     public void setCjSaldoChanca(BigDecimal cjSaldoChanca) {
         this.cjSaldoChanca = cjSaldoChanca;
     }    
+
+    public BigDecimal getCjVentsp() {
+        return cjVentsp;
+    }
+
+    public void setCjVentsp(BigDecimal cjVentsp) {
+        this.cjVentsp = cjVentsp;
+    }
+
+    public BigDecimal getCjSaldoantsp() {
+        return cjSaldoantsp;
+    }
+
+    public void setCjSaldoantsp(BigDecimal cjSaldoantsp) {
+        this.cjSaldoantsp = cjSaldoantsp;
+    }
+
+    public BigDecimal getCjSaldoSP() {
+        return cjSaldoSP;
+    }
+
+    public void setCjSaldoSP(BigDecimal cjSaldoSP) {
+        this.cjSaldoSP = cjSaldoSP;
+    }
+
+    public BigDecimal getCjAbonoscxcchanca() {
+        return cjAbonoscxcchanca;
+    }
+
+    public void setCjAbonoscxcchanca(BigDecimal cjAbonoscxcchanca) {
+        this.cjAbonoscxcchanca = cjAbonoscxcchanca;
+    }
+
+    public BigDecimal getCjAbonoscxpchanca() {
+        return cjAbonoscxpchanca;
+    }
+
+    public void setCjAbonoscxpchanca(BigDecimal cjAbonoscxpchanca) {
+        this.cjAbonoscxpchanca = cjAbonoscxpchanca;
+    }
+
+    public BigDecimal getCjAbonoscxcsp() {
+        return cjAbonoscxcsp;
+    }
+
+    public void setCjAbonoscxcsp(BigDecimal cjAbonoscxcsp) {
+        this.cjAbonoscxcsp = cjAbonoscxcsp;
+    }
+
+    public BigDecimal getCjAbonoscxpsp() {
+        return cjAbonoscxpsp;
+    }
+
+    public void setCjAbonoscxpsp(BigDecimal cjAbonoscxpsp) {
+        this.cjAbonoscxpsp = cjAbonoscxpsp;
+    }
 
     @Override
     public int hashCode() {

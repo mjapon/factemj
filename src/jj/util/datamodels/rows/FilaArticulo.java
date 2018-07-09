@@ -104,7 +104,11 @@ public class FilaArticulo {
     }
     
     private BigDecimal multipleWithAmount(BigDecimal value){
-        return value.multiply(this.inventario);
+        if (this.inventario.compareTo(BigDecimal.ZERO)>0){
+            return value.multiply(this.inventario);
+        }
+        return BigDecimal.ZERO;
+        
     }
     
     public BigDecimal getPrecioCompraMult(){

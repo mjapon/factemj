@@ -40,7 +40,6 @@ public class CierreCajaFrame extends BaseFrame {
     private Date dia;
     private CajasJpaController cajasController;
     private CtesJpaController ctesCntrl;
-
     
     private MovsCVDataModel movsVentasDataModel;    
     private MovsCVDataModel movsComprasDataModel;    
@@ -50,12 +49,23 @@ public class CierreCajaFrame extends BaseFrame {
     
     private BigDecimal totalVentas;
     private BigDecimal totalVentasChanca;
+    private BigDecimal totalVentasSP;
+    
     private BigDecimal abonosCobrados;
+    private BigDecimal abonosCobradosChk;
+    private BigDecimal abonosCobradosSP;
+    
     private BigDecimal abonosPagados;
+    private BigDecimal abonosPagadosChk;
+    private BigDecimal abonosPagadosSP;
+    
     private BigDecimal saldoInicial;
     private BigDecimal saldoInicialChanca;
+    private BigDecimal saldoInicialSP;
+    
     private BigDecimal saldoCaja;
     private BigDecimal saldoCajaChanca;
+    private BigDecimal saldoCajaSP;
     
     /**
      * Creates new form CierreCajaFrame
@@ -160,10 +170,24 @@ public class CierreCajaFrame extends BaseFrame {
         jTableCxP.updateUI();
         
         saldoInicial = BigDecimal.ZERO;
+        saldoInicialChanca= BigDecimal.ZERO;
+        saldoInicialSP= BigDecimal.ZERO;
+        
         totalVentas = BigDecimal.ZERO;
+        totalVentasChanca= BigDecimal.ZERO;
+        totalVentasSP = BigDecimal.ZERO;
+        
         abonosCobrados = BigDecimal.ZERO;
+        abonosCobradosChk = BigDecimal.ZERO;
+        abonosCobradosSP = BigDecimal.ZERO;        
+        
         abonosPagados = BigDecimal.ZERO;
+        abonosPagadosChk= BigDecimal.ZERO;
+        abonosPagadosSP= BigDecimal.ZERO;        
+        
         saldoCaja = BigDecimal.ZERO;
+        saldoCajaChanca = BigDecimal.ZERO;
+        saldoCajaSP = BigDecimal.ZERO;
         
         this.jTFFechaApertura.setText( FechasUtil.getFechaActual() );
         
@@ -197,10 +221,12 @@ public class CierreCajaFrame extends BaseFrame {
                 this.jTFFechaApertura.setText( FechasUtil.formatDateHour(caja.getCjFecaper()) );
                 saldoInicial = caja.getCjSaldoant()!=null?caja.getCjSaldoant():BigDecimal.ZERO;
                 saldoInicialChanca = caja.getCjSaldoantchanca()!=null?caja.getCjSaldoantchanca():BigDecimal.ZERO;
+                saldoInicialSP = caja.getCjSaldoantsp()!=null?caja.getCjSaldoantsp():BigDecimal.ZERO;
 
                 this.jTFFechaApertura.setText( FechasUtil.formatDateHour(caja.getCjFecaper()) );
                 this.jTFSaldoInicial.setText( NumbersUtil.round2(saldoInicial).toPlainString() );
                 this.jTFSaldoInicialChanca.setText( NumbersUtil.round2(saldoInicialChanca).toPlainString() );
+                this.jTFSaldoInicialSP.setText( NumbersUtil.round2(saldoInicialSP).toPlainString() );
                 this.jTAObsApertura.setText( caja.getCjObsaper() );
 
                 Date desde = caja.getCjFecaper();
@@ -213,8 +239,7 @@ public class CierreCajaFrame extends BaseFrame {
                 paramsVentas.setTraCodigo(1);            
                 paramsVentas.setArtId(0);
                 paramsVentas.setCliId(0);
-                paramsVentas.setUsarFechaHora(true);
-                
+                paramsVentas.setUsarFechaHora(true);                
                 
                 Integer codCatChanca = Integer.valueOf(ctesCntrl.findValueByClave("COD_CAT_CHANCADO"));
                 ParamsBusquedaTransacc paramsVentasChanca = new ParamsBusquedaTransacc();
@@ -224,15 +249,28 @@ public class CierreCajaFrame extends BaseFrame {
                 paramsVentasChanca.setArtId(codCatChanca);
                 paramsVentasChanca.setCliId(0);
                 paramsVentasChanca.setUsarFechaHora(true);
-                paramsVentasChanca.setArtId( codCatChanca );
                 paramsVentasChanca.setByCat(true);
                 
-                //facturaController.listarByCat(paramsVentasChanca);
+                Integer codCatSP = Integer.valueOf(ctesCntrl.findValueByClave("COD_CAT_SP"));
+                ParamsBusquedaTransacc paramsVentasSP = new ParamsBusquedaTransacc();
+                paramsVentasSP.setDesde(desde);
+                paramsVentasSP.setHasta(hasta);
+                paramsVentasSP.setTraCodigo(1);            
+                paramsVentasSP.setArtId(codCatSP);
+                paramsVentasSP.setCliId(0);
+                paramsVentasSP.setUsarFechaHora(true);
+                paramsVentasSP.setByCat(true);
                 
+                //facturaController.listarByCat(paramsVentasChanca);
                 VentasDataModel ventasChancado = new VentasDataModel();
                 ventasChancado.setController(facturaController);
                 ventasChancado.setParams(paramsVentasChanca);
                 ventasChancado.loadFromDataBase();
+                
+                VentasDataModel ventasSP = new VentasDataModel();
+                ventasSP.setController(facturaController);
+                ventasSP.setParams(paramsVentasSP);
+                ventasSP.loadFromDataBase();
                 
 
                 movsVentasDataModel.setParams(paramsVentas);
@@ -266,6 +304,36 @@ public class CierreCajaFrame extends BaseFrame {
                 paramsCXC.setCliId(0);
                 movsCXCDataModel.setParams(paramsCXC);
                 movsCXCDataModel.loadFromDataBase();
+                
+                //Cuentas x cobrar chancado
+                MovsCXCPDataModel movsCXCChacaDM = new MovsCXCPDataModel(3);
+                ParamBusquedaCXCP paramsCXCChanca = new ParamBusquedaCXCP();
+                paramsCXCChanca.setDesde(desde);
+                paramsCXCChanca.setHasta(hasta);
+                paramsCXCChanca.setTra_codigo(3);
+                paramsCXCChanca.setArtId(0);
+                paramsCXCChanca.setCliId(0);
+                paramsCXCChanca.setFindByCaja(true);
+                paramsCXCChanca.setCajaId(1);
+                movsCXCChacaDM.setParams(paramsCXCChanca);
+                movsCXCChacaDM.setController(facturaController);
+                movsCXCChacaDM.loadFromDataBase();
+                
+                MovsCXCPDataModel movsCXPChacaDM = new MovsCXCPDataModel(4);
+                ParamBusquedaCXCP paramsCXPChanca = new ParamBusquedaCXCP();
+                paramsCXPChanca.setDesde(desde);
+                paramsCXPChanca.setHasta(hasta);
+                paramsCXPChanca.setTra_codigo(4);
+                paramsCXPChanca.setArtId(0);
+                paramsCXPChanca.setCliId(0);
+                paramsCXPChanca.setFindByCaja(true);
+                paramsCXPChanca.setCajaId(1);
+                movsCXPChacaDM.setController(facturaController);
+                movsCXPChacaDM.setParams(paramsCXPChanca);
+                movsCXPChacaDM.loadFromDataBase();
+                
+                
+                
                 jTableCxC.updateUI();
                 movsCXCDataModel.fireTableDataChanged();
                 jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Abonos Cobrados("+movsCXCDataModel.getItems().size() +")" , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
@@ -280,38 +348,96 @@ public class CierreCajaFrame extends BaseFrame {
                 paramsCXP.setCliId(0);
                 movsCXPDataModel.setParams(paramsCXP);
                 movsCXPDataModel.loadFromDataBase();
+                
+                //CUENTAS POR PAGAR CHANCA, SERVICIOS PROF
+                MovsCXCPDataModel movsCXCSPDM = new MovsCXCPDataModel(3);
+                ParamBusquedaCXCP paramsCXCSP = new ParamBusquedaCXCP();
+                paramsCXCSP.setDesde(desde);
+                paramsCXCSP.setHasta(hasta);
+                paramsCXCSP.setTra_codigo(3);
+                paramsCXCSP.setArtId(0);
+                paramsCXCSP.setCliId(0);
+                paramsCXCSP.setFindByCaja(true);
+                paramsCXCSP.setCajaId(2);
+                movsCXCSPDM.setController(facturaController);
+                movsCXCSPDM.setParams(paramsCXCSP);
+                movsCXCSPDM.loadFromDataBase();
+                
+                MovsCXCPDataModel movsCXPSPDM = new MovsCXCPDataModel(4);
+                ParamBusquedaCXCP paramsCXPSP = new ParamBusquedaCXCP();
+                paramsCXPSP.setDesde(desde);
+                paramsCXPSP.setHasta(hasta);
+                paramsCXPSP.setTra_codigo(4);
+                paramsCXPSP.setArtId(0);
+                paramsCXPSP.setCliId(0);
+                paramsCXPSP.setFindByCaja(true);
+                paramsCXPSP.setCajaId(2);
+                movsCXPSPDM.setController(facturaController);
+                movsCXPSPDM.setParams(paramsCXPSP);
+                movsCXPSPDM.loadFromDataBase();
+                
+                
                 jTableCxP.updateUI();
                 movsCXPDataModel.fireTableDataChanged();
                 jPanelCxP.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Abonos Pagados("+movsCXPDataModel.getItems().size() +")" , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
 
-                //updateLabelTotales();         
-
                 //Sumatora de ventas
                 TotalesVentasModel totalesVentas =  movsVentasDataModel.getTotalesVentasModel();
                 TotalesVentasModel totalesVentasChanca =  ventasChancado.getTotalesVentasModel();
+                TotalesVentasModel totalesVentasSP =  ventasSP.getTotalesVentasModel();
+                
                 TotalesCuentasXPC totalesCXP = movsCXPDataModel.getTotalesFactura();
                 TotalesCuentasXPC totalesCXC = movsCXCDataModel.getTotalesFactura();
-
-                BigDecimal  auxTotalVentas = totalesVentas.getSumaEfectivo();
-                totalVentasChanca = totalesVentasChanca.getSumaEfectivo();
-                abonosCobrados = totalesCXC.getSumaMonto();
-                abonosPagados = totalesCXP.getSumaMonto();
                 
-                totalVentas = auxTotalVentas.subtract(totalVentasChanca);
+                TotalesCuentasXPC totalesCXPChanca = movsCXPChacaDM.getTotalesFactura();
+                TotalesCuentasXPC totalesCXPSP = movsCXPSPDM.getTotalesFactura();
+                
+                TotalesCuentasXPC totalesCXCChanca = movsCXCChacaDM.getTotalesFactura();
+                TotalesCuentasXPC totalesCXCSP = movsCXCSPDM.getTotalesFactura();
+                
+                
+                BigDecimal  auxTotalVentas = totalesVentas.getSumaEfectivo();
+                
+                totalVentasChanca = totalesVentasChanca.getSumaEfectivo();
+                totalVentasSP = totalesVentasSP.getSumaEfectivo();
+                
+                BigDecimal auxAbonosCobrados = totalesCXC.getSumaMonto();
+                BigDecimal auxAbonosPagados = totalesCXP.getSumaMonto();
+                
+                abonosCobradosChk = totalesCXCChanca.getSumaMonto();
+                abonosPagadosChk = totalesCXPChanca.getSumaMonto();
+                
+                abonosCobradosSP = totalesCXCSP.getSumaMonto();
+                abonosPagadosSP = totalesCXPSP.getSumaMonto();
+                
+                abonosCobrados = auxAbonosCobrados.subtract(abonosCobradosChk.add(abonosCobradosSP)); 
+                abonosPagados = auxAbonosPagados.subtract(abonosPagadosChk.add(abonosPagadosSP));
+                
+                totalVentas = auxTotalVentas.subtract(totalVentasChanca.add(totalVentasSP));
 
                 saldoCaja =  saldoInicial.add(totalVentas).add(abonosCobrados).subtract(abonosPagados);
-                saldoCajaChanca = saldoInicialChanca.add(totalVentasChanca);
+                saldoCajaChanca = saldoInicialChanca.add(totalVentasChanca).add(abonosCobradosChk).subtract(abonosPagadosChk);
+                saldoCajaSP = saldoInicialSP.add(totalVentasSP).add(abonosCobradosSP).subtract(abonosPagadosSP);
 
                 jTFVentas.setText( NumbersUtil.round2(totalVentas).toPlainString() );
                 jTFVentasChancado.setText( NumbersUtil.round2(totalVentasChanca).toPlainString() );
+                jTFVentasSP.setText(NumbersUtil.round2(totalVentasSP).toPlainString() );
+                
                 jTFCuentasXCobrar.setText( NumbersUtil.round2(abonosCobrados).toPlainString() );
+                jTFCXCChanca.setText( NumbersUtil.round2(abonosCobradosChk).toPlainString() );
+                jTFCXCSP.setText( NumbersUtil.round2(abonosCobradosSP).toPlainString() );                
+                
                 jTFCuentasXPagar.setText( NumbersUtil.round2(abonosPagados).toPlainString() );
+                jTFCXPChanca.setText( NumbersUtil.round2(abonosPagadosChk).toPlainString() );
+                jTFCXPSP.setText( NumbersUtil.round2(abonosPagadosSP).toPlainString() );                
+                
                 jTFSaldo.setText(NumbersUtil.round2(saldoCaja).toPlainString());
                 jTFSaldoChanca.setText(NumbersUtil.round2(saldoCajaChanca).toPlainString());
+                jTFSaldoSP.setText(NumbersUtil.round2(saldoCajaSP).toPlainString());
 
                 jTFTotalVGrid.setText(NumbersUtil.round2(auxTotalVentas).toPlainString());
-                jTFTotalACGrid.setText(NumbersUtil.round2(abonosCobrados).toPlainString());
-                jTFTotalAPGrid.setText(NumbersUtil.round2(abonosPagados).toPlainString());
+                jTFTotalACGrid.setText(NumbersUtil.round2(auxAbonosCobrados).toPlainString());
+                jTFTotalAPGrid.setText(NumbersUtil.round2(auxAbonosPagados).toPlainString());
             }
         }
         catch(Throwable ex){
@@ -404,7 +530,26 @@ public class CierreCajaFrame extends BaseFrame {
         jLabel15 = new javax.swing.JLabel();
         jTFVentasChancado = new javax.swing.JTextField();
         jTFSaldoChanca = new javax.swing.JTextField();
-        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jTFSaldoInicialSP = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jTFVentasSP = new javax.swing.JTextField();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        jTFCXCSP = new javax.swing.JTextField();
+        jTFCXCChanca = new javax.swing.JTextField();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        jTFCXPSP = new javax.swing.JTextField();
+        jTFCXPChanca = new javax.swing.JTextField();
+        jLabel27 = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
+        jTFSaldoSP = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -430,7 +575,7 @@ public class CierreCajaFrame extends BaseFrame {
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 700));
+        setPreferredSize(new java.awt.Dimension(1200, 800));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -476,7 +621,7 @@ public class CierreCajaFrame extends BaseFrame {
 
         jTFCuentasXPagar.setEditable(false);
 
-        jLabel9.setText("Saldo en CAJA:");
+        jLabel9.setText("Saldos en CAJA:");
 
         jTFSaldo.setEditable(false);
         jTFSaldo.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
@@ -489,11 +634,11 @@ public class CierreCajaFrame extends BaseFrame {
         jTAObsApertura.setRows(5);
         jScrollPane5.setViewportView(jTAObsApertura);
 
-        jLabel14.setText("Saldo Inicial Chancado (Anterior):");
+        jLabel14.setText("Chancado:");
 
         jTFSaldoInicialChanca.setEditable(false);
 
-        jLabel15.setText("Total Ventas Válidas Chancado:");
+        jLabel15.setText("Chancado:");
 
         jTFVentasChancado.setEditable(false);
 
@@ -501,119 +646,217 @@ public class CierreCajaFrame extends BaseFrame {
         jTFSaldoChanca.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jTFSaldoChanca.setForeground(new java.awt.Color(0, 153, 51));
 
-        jLabel16.setText("Saldo en CAJA Chancado:");
+        jLabel17.setText("Servicios Prof.:");
+
+        jLabel18.setText("Otros:");
+
+        jTFSaldoInicialSP.setEditable(false);
+
+        jLabel19.setText("Servicios Prof:");
+
+        jLabel20.setText("Otros:");
+
+        jTFVentasSP.setEditable(false);
+
+        jLabel21.setText("Chancado:");
+
+        jLabel22.setText("Servicios Prof:");
+
+        jLabel23.setText("Otros:");
+
+        jTFCXCSP.setEditable(false);
+
+        jTFCXCChanca.setEditable(false);
+
+        jLabel24.setText("Chancado:");
+
+        jLabel25.setText("Servicios Prof:");
+
+        jLabel26.setText("Otros:");
+
+        jTFCXPSP.setEditable(false);
+
+        jTFCXPChanca.setEditable(false);
+
+        jLabel27.setText("Chancado:");
+
+        jLabel28.setText("Servicios Prof:");
+
+        jLabel29.setText("Otros:");
+
+        jTFSaldoSP.setEditable(false);
+        jTFSaldoSP.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTFSaldoSP.setForeground(new java.awt.Color(0, 153, 51));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(jTFCXCChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jTFCXCSP, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jTFCuentasXCobrar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addGap(41, 41, 41)
+                                        .addComponent(jTFFechaApertura, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel5)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel15)
+                                        .addGap(82, 82, 82)
+                                        .addComponent(jLabel19)
+                                        .addGap(51, 51, 51)
+                                        .addComponent(jLabel20))
+                                    .addComponent(jLabel3)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                                .addComponent(jLabel14)
+                                                .addGap(77, 77, 77)
+                                                .addComponent(jLabel17))
+                                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                                .addComponent(jTFSaldoInicialChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jTFSaldoInicialSP, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGap(23, 23, 23)
+                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel18)
+                                            .addComponent(jTFSaldoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(jLabel4)
+                                    .addComponent(jScrollPane5))
+                                .addComponent(jLabel6)
+                                .addGroup(jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jTFVentasChancado, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(22, 22, 22)
+                                    .addComponent(jTFVentasSP, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jTFVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel7)
+                                .addGroup(jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel21)
+                                    .addGap(82, 82, 82)
+                                    .addComponent(jLabel22)
+                                    .addGap(51, 51, 51)
+                                    .addComponent(jLabel23))))
+                        .addComponent(jLabel8)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                            .addComponent(jLabel24)
+                            .addGap(82, 82, 82)
+                            .addComponent(jLabel25)
+                            .addGap(51, 51, 51)
+                            .addComponent(jLabel26))
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel27)
+                                    .addComponent(jTFSaldoChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(30, 30, 30)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jTFSaldoSP, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(23, 23, 23)
+                                        .addComponent(jTFSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel28)))
+                            .addComponent(jLabel29))
+                        .addComponent(jLabel9)
+                        .addComponent(jLabel10)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(42, 42, 42)
-                        .addComponent(jTFFechaApertura, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTFSaldoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel5)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTFVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTFCuentasXCobrar, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel10)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTFSaldoInicialChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel15)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTFVentasChancado, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                            .addComponent(jLabel16)
-                            .addGap(18, 18, 18)
-                            .addComponent(jTFSaldoChanca))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                            .addComponent(jLabel9)
-                            .addGap(18, 18, 18)
-                            .addComponent(jTFSaldo))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                            .addComponent(jLabel8)
-                            .addGap(18, 18, 18)
-                            .addComponent(jTFCuentasXPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(28, Short.MAX_VALUE))
+                        .addComponent(jTFCXPChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jTFCXPSP, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(jTFCuentasXPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTFFechaApertura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTFSaldoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel14)
-                        .addGap(18, 18, 18))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTFSaldoInicialChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
-                .addGap(22, 22, 22)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jTFVentas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(2, 2, 2)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(jTFVentasChancado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jTFCuentasXCobrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addComponent(jTFCuentasXPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9)
-                    .addComponent(jTFSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel16)
-                    .addComponent(jTFSaldoChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel14)
+                    .addComponent(jLabel17)
+                    .addComponent(jLabel18))
                 .addGap(2, 2, 2)
-                .addComponent(jLabel10)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTFSaldoInicialSP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFSaldoInicialChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFSaldoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(jLabel19)
+                    .addComponent(jLabel20))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTFVentasChancado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFVentas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFVentasSP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel21)
+                    .addComponent(jLabel22)
+                    .addComponent(jLabel23))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTFCuentasXCobrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFCXCChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFCXCSP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel24)
+                    .addComponent(jLabel25)
+                    .addComponent(jLabel26))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTFCuentasXPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFCXPSP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFCXPChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel27)
+                        .addComponent(jLabel29)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTFSaldoChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFSaldoSP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
         jPanel2.add(jPanel4);
@@ -786,18 +1029,29 @@ public class CierreCajaFrame extends BaseFrame {
     }//GEN-LAST:event_jButtonUpdValActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
         try{
             int response = JOptionPane.showConfirmDialog(null, "¿Seguro que desea registrar el cierre de caja, ya no podra registrar ventas? ");
             if (response == JOptionPane.YES_OPTION){
-
                 Integer cjId = caja.getCjId();
                 BigDecimal ventasAnuladas = BigDecimal.ZERO;
                 String obsCierre = jTAObsCierre.getText();
-
-                cajasController.cerrarCaja(cjId, totalVentas, totalVentasChanca, abonosCobrados, abonosPagados, ventasAnuladas, saldoCaja, saldoCajaChanca, obsCierre);
-                showMsg(" La caja ha sido cerrada satisfactoriamente ");
-                
+                cajasController.cerrarCaja(cjId, 
+                        totalVentas, 
+                        totalVentasChanca, 
+                        totalVentasSP,
+                        abonosCobrados, 
+                        abonosPagados, 
+                        ventasAnuladas, 
+                        saldoCaja, 
+                        saldoCajaChanca, 
+                        saldoCajaSP, 
+                        obsCierre,
+                        abonosCobradosChk,
+                        abonosCobradosSP,
+                        abonosPagadosChk,
+                        abonosPagadosSP
+                        );
+                showMsg(" La caja ha sido cerrada satisfactoriamente ");                
                 setVisible(false);
             }
         }
@@ -833,8 +1087,20 @@ public class CierreCajaFrame extends BaseFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -860,6 +1126,10 @@ public class CierreCajaFrame extends BaseFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTextArea jTAObsApertura;
     private javax.swing.JTextArea jTAObsCierre;
+    private javax.swing.JTextField jTFCXCChanca;
+    private javax.swing.JTextField jTFCXCSP;
+    private javax.swing.JTextField jTFCXPChanca;
+    private javax.swing.JTextField jTFCXPSP;
     private javax.swing.JTextField jTFCuentasXCobrar;
     private javax.swing.JTextField jTFCuentasXPagar;
     private javax.swing.JTextField jTFFechaApertura;
@@ -867,11 +1137,14 @@ public class CierreCajaFrame extends BaseFrame {
     private javax.swing.JTextField jTFSaldoChanca;
     private javax.swing.JTextField jTFSaldoInicial;
     private javax.swing.JTextField jTFSaldoInicialChanca;
+    private javax.swing.JTextField jTFSaldoInicialSP;
+    private javax.swing.JTextField jTFSaldoSP;
     private javax.swing.JTextField jTFTotalACGrid;
     private javax.swing.JTextField jTFTotalAPGrid;
     private javax.swing.JTextField jTFTotalVGrid;
     private javax.swing.JTextField jTFVentas;
     private javax.swing.JTextField jTFVentasChancado;
+    private javax.swing.JTextField jTFVentasSP;
     private javax.swing.JTable jTableCxC;
     private javax.swing.JTable jTableCxP;
     private javax.swing.JTable jTableVentas;
