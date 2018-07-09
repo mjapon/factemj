@@ -5,6 +5,7 @@
  */
 package jj.gui.merc.unid;
 
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -324,9 +325,19 @@ public class PreciosXUnidadFrame extends BaseFrame {
 
         jLabel1.setText("PRECIO HA CRÉDITO:");
 
+        jTFPCred.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jTFPCredMousePressed(evt);
+            }
+        });
         jTFPCred.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTFPCredActionPerformed(evt);
+            }
+        });
+        jTFPCred.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTFPCredKeyPressed(evt);
             }
         });
 
@@ -457,19 +468,42 @@ public class PreciosXUnidadFrame extends BaseFrame {
     }//GEN-LAST:event_jBtnSelectActionPerformed
 
     private void jBtnOkPrecioCredActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOkPrecioCredActionPerformed
-        try{
+       
+        logicaPrecio();
+    }//GEN-LAST:event_jBtnOkPrecioCredActionPerformed
+
+    public void logicaPrecio(){
+         try{
             listenerSelectUnity.doChangePrecio(new BigDecimal(this.jTFPCred.getText()));
             setVisible(false);
         }
         catch(Throwable ex){
             showMsgError(ex);
         }
-        
-    }//GEN-LAST:event_jBtnOkPrecioCredActionPerformed
-
+    }
+    
+    
     private void jTFPCredActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFPCredActionPerformed
-        // TODO add your handling code here:
+        
+        
+        
+        
     }//GEN-LAST:event_jTFPCredActionPerformed
+
+    private void jTFPCredMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTFPCredMousePressed
+        
+        
+        
+        
+    }//GEN-LAST:event_jTFPCredMousePressed
+
+    private void jTFPCredKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFPCredKeyPressed
+        
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER){
+            logicaPrecio();
+        }
+        
+    }//GEN-LAST:event_jTFPCredKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
