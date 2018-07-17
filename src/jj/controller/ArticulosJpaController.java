@@ -191,7 +191,7 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
             }
             else{
                 System.out.println("El inventario es menor ha cero se establece el inventario en el monto que viene en la compra");
-                newInv = artInv;
+                newInv = cant;
             }
             
             System.out.println("El nuevo inventario es-->" + newInv);

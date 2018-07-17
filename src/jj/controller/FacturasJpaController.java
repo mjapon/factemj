@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.TemporalType;
 import jj.controller.exceptions.IllegalOrphanException;
@@ -290,7 +291,8 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                 (BigDecimal)item[8],
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
-                BigDecimal.ZERO
+                BigDecimal.ZERO,
+                    (String)item[11]
             );
         
             filafactura.updateTotales();
@@ -304,78 +306,9 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         datosFactura.put("detalles", detallesList);
         
         return datosFactura;
-        
     }
     
     public List<Object[]> listarMovsAbonos(ParamBusquedaCXCP params){
-        
-        /*
-        StringBuilder builder = new StringBuilder("select " +
-                        " m.movFechareg as movFechareg, " +
-                        " m.factIdRel.factNum as factNum, " +
-                        " m.factIdRel.factTotal as factTotal, " +
-                        " m.movMonto as movMonto, " +
-                        " p.pgfSaldo as pgfSaldo, " +                        
-                        " m.factIdRel.factId as factId " +                
-                        " from Movtransacc m " +
-                        " join Pagosfact p on m.pgfId = p.pgfId ");
-        
-        List<String> paramsList = new ArrayList<String>();
-        
-        paramsList.add("m.factIdRel.factValido = 0");
-        paramsList.add("m.movValido = 0");        
-        
-        if (params.getDesde() != null){
-            paramsList.add("year(m.movFechareg) >= year(:paramDesde) ");
-            paramsList.add("month(m.movFechareg) >= month(:paramDesde) ");
-            paramsList.add("day(m.movFechareg) >= day(:paramDesde) ");
-        }
-        if (params.getHasta() != null){
-            //paramsList.add("DATE(m.movFechareg) <= :paramHasta ");
-            
-            paramsList.add("year(m.movFechareg) <= year(:paramHasta) ");
-            paramsList.add("month(m.movFechareg) <= month(:paramHasta) ");
-            paramsList.add("day(m.movFechareg) <= day(:paramHasta) ");
-        }
-        
-        paramsList.add("m.traId.traId = "+params.getTra_codigo());
-        
-        String delimiter = " and ";
-        String where = "";
-            
-        if (paramsList.size()>0){
-            StringJoiner joiner = new StringJoiner(delimiter);
-            for(String param: paramsList){
-                joiner.add(param);
-            }
-
-            where = " where " + joiner.toString();
-        }
-        
-        String baseQuery = builder.toString();
-        StringBuilder orderSB = new StringBuilder("order by ");
-        orderSB.append(params.getSortColumn());
-        orderSB.append(" ");
-        orderSB.append(params.getSortOrder());
-
-        String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
-        
-        System.out.println("Query movs:");
-        System.out.println(queryStr);
-
-        Query query = this.newQuery(queryStr.toString());        
-            
-        if (params.getDesde() != null){
-            query = query.setParameter("paramDesde", params.getDesde(), TemporalType.DATE);
-        }
-
-        if (params.getHasta() != null){
-            query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
-        }        
-        
-        return query.getResultList();
-        */
-        
         
         StringBuilder builder = new StringBuilder("select\n" +
         " date(m.mov_fechareg) as movFechareg,\n" +
@@ -398,6 +331,10 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         }
         if (params.getHasta() != null){
             paramsList.add("date(m.mov_fechareg) <= date(?paramHasta) ");
+        }
+        
+        if (params.isFindByCaja()){
+            paramsList.add("m.cj_id = ?paramCaja ");
         }
         
         paramsList.add("m.tra_id = "+params.getTra_codigo());
@@ -435,8 +372,11 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
             query = query.setParameter("paramHasta", params.getHasta(), TemporalType.DATE);
         }        
         
-        return query.getResultList();
+        if (params.isFindByCaja()){
+            query = query.setParameter("paramCaja", params.getCajaId());
+        }
         
+        return query.getResultList();
         
     }
     
@@ -493,6 +433,12 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         else{
             
         }        
+        
+        if (params.isFindByCaja()){
+            paramsList.add("f.factFecha <= :paramHasta ");
+        }
+        
+        
         
         String delimiter = " and ";
         String where = "";
@@ -561,7 +507,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         
     }
      
-    public List<Object[]> listar(ParamsBusquedaTransacc params){
+    public Map<Integer,List<Object[]>> listar(ParamsBusquedaTransacc params){
         boolean searchByArt = params.getArtId() != null && params.getArtId()>0;      
         StringBuilder baseQueryArts = new StringBuilder("select f.factId.factId,\n" +
                                                         "f.factId.factNum,\n" +
@@ -677,18 +623,78 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         }
 
         List<Object[]> resultList = query.getResultList();
+        
+        List<Integer> idList = new ArrayList<>();
 
-        for (Object[] fila:  resultList){      
-            Map<Integer, BigDecimal> efeccredmap =getEfectCreditVal((Integer)fila[0]);
-
+        for (Object[] fila:  resultList){
+            Integer idFact = (Integer)fila[0];
+            Map<Integer, BigDecimal> efeccredmap =getEfectCreditVal(idFact);
             fila[10] = efeccredmap.get(1);
             fila[11] = efeccredmap.get(2);
             fila[12] = efeccredmap.get(3);
+            idList.add(idFact);
+        }   
+        //Obtener las utilidades por categoria
+        Map<Integer, List<Object[]>> resultMap = new HashMap<Integer, List<Object[]>>();
+        List<Object[]> utilidadesByCat = new ArrayList<>();
+        if (idList.size()>0){
+            utilidadesByCat = getUtilidadesByIds(idList);
         }
-
-        return resultList;
-    }
         
+        resultMap.put(1, resultList);//1->Listado
+        resultMap.put(2, utilidadesByCat);//2->Categorias
+        
+        return resultMap;
+    }
+    
+    /**
+     * Retorna cat, utilidad
+     * @param factids de ls facturas
+     * @return List<0->cat, 1->utilidad>
+     */
+    public List<Object[]> getUtilidadesByIds(List<Integer> factids){
+        String ids = factids.stream().map(i -> "'"+i.toString()+"'").collect(Collectors.joining(","));
+        String nquery = "select c.cat_id, c.cat_name, (a.detf_precio-a.detf_preciocm)*a.detf_cant as utilidad  from detallesfact a\n" +
+                        " join articulos art on a.art_id = art.art_id\n" +
+                        " join categorias c  on art.cat_id = c.cat_id\n" +
+                        "where a.fact_id in ("+ ids +") GROUP BY c.cat_id, c.cat_name, utilidad";
+        return newNativeQuery(nquery).getResultList();
+    }
+    
+    /**
+     * Retorna las utlidades por caja: -1: otrod, catchanca, catsp
+     * @param codCatChanca
+     * @param codCatSP
+     * @param list
+     * @return 
+     */
+    public Map<Integer, BigDecimal> getUtilidadesByCat(Integer codCatChanca, Integer codCatSP, List<Object[]> list){
+        BigDecimal utilidadesChanca = BigDecimal.ZERO;
+        BigDecimal utilidadesSP = BigDecimal.ZERO;
+        BigDecimal otrasUtil = BigDecimal.ZERO;
+        
+        for(Object[] item: list){
+            Integer catid = (Integer)item[0];
+            BigDecimal utilidadCat = (BigDecimal)item[2];
+            
+            if (codCatChanca.intValue() == catid.intValue()){
+                utilidadesChanca = utilidadesChanca.add(utilidadCat);
+            }
+            else if(codCatSP.intValue() == catid.intValue()){
+                utilidadesSP = utilidadesSP.add(utilidadCat);
+            }
+            else{
+                otrasUtil = otrasUtil.add(utilidadCat);
+            }
+        }
+        
+        Map<Integer, BigDecimal> resultMap = new HashMap<>();
+        resultMap.put(codCatChanca, utilidadesChanca);
+        resultMap.put(codCatSP, utilidadesSP);
+        resultMap.put(-1, otrasUtil);
+        
+        return resultMap;
+    }
     
     public List<Object[]> listarByCat(ParamsBusquedaTransacc params){
         
@@ -793,15 +799,27 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
 
         List<Object[]> resultList = query.getResultList();
 
-        /*
+        
         for (Object[] fila:  resultList){      
             Map<Integer, BigDecimal> efeccredmap =getEfectCreditVal((Integer)fila[0]);
+            
+            BigDecimal valcredito = efeccredmap.get(2);
+            
+            System.out.println("------------------------->factid:"+fila[0]+"valor credito:"+valcredito.toPlainString()+"comp"+(valcredito.compareTo(BigDecimal.ZERO)>0));
+            
+            if (valcredito.compareTo(BigDecimal.ZERO)>0){
+                //No se puede asegurar que el articulo comprado este en efectivo ya que la factura tiene un monto ha credito no puede ir al cierre de caja de la categoria
+                
+                System.out.println("--------------_>Valor de fila[10] es:"+fila[10]);
+                fila[10] = BigDecimal.ZERO;
+                fila[11] = BigDecimal.ZERO;
+                fila[12] = BigDecimal.ZERO;
+            }
 
-            fila[10] = efeccredmap.get(1);
-            fila[11] = efeccredmap.get(2);
-            fila[12] = efeccredmap.get(3);
+            //fila[10] = efeccredmap.get(1);
+            //fila[11] = efeccredmap.get(2);d
+            //fila[12] = efeccredmap.get(3);
         }
-        */
 
         return resultList;
     }    
@@ -910,9 +928,12 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                             " art.artCodbar, "+
                             " d.detfCant*d.detfPrecio as subt, "+
                             " (d.detfCant*d.detfPrecio)*d.detfDesc as descv, "+                            
-                            " case when d.detfIva = 1 then ((d.detfCant*d.detfPrecio) - ((d.detfCant*d.detfPrecio)*d.detfDesc))*0.12 else 0.0 end as ivaval "+
+                            " case when d.detfIva = 1 then ((d.detfCant*d.detfPrecio) - ((d.detfCant*d.detfPrecio)*d.detfDesc))*0.12 else 0.0 end as ivaval, "+
+                            " art.artTipo "+    
                             "  from Detallesfact d join Articulos art on d.artId = art.artId where d.factId.factId= "+factId);
             
+            System.out.println("Query es:");
+            System.out.println(builder.toString());
             
             Query query = this.newQuery(builder.toString());
             //query = query.setParameter("paramfecha", dia, TemporalType.DATE);
@@ -1098,8 +1119,10 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         }
         
         return utilidad;
-        
     }
+    
+    
+    
     
     public void crearFactura(
             DatosCabeceraFactura datosCabecera, 

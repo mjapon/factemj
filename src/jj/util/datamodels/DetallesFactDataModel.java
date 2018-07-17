@@ -43,7 +43,8 @@ public class DetallesFactDataModel extends FacturaDataModel{
                 (BigDecimal)item[8],
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
-                BigDecimal.ZERO
+                BigDecimal.ZERO,
+                    (String)item[11]
             );
         
             filafactura.updateTotales();

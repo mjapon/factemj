@@ -71,7 +71,9 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
     
     
     public Cajas getCajaCerradaMenorFechaCierre(Date dia){
-        String nativeQuery = String.format("select cj_id from cajas where cj_feccierre < to_date('%s','DD/MM/YYYY HH24:MI') and cj_estado = 1 order by cj_feccierre desc ", FechasUtil.formatDateHour(dia));
+        String nativeQuery = String.format("select cj_id from cajas where cj_feccierre < to_timestamp('%s','DD/MM/YYYY HH24:MI') and cj_estado = 1 order by cj_feccierre desc ", FechasUtil.formatDateHour(dia));
+        System.out.println("Query que se ejecuta:");
+        System.out.println(nativeQuery);
         List<Integer> rs = newNativeQuery(nativeQuery).getResultList();
         if (rs.size()>0){
             Integer cajaId = (Integer)rs.get(0);
@@ -131,7 +133,7 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
          }        
     }
     
-    public void crearCaja(Date fechaApertura, BigDecimal saldoAnterior, BigDecimal saldoAntChanca, String obs) throws Throwable{
+    public void crearCaja(Date fechaApertura, BigDecimal saldoAnterior, BigDecimal saldoAntChanca, BigDecimal saldoAntSP, String obs) throws Throwable{
         
         if (existeCajaAbierta(fechaApertura)){
            throw new ErrorValidException("Ya ha sido registrado la apertura de caja");
@@ -145,6 +147,7 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
             cajas.setCjFecaper(fechaApertura);
             cajas.setCjSaldoant(saldoAnterior);
             cajas.setCjSaldoantchanca(saldoAntChanca);
+            cajas.setCjSaldoantsp(saldoAntSP);
             cajas.setCjObsaper(obs);
             cajas.setCjEstado(0);
 
@@ -162,12 +165,18 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
     public void cerrarCaja(Integer cjId,
             BigDecimal ventas,
             BigDecimal ventasChanca,
+            BigDecimal ventasSP,
             BigDecimal abonosCxC,
             BigDecimal abonosCxP,
             BigDecimal ventasAnuladas,
             BigDecimal saldo,
             BigDecimal saldoChanca,
-            String obsCierre
+            BigDecimal saldoSP,
+            String obsCierre,
+            BigDecimal abonosCxCChanca,
+            BigDecimal abonosCxCSP,            
+            BigDecimal abonosCxPChanca,
+            BigDecimal abonosCxPSP
             ){
         
         beginTrans();
@@ -184,6 +193,7 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
         caja.setCjFeccierre(new Date());
         caja.setCjVentas(ventas);
         caja.setCjventchanca(ventasChanca);
+        caja.setCjVentsp(ventasSP);
         caja.setCjAbonoscxc(abonosCxC);
         caja.setCjAbonoscxp(abonosCxP);
         caja.setCjAnulados(ventasAnuladas);
@@ -191,6 +201,13 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
         caja.setCjSaldoChanca(saldoChanca);
         caja.setCjObscierre(obsCierre);
         caja.setCjEstado(1);
+        
+        caja.setCjSaldoSP(saldoSP);
+        caja.setCjAbonoscxcchanca(abonosCxCChanca);
+        caja.setCjAbonoscxcsp(abonosCxCSP);
+        
+        caja.setCjAbonoscxpchanca(abonosCxPChanca);
+        caja.setCjAbonoscxpsp(abonosCxPSP);
         
         commitTrans();
     }

@@ -444,6 +444,7 @@
                                     </Property>
                                   </Properties>
                                   <Events>
+                                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTFEfectivoFocusGained"/>
                                     <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTFEfectivoFocusLost"/>
                                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTFEfectivoKeyReleased"/>
                                   </Events>
@@ -455,6 +456,7 @@
                                     </Property>
                                   </Properties>
                                   <Events>
+                                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTFCreditoFocusGained"/>
                                     <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTFCreditoFocusLost"/>
                                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTFCreditoKeyReleased"/>
                                   </Events>
@@ -850,7 +852,7 @@
                 <Container class="javax.swing.JScrollPane" name="jScrollPane2">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Arial" size="18" style="0"/>
+                      <Font name="Arial" size="13" style="0"/>
                     </Property>
                   </Properties>
                   <Constraints>

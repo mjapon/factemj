@@ -219,6 +219,8 @@ public class VentasDataModel extends AbstractTableModel{
         
     }
     
+    private List<Object[]> utilidadesList;
+    
     public void loadFromDataBase() throws Exception{
         int sortIndex = getSorIndex();
         int sortorder = mapSort.get(sortIndex);
@@ -234,7 +236,10 @@ public class VentasDataModel extends AbstractTableModel{
             ventas = controller.listarByCat(this.params);
         }
         else{
-            ventas = controller.listar(this.params);
+            Map<Integer, List<Object[]>> resultMap = controller.listar(this.params);
+            ventas = resultMap.get(1);
+            //2 es el listado de utilidades por categoria
+            utilidadesList = resultMap.get(2);
         }        
         
         items.clear();
@@ -281,7 +286,9 @@ public class VentasDataModel extends AbstractTableModel{
             
             
             if (efectivo.compareTo(BigDecimal.ZERO)==0 && credito.compareTo(BigDecimal.ZERO)==0){
-                efectivo = total;
+                if (!this.params.isByCat()){
+                    efectivo = total;
+                }
             }
             
             FilaVenta fila = new FilaVenta(ventaId, nro, cliente, ciruc, iva, 
@@ -402,5 +409,13 @@ public class VentasDataModel extends AbstractTableModel{
 
     public void setTotalesVentasModel(TotalesVentasModel totalesVentasModel) {
         this.totalesVentasModel = totalesVentasModel;
+    }
+
+    public List<Object[]> getUtilidadesList() {
+        return utilidadesList;
+    }
+
+    public void setUtilidadesList(List<Object[]> utilidadesList) {
+        this.utilidadesList = utilidadesList;
     }
 }

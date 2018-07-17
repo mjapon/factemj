@@ -19,7 +19,7 @@ import java.util.Map;
 public class FechasUtil {
     
     public static String formato = "dd/MM/yyyy";
-    public static String formatoFechaHora = "dd/MM/yyyy hh:mm";
+    public static String formatoFechaHora = "dd/MM/yyyy HH:mm";
     public static SimpleDateFormat dateFormat;
     public static SimpleDateFormat dateHourFormat;
     public static Map<Integer, String> mesesMap;

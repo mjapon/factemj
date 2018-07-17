@@ -22,6 +22,7 @@ public class AperturaCajaFrame extends BaseFrame {
     private Date dia;
     private BigDecimal saldoInicial;
     private BigDecimal saldoInicialChanca;
+    private BigDecimal saldoInicialSP;
     
     CajasJpaController cajasController;    
     
@@ -42,13 +43,17 @@ public class AperturaCajaFrame extends BaseFrame {
             jTFFecha.setText( FechasUtil.format(dia) );
             saldoInicial = BigDecimal.ZERO;
             saldoInicialChanca = BigDecimal.ZERO;
+            saldoInicialSP = BigDecimal.ZERO;
             Cajas cajaAyer = cajasController.getCajaCerradaMenorFechaCierre(dia);
             if (cajaAyer != null){
                 saldoInicial = cajaAyer.getCjSaldo();
                 saldoInicialChanca = cajaAyer.getCjSaldoChanca();
+                saldoInicialSP = cajaAyer.getCjSaldoSP();
+                
             }
             jTFSaldoAnterior.setText( NumbersUtil.round2(saldoInicial).toPlainString() );
             jTFSaldoAnteriorChanca.setText( NumbersUtil.round2(saldoInicialChanca).toPlainString() );
+            jTFSaldoAnteriorSP.setText(NumbersUtil.round2(saldoInicialSP).toPlainString() );
             jTAObs.setText("");
         }
         catch(Throwable ex){
@@ -91,6 +96,9 @@ public class AperturaCajaFrame extends BaseFrame {
         dayName = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jTFSaldoAnteriorChanca = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jTFSaldoAnteriorSP = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jButtonGuardar = new javax.swing.JButton();
         jButtonCerrar = new javax.swing.JButton();
@@ -139,9 +147,15 @@ public class AperturaCajaFrame extends BaseFrame {
 
         dayName.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
 
-        jLabel5.setText("Saldo Inicial Chancado (anterior):");
+        jLabel5.setText("Chancado:");
 
         jTFSaldoAnteriorChanca.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
+
+        jLabel6.setText("Servicios Prof.:");
+
+        jTFSaldoAnteriorSP.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
+
+        jLabel7.setText("Otros:");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -150,42 +164,63 @@ public class AperturaCajaFrame extends BaseFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTFSaldoAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jTFFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dayName))
-                    .addComponent(jTFSaldoAnteriorChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(65, 65, 65))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(jLabel2)
+                                    .addGap(125, 125, 125)
+                                    .addComponent(jTFFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(dayName, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(jLabel5)
+                                    .addGap(116, 116, 116)
+                                    .addComponent(jLabel6)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jTFSaldoAnteriorChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jTFSaldoAnteriorSP, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jTFSaldoAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addContainerGap(111, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTFFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dayName))
-                .addGap(35, 35, 35)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTFSaldoAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jTFSaldoAnteriorChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addContainerGap(13, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(jTFFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(dayName, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel3)
+                .addGap(12, 12, 12)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(jLabel7)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTFSaldoAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTFSaldoAnteriorChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTFSaldoAnteriorSP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -223,7 +258,8 @@ public class AperturaCajaFrame extends BaseFrame {
         try{
             saldoInicial = new BigDecimal(jTFSaldoAnterior.getText());
             saldoInicialChanca =new BigDecimal(jTFSaldoAnteriorChanca.getText());
-            cajasController.crearCaja(dia, saldoInicial, saldoInicialChanca, jTAObs.getText());
+            saldoInicialSP = new BigDecimal(jTFSaldoAnteriorSP.getText());
+            cajasController.crearCaja(dia, saldoInicial, saldoInicialChanca,saldoInicialSP, jTAObs.getText());
             String dayName = FechasUtil.getDayNameOfDate(dia);
             showMsg("CAJA APERTURA PARA EL DIA DE HOY:" + dayName);
             setVisible(false);
@@ -252,6 +288,8 @@ public class AperturaCajaFrame extends BaseFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
@@ -260,5 +298,6 @@ public class AperturaCajaFrame extends BaseFrame {
     private javax.swing.JFormattedTextField jTFFecha;
     private javax.swing.JTextField jTFSaldoAnterior;
     private javax.swing.JTextField jTFSaldoAnteriorChanca;
+    private javax.swing.JTextField jTFSaldoAnteriorSP;
     // End of variables declaration//GEN-END:variables
 }

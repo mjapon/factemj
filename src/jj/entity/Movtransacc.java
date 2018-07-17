@@ -67,6 +67,9 @@ public class Movtransacc implements Serializable {
     @JoinColumn(name = "tra_id", referencedColumnName = "tra_id")
     @OneToOne
     private Transacciones traId;
+    
+    @Column(name = "cj_id")
+    private Integer cjId;
 
     public Movtransacc() {
     }
@@ -168,7 +171,15 @@ public class Movtransacc implements Serializable {
     public void setPgfId(Integer pgfId) {
         this.pgfId = pgfId;
     }
-    
-    
+
+    public Integer getCjId() {
+        return cjId;
+    }
+
+    public void setCjId(Integer cjId) {
+        this.cjId = cjId;
+    }
+
+   
     
 }

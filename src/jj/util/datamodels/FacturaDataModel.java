@@ -14,7 +14,6 @@ import jj.entity.Articulos;
 import jj.gui.FarmaAppMain;
 import jj.gui.facte.FacturaVentaFrame;
 import jj.util.CtesU;
-import jj.util.ErrorValidException;
 import jj.util.datamodels.rows.FilaFactura;
 import jj.util.TotalesFactura;
 /**
@@ -97,7 +96,8 @@ public class FacturaDataModel extends AbstractTableModel{
                 BigDecimal.ZERO,
                 BigDecimal.ZERO,
                 articulo.getArtPreciomin(),
-                articulo.getArtPrecioCompra()
+                articulo.getArtPrecioCompra(),
+                articulo.getArtTipo()
             );
         
         filafactura.updateTotales();
@@ -165,8 +165,15 @@ public class FacturaDataModel extends AbstractTableModel{
             return true;
         }
         else{
+            
+            FilaFactura filafactura = getValueAt(rowIndex);
+            
             return (columnIndex == ColumnaFacturaEnum.IVA.index)
-               //||(columnIndex == ColumnaFacturaEnum.PRECIOU.index)
+               ||(
+                    (columnIndex == ColumnaFacturaEnum.PRECIOU.index)&&(tra_codigo==2)
+                    ||
+                    (filafactura!=null?filafactura.getTipo().equalsIgnoreCase("S"):false)
+                )
                ||(columnIndex == ColumnaFacturaEnum.CANTIDAD.index)
                ||(columnIndex == ColumnaFacturaEnum.VDESC.index)
                ||(columnIndex == ColumnaFacturaEnum.PDESC.index);
@@ -209,7 +216,13 @@ public class FacturaDataModel extends AbstractTableModel{
         }
         super.setValueAt(aValue, rowIndex, columnIndex); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
+    public FilaFactura getValueAt(int rowIndex){
+        FilaFactura filafactura = items.get(rowIndex);
+        return filafactura;
+    }
+            
+    
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {        
         if (rowIndex>=0 && rowIndex<items.size()){

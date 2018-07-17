@@ -5,6 +5,7 @@
  */
 package jj.gui.merc.unid;
 
+import java.math.BigDecimal;
 import jj.util.datamodels.rows.FilaFactura;
 import jj.util.datamodels.rows.FilaUnidadPrecio;
 
@@ -17,5 +18,7 @@ public interface IListenerSelectUnity {
     public void doSelect(FilaUnidadPrecio filaUnidadPrecio);
     
     public void doChangeDescuento(FilaFactura filaFactura);
+    
+    public void doChangePrecio(BigDecimal newPrecio);
     
 }
