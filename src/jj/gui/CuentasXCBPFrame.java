@@ -296,6 +296,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jButtonVerFact = new javax.swing.JButton();
         jButtonAbonar = new javax.swing.JButton();
+        jButtonAnular = new javax.swing.JButton();
         jButtonClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -504,6 +505,17 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         });
         jPanel4.add(jButtonAbonar);
 
+        jButtonAnular.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonAnular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-cancel_subscription.png"))); // NOI18N
+        jButtonAnular.setText("Anular");
+        jButtonAnular.setEnabled(false);
+        jButtonAnular.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAnularActionPerformed(evt);
+            }
+        });
+        jPanel4.add(jButtonAnular);
+
         jButtonClose.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/icons8-close_pane_filled.png"))); // NOI18N
         jButtonClose.setText("Cerrar");
@@ -637,6 +649,16 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_jTextFieldFiltroKeyReleased
+
+    private void jButtonAnularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnularActionPerformed
+        
+        
+        int row = this.jTable1.getSelectedRow();
+        if (row>-1){
+            
+        }
+        
+    }//GEN-LAST:event_jButtonAnularActionPerformed
      
     public void logicaBuscar(){
         ParamBusquedaCXCP paramsBusqueda = new ParamBusquedaCXCP();
@@ -700,6 +722,7 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton jButtonAbonar;
+    private javax.swing.JButton jButtonAnular;
     private javax.swing.JButton jButtonClose;
     private javax.swing.JButton jButtonVerFact;
     private javax.swing.JComboBox<String> jCmbEstado;

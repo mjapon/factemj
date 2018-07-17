@@ -212,6 +212,34 @@ public class MovtransaccJpaController  extends BaseJpaController<Facturas> imple
         
     }
     
+    public void anularAbono( Integer movId, String obs){
+        try{
+            beginTrans();
+            if (obs == null){
+                obs = "";
+            }
+            Movtransacc movtransacc = em.find(Movtransacc.class, movId);
+            if (movtransacc != null){
+                movtransacc.setMovValido(1);
+                String currentobs = movtransacc.getMovObserv()!=null?movtransacc.getMovObserv():"";
+                String theobs =  currentobs+"REGISTRO ANULADO"+obs;
+                movtransacc.setMovObserv(theobs);
+                em.merge(movtransacc);
+            }
+            commitTrans();
+        }
+        catch(Throwable ex){
+            
+        }
+        finally{
+            if (em != null) {
+                //em.close();
+            }
+        }
+        
+    }
+            
+    
     public void guardarAbono(AbonoForm form){
         
         try{
