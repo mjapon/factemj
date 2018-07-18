@@ -176,7 +176,10 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
             BigDecimal abonosCxCChanca,
             BigDecimal abonosCxCSP,            
             BigDecimal abonosCxPChanca,
-            BigDecimal abonosCxPSP
+            BigDecimal abonosCxPSP,            
+            BigDecimal ajGen,
+            BigDecimal ajSP,
+            BigDecimal ajChanca
             ){
         
         beginTrans();
@@ -208,6 +211,10 @@ public class CajasJpaController extends BaseJpaController<Facturas> implements S
         
         caja.setCjAbonoscxpchanca(abonosCxPChanca);
         caja.setCjAbonoscxpsp(abonosCxPSP);
+        
+        caja.setCjAjgen(ajGen);
+        caja.setCjAjchanca(ajChanca);
+        caja.setCjAjsp(ajSP);
         
         commitTrans();
     }

@@ -260,7 +260,7 @@ public class AbonosDataModel  extends AbstractTableModel{
             String estado = item.getMovValido()==0?"VALIDO":"ANULADO";
             String observacion = item.getMovObserv();
             
-            FilaAbonos fila = new FilaAbonos(fechaAbono, monto, estado, observacion);
+            FilaAbonos fila = new FilaAbonos(item.getMovId(),fechaAbono, monto, estado, observacion);
             items.add(fila);
         }
         

@@ -30,6 +30,7 @@ import jj.util.datamodels.rows.FilaCXCP;
 import jj.util.ParamBusquedaCXCP;
 import jj.util.datamodels.AbonosDataModel;
 import jj.util.datamodels.CuentaXCPDataModel;
+import jj.util.datamodels.rows.FilaAbonos;
 
 /**
  *
@@ -149,7 +150,6 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
             }
         });
         
-        
         this.desdeTF.setText( FechasUtil.getFechaActual() );
         this.hastaTF.setText( FechasUtil.getFechaActual() ); 
         
@@ -171,13 +171,29 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
             }
         });
         
+        jTable2.getSelectionModel().addListSelectionListener((e)->{
+            if (!e.getValueIsAdjusting()) {
+                updateStatusBtnAnul();
+            }
+        });
+        
         jTable2.updateUI();
         abonosDataModel.fireTableDataChanged();        
     }
     
+    public void updateStatusBtnAnul(){
+        boolean isEnabled = jTable2.getSelectedRows().length>0;        
+        jButtonAnular.setEnabled(false);
+        if (isEnabled){
+            FilaAbonos fila = abonosDataModel.getValueAt(jTable2.getSelectedRow());
+            if (!"ANULADO".equalsIgnoreCase(fila.getEstado())){
+                jButtonAnular.setEnabled(true);
+            }
+        }
+    }
+    
     public void updateStatusBtn(){
         boolean isEnabled = jTable1.getSelectedRows().length>0;
-        
         jButtonVerFact.setEnabled(isEnabled);
         jButtonAbonar.setEnabled(isEnabled);
         
@@ -651,13 +667,25 @@ public class CuentasXCBPFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldFiltroKeyReleased
 
     private void jButtonAnularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnularActionPerformed
-        
-        
-        int row = this.jTable1.getSelectedRow();
-        if (row>-1){
-            
+        try{
+            int row = this.jTable2.getSelectedRow();
+            if (row>-1){                
+                String obs = JOptionPane.showInputDialog(null, "Ingrese la observación para la anulación");
+                if (obs !=null){
+                    FilaAbonos fila = abonosDataModel.getValueAt(row);
+                    movsController.anularAbono(fila.getMovId(), "ABONO ANULADO");
+                    abonosDataModel.loadFromDataBase(); 
+                    JOptionPane.showMessageDialog(null, "El abono ha sido anulado");
+                    
+                    logicaBuscar();
+                }
+            }
         }
-        
+        catch(Throwable ex){
+            System.out.println("Error al tratar de anular el abono:"+ex.getMessage());
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al tratar de anular el abono:"+ex.getMessage());
+        }
     }//GEN-LAST:event_jButtonAnularActionPerformed
      
     public void logicaBuscar(){

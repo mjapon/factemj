@@ -126,6 +126,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
                         selectedCatIndex =  index;
                         CatRow selectedCat = catsList.get(index);
                         jEditCatBtn.setEnabled(selectedCat.getCatId()>0);
+                        jDeleteCatBtn.setEnabled(selectedCat.getCatId()>0);
                         mercaderiaDataModel.loadFromDataBaseCat(selectedCat.getCatId());
                         updateTotales();
                         updateLabelBorder();
@@ -238,6 +239,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jEditCatBtn = new javax.swing.JButton();
+        jDeleteCatBtn = new javax.swing.JButton();
         jCrearCatBtn = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -315,6 +317,16 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
             }
         });
         jPanel6.add(jEditCatBtn);
+
+        jDeleteCatBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/Trash_25px.png"))); // NOI18N
+        jDeleteCatBtn.setToolTipText("Crear nueva categoría");
+        jDeleteCatBtn.setEnabled(false);
+        jDeleteCatBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jDeleteCatBtnActionPerformed(evt);
+            }
+        });
+        jPanel6.add(jDeleteCatBtn);
 
         jCrearCatBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jj/gui/icons/Plus_25px.png"))); // NOI18N
         jCrearCatBtn.setToolTipText("Crear nueva categoría");
@@ -537,6 +549,24 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         }        
     }//GEN-LAST:event_jCrearCatBtnActionPerformed
     
+    public void showDeleteCat(Integer catIndex){
+        try{
+            CatRow selectedCat = catsList.get(catIndex);
+            if (selectedCat.getCatId()>0){
+                String currentName = selectedCat.getCatName().trim().toUpperCase();                
+                int resp = JOptionPane.showConfirmDialog(null, "¿Seguro que desea borrar la categoría:"+currentName+"?");
+                if (resp == JOptionPane.YES_OPTION){
+                    catsController.borrar(selectedCat.getCatId());             
+                    showMsg("Borrado correctamente");
+                    loadCats();
+                }
+            }
+        }
+         catch(Throwable ex){
+            showMsgError(ex);
+        }
+    }
+    
     public void showEditCatName(Integer catIndex){
         try{
             CatRow selectedCat = catsList.get(catIndex);
@@ -682,6 +712,14 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
         }
         
     }//GEN-LAST:event_jBtnPreciosActionPerformed
+
+    private void jDeleteCatBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDeleteCatBtnActionPerformed
+                
+        if (selectedCatIndex!=null){
+            showDeleteCat(selectedCatIndex);
+        }
+        
+    }//GEN-LAST:event_jDeleteCatBtnActionPerformed
     public void loadCats(){
         try{
             List<Categorias> auxCatsList = catsController.listar();
@@ -702,6 +740,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame {
     private javax.swing.JButton jCerrarBtn;
     private javax.swing.JButton jCrearArtBtn;
     private javax.swing.JButton jCrearCatBtn;
+    private javax.swing.JButton jDeleteCatBtn;
     private javax.swing.JButton jEditCatBtn;
     private javax.swing.JButton jGuardarBtn;
     private javax.swing.JLabel jLabel1;

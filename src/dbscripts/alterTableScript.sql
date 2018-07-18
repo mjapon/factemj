@@ -133,3 +133,13 @@ update facturas set fact_utilidad = subquery.utl from
 where facturas.fact_id = subquery.fact_id
 
 --http://calculo.cc/temas/temas_e.s.o/sucesiones/teoria/formulas.html
+
+----------------------------->
+--  CAMBIOS 18 JULIO 2018 AJUSTES DE CAJA
+
+
+
+
+ALTER TABLE public.cajas ADD cj_ajgen NUMERIC(15,4) DEFAULT 0.0 NULL;
+ALTER TABLE public.cajas ADD cj_ajchanca NUMERIC(15,4) DEFAULT 0.0 NULL;
+ALTER TABLE public.cajas ADD cj_ajsp NUMERIC(15,4) DEFAULT 0.0 NULL;

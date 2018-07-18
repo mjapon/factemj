@@ -222,21 +222,43 @@ public class MovtransaccJpaController  extends BaseJpaController<Facturas> imple
             if (movtransacc != null){
                 movtransacc.setMovValido(1);
                 String currentobs = movtransacc.getMovObserv()!=null?movtransacc.getMovObserv():"";
-                String theobs =  currentobs+"REGISTRO ANULADO"+obs;
+                String theobs =  currentobs+" REGISTRO ANULADO:"+obs;
                 movtransacc.setMovObserv(theobs);
                 em.merge(movtransacc);
+                
+                  //Sumar el saldo en la factura            
+                Pagosfact pago = em.find(Pagosfact.class, movtransacc.getPgfId());
+                BigDecimal saldo  = pago.getPgfSaldo();
+                BigDecimal newSaldo  = saldo.add(movtransacc.getMovMonto());
+
+                if (newSaldo.compareTo(BigDecimal.ZERO)<0){
+                    throw new Exception("El valor del abono es incorrecto:"+newSaldo.toPlainString());
+                }
+                pago.setPgfSaldo(newSaldo);
+
+                if (newSaldo.compareTo(BigDecimal.ZERO)==0 ){
+                    Estadospago cancelStatus = em.find(Estadospago.class, 1);
+                    pago.setSpId(cancelStatus);
+                }
+                else if (newSaldo.compareTo(BigDecimal.ZERO)>0){
+                    Estadospago cancelStatus = em.find(Estadospago.class, 2);
+                    pago.setSpId(cancelStatus);
+                }
+
+                em.merge(pago);
             }
+            
             commitTrans();
         }
         catch(Throwable ex){
-            
+            System.out.println("Error al tratar de anular el abono:"+ex.getMessage());
+            ex.printStackTrace();
         }
         finally{
             if (em != null) {
                 //em.close();
             }
         }
-        
     }
             
     

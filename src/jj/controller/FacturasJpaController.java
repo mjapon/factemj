@@ -396,7 +396,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                 + " p.pgfObs as pgfObs, "
                 + " p.pgfId as pgfId, "
                 + " case when p.pgfSaldo > 0.0 then 'PENDIENTE DE PAGO' else 'FACTURA CANCELADA' end as estadoDesc "
-                + "  from Facturas f join Pagosfact p on p.factId.factId = f.factId and f.traId.traId= "+params.getTra_codigo());
+                + "  from Facturas f join Pagosfact p on p.factId.factId = f.factId and p.fpId.fpId = 2 and f.traId.traId= "+params.getTra_codigo());
         
         List<String> paramsList = new ArrayList<String>();
         
@@ -460,6 +460,9 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
         String queryStr = String.format("%s %s %s",  baseQuery, where, orderSB);
 
         Query query = this.newQuery(queryStr.toString());
+        
+        System.out.println("Query que se ejecuta es:");
+        System.out.println(queryStr.toString());
         
         if (searchByDate){
             if (params.getDesde() != null){

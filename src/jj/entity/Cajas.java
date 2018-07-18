@@ -116,6 +116,15 @@ public class Cajas implements Serializable {
     
     @Column(name = "cj_abonoscxpsp")
     private BigDecimal cjAbonoscxpsp;
+    
+    @Column(name = "cj_ajgen")
+    private BigDecimal cjAjgen;
+    
+    @Column(name = "cj_ajchanca")
+    private BigDecimal cjAjchanca;
+    
+    @Column(name = "cj_ajsp")
+    private BigDecimal cjAjsp;
 
     public Cajas() {
     }
@@ -323,6 +332,32 @@ public class Cajas implements Serializable {
     public void setCjAbonoscxpsp(BigDecimal cjAbonoscxpsp) {
         this.cjAbonoscxpsp = cjAbonoscxpsp;
     }
+
+    public BigDecimal getCjAjgen() {
+        return cjAjgen;
+    }
+
+    public void setCjAjgen(BigDecimal cjAjgen) {
+        this.cjAjgen = cjAjgen;
+    }
+
+    public BigDecimal getCjAjchanca() {
+        return cjAjchanca;
+    }
+
+    public void setCjAjchanca(BigDecimal cjAjchanca) {
+        this.cjAjchanca = cjAjchanca;
+    }
+
+    public BigDecimal getCjAjsp() {
+        return cjAjsp;
+    }
+
+    public void setCjAjsp(BigDecimal cjAjsp) {
+        this.cjAjsp = cjAjsp;
+    }
+    
+    
 
     @Override
     public int hashCode() {

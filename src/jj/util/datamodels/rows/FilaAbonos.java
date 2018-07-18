@@ -17,8 +17,10 @@ public class FilaAbonos {
     private BigDecimal monto;
     private String estado;
     private String observacion;
+    private Integer movId;
 
-    public FilaAbonos(String fechaAbono, BigDecimal monto, String estado, String observacion) {
+    public FilaAbonos(Integer movId, String fechaAbono, BigDecimal monto, String estado, String observacion) {
+        this.movId = movId;
         this.fechaAbono = fechaAbono;
         this.monto = monto;
         this.estado = estado;
@@ -56,7 +58,12 @@ public class FilaAbonos {
     public void setObservacion(String observacion) {
         this.observacion = observacion;
     }
-    
-    
-    
+
+    public Integer getMovId() {
+        return movId;
+    }
+
+    public void setMovId(Integer movId) {
+        this.movId = movId;
+    }
 }

@@ -7,9 +7,11 @@ package jj.gui.cajas;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import jj.controller.CajasJpaController;
@@ -66,6 +68,10 @@ public class CierreCajaFrame extends BaseFrame {
     private BigDecimal saldoCaja;
     private BigDecimal saldoCajaChanca;
     private BigDecimal saldoCajaSP;
+    
+    private BigDecimal auxSaldoCaja;
+    private BigDecimal auxSaldoCajaChanca;
+    private BigDecimal auxSaldoCajaSP;
     
     /**
      * Creates new form CierreCajaFrame
@@ -189,8 +195,15 @@ public class CierreCajaFrame extends BaseFrame {
         saldoCajaChanca = BigDecimal.ZERO;
         saldoCajaSP = BigDecimal.ZERO;
         
-        this.jTFFechaApertura.setText( FechasUtil.getFechaActual() );
+        valAJSP = BigDecimal.ZERO;
+        valAjChanca = BigDecimal.ZERO;
+        valAjOtros = BigDecimal.ZERO;
         
+        jTFAjChanca.setText(valAjChanca.toPlainString());
+        jTFAjSP.setText(valAJSP.toPlainString());
+        jTFAjOtros.setText(valAjOtros.toPlainString());
+        
+        this.jTFFechaApertura.setText( FechasUtil.getFechaActual() );
     }
     
     public void loadInfoCaja(){
@@ -415,9 +428,9 @@ public class CierreCajaFrame extends BaseFrame {
                 
                 totalVentas = auxTotalVentas.subtract(totalVentasChanca.add(totalVentasSP));
 
-                saldoCaja =  saldoInicial.add(totalVentas).add(abonosCobrados).subtract(abonosPagados);
-                saldoCajaChanca = saldoInicialChanca.add(totalVentasChanca).add(abonosCobradosChk).subtract(abonosPagadosChk);
-                saldoCajaSP = saldoInicialSP.add(totalVentasSP).add(abonosCobradosSP).subtract(abonosPagadosSP);
+                auxSaldoCaja =  saldoInicial.add(totalVentas).add(abonosCobrados).subtract(abonosPagados);
+                auxSaldoCajaChanca = saldoInicialChanca.add(totalVentasChanca).add(abonosCobradosChk).subtract(abonosPagadosChk);
+                auxSaldoCajaSP = saldoInicialSP.add(totalVentasSP).add(abonosCobradosSP).subtract(abonosPagadosSP);
 
                 jTFVentas.setText( NumbersUtil.round2(totalVentas).toPlainString() );
                 jTFVentasChancado.setText( NumbersUtil.round2(totalVentasChanca).toPlainString() );
@@ -431,9 +444,12 @@ public class CierreCajaFrame extends BaseFrame {
                 jTFCXPChanca.setText( NumbersUtil.round2(abonosPagadosChk).toPlainString() );
                 jTFCXPSP.setText( NumbersUtil.round2(abonosPagadosSP).toPlainString() );                
                 
+                /*
                 jTFSaldo.setText(NumbersUtil.round2(saldoCaja).toPlainString());
                 jTFSaldoChanca.setText(NumbersUtil.round2(saldoCajaChanca).toPlainString());
                 jTFSaldoSP.setText(NumbersUtil.round2(saldoCajaSP).toPlainString());
+                */
+                updateSaldoAjustes();
 
                 jTFTotalVGrid.setText(NumbersUtil.round2(auxTotalVentas).toPlainString());
                 jTFTotalACGrid.setText(NumbersUtil.round2(auxAbonosCobrados).toPlainString());
@@ -550,6 +566,10 @@ public class CierreCajaFrame extends BaseFrame {
         jLabel28 = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
         jTFSaldoSP = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        jTFAjChanca = new javax.swing.JTextField();
+        jTFAjSP = new javax.swing.JTextField();
+        jTFAjOtros = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -688,6 +708,29 @@ public class CierreCajaFrame extends BaseFrame {
         jTFSaldoSP.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jTFSaldoSP.setForeground(new java.awt.Color(0, 153, 51));
 
+        jLabel16.setText("Ajustes de Caja (+/-)");
+
+        jTFAjChanca.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jTFAjChanca.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTFAjChancaKeyReleased(evt);
+            }
+        });
+
+        jTFAjSP.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jTFAjSP.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTFAjSPKeyReleased(evt);
+            }
+        });
+
+        jTFAjOtros.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jTFAjOtros.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTFAjOtrosKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -695,86 +738,93 @@ public class CierreCajaFrame extends BaseFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jTFCXCChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jTFCXCSP, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTFCuentasXCobrar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jTFCXCChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTFCXCSP, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTFCuentasXCobrar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel2)
+                                .addGap(41, 41, 41)
+                                .addComponent(jTFFechaApertura, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel5)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(jLabel15)
+                                .addGap(82, 82, 82)
+                                .addComponent(jLabel19)
+                                .addGap(51, 51, 51)
+                                .addComponent(jLabel20))
+                            .addComponent(jLabel3)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addComponent(jLabel2)
-                                        .addGap(41, 41, 41)
-                                        .addComponent(jTFFechaApertura, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jLabel5)
+                                        .addComponent(jLabel14)
+                                        .addGap(77, 77, 77)
+                                        .addComponent(jLabel17))
                                     .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addComponent(jLabel15)
-                                        .addGap(82, 82, 82)
-                                        .addComponent(jLabel19)
-                                        .addGap(51, 51, 51)
-                                        .addComponent(jLabel20))
-                                    .addComponent(jLabel3)
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                                .addComponent(jLabel14)
-                                                .addGap(77, 77, 77)
-                                                .addComponent(jLabel17))
-                                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                                .addComponent(jTFSaldoInicialChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jTFSaldoInicialSP, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGap(23, 23, 23)
-                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel18)
-                                            .addComponent(jTFSaldoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addComponent(jLabel4)
-                                    .addComponent(jScrollPane5))
-                                .addComponent(jLabel6)
-                                .addGroup(jPanel4Layout.createSequentialGroup()
-                                    .addComponent(jTFVentasChancado, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(22, 22, 22)
-                                    .addComponent(jTFVentasSP, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(jTFVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jLabel7)
-                                .addGroup(jPanel4Layout.createSequentialGroup()
-                                    .addComponent(jLabel21)
-                                    .addGap(82, 82, 82)
-                                    .addComponent(jLabel22)
-                                    .addGap(51, 51, 51)
-                                    .addComponent(jLabel23))))
-                        .addComponent(jLabel8)
+                                        .addComponent(jTFSaldoInicialChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jTFSaldoInicialSP, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(23, 23, 23)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel18)
+                                    .addComponent(jTFSaldoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel4)
+                            .addComponent(jScrollPane5))
+                        .addComponent(jLabel6)
                         .addGroup(jPanel4Layout.createSequentialGroup()
-                            .addComponent(jLabel24)
+                            .addComponent(jTFVentasChancado, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(22, 22, 22)
+                            .addComponent(jTFVentasSP, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jTFVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel7)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                            .addComponent(jLabel21)
                             .addGap(82, 82, 82)
-                            .addComponent(jLabel25)
+                            .addComponent(jLabel22)
                             .addGap(51, 51, 51)
-                            .addComponent(jLabel26))
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel23)))
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel24)
+                        .addGap(82, 82, 82)
+                        .addComponent(jLabel25)
+                        .addGap(51, 51, 51)
+                        .addComponent(jLabel26))
+                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel16)
+                                    .addComponent(jTFAjChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(3, 3, 3))
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel27)
                                     .addComponent(jTFSaldoChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(30, 30, 30)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addComponent(jTFSaldoSP, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(23, 23, 23)
-                                        .addComponent(jTFSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jLabel28)))
-                            .addComponent(jLabel29))
-                        .addComponent(jLabel9)
-                        .addComponent(jLabel10)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jTFSaldoSP, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel28)
+                                    .addComponent(jTFAjSP))))
+                        .addGap(21, 21, 21)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel29)
+                                .addComponent(jTFSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jTFAjOtros, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jTFCXPChanca, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jTFCXPSP, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTFCXPSP)
+                        .addGap(18, 18, 18)
                         .addComponent(jTFCuentasXPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -840,23 +890,30 @@ public class CierreCajaFrame extends BaseFrame {
                     .addComponent(jTFCXPSP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTFCXPChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel16)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTFAjChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFAjSP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFAjOtros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel27)
-                        .addComponent(jLabel29)))
+                        .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel29))
+                    .addComponent(jLabel27))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTFSaldoChanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTFSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTFSaldoSP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jPanel2.add(jPanel4);
@@ -1049,7 +1106,10 @@ public class CierreCajaFrame extends BaseFrame {
                         abonosCobradosChk,
                         abonosCobradosSP,
                         abonosPagadosChk,
-                        abonosPagadosSP
+                        abonosPagadosSP,
+                        valAjOtros,
+                        valAJSP,
+                        valAjChanca
                         );
                 showMsg(" La caja ha sido cerrada satisfactoriamente ");                
                 setVisible(false);
@@ -1074,7 +1134,60 @@ public class CierreCajaFrame extends BaseFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTFTotalAPGridActionPerformed
 
+    private void jTFAjChancaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFAjChancaKeyReleased
+        try{
+             valAjChanca = BigDecimal.ZERO;
+             valAjChanca = new BigDecimal( jTFAjChanca.getText() );                          
+        }
+        catch(Throwable ex){
+            valAjChanca = BigDecimal.ZERO;
+        }
+        updateSaldoAjustes();
+        
+    }//GEN-LAST:event_jTFAjChancaKeyReleased
+
+    private void jTFAjSPKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFAjSPKeyReleased
+        try{
+             valAJSP = BigDecimal.ZERO;
+             valAJSP = new BigDecimal( jTFAjSP.getText() );                          
+        }
+        catch(Throwable ex){
+            valAJSP = BigDecimal.ZERO;
+        }
+        updateSaldoAjustes();
+        
+    }//GEN-LAST:event_jTFAjSPKeyReleased
+
+    private void jTFAjOtrosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFAjOtrosKeyReleased
+        try{
+             valAjOtros = BigDecimal.ZERO;
+             valAjOtros = new BigDecimal( jTFAjOtros.getText() );                          
+        }
+        catch(Throwable ex){
+            valAjOtros = BigDecimal.ZERO;
+        }
+        updateSaldoAjustes();
+    }//GEN-LAST:event_jTFAjOtrosKeyReleased
     
+    public void updateSaldoAjustes(){
+        try{
+            saldoCaja =  auxSaldoCaja.add(valAjOtros);
+            saldoCajaChanca =  auxSaldoCajaChanca.add(valAjChanca);
+            saldoCajaSP = auxSaldoCajaSP.add(valAJSP);
+
+            jTFSaldo.setText(NumbersUtil.round2(saldoCaja).toPlainString());
+            jTFSaldoChanca.setText(NumbersUtil.round2(saldoCajaChanca).toPlainString());
+            jTFSaldoSP.setText(NumbersUtil.round2(saldoCajaSP).toPlainString());
+        }
+        catch(Throwable ex){
+            System.out.println("Error al actualizar saldos de caja:"+ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+    
+    private BigDecimal valAjChanca = BigDecimal.ZERO;
+    private BigDecimal valAJSP= BigDecimal.ZERO;
+    private BigDecimal valAjOtros= BigDecimal.ZERO;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -1087,6 +1200,7 @@ public class CierreCajaFrame extends BaseFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
@@ -1126,6 +1240,9 @@ public class CierreCajaFrame extends BaseFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTextArea jTAObsApertura;
     private javax.swing.JTextArea jTAObsCierre;
+    private javax.swing.JTextField jTFAjChanca;
+    private javax.swing.JTextField jTFAjOtros;
+    private javax.swing.JTextField jTFAjSP;
     private javax.swing.JTextField jTFCXCChanca;
     private javax.swing.JTextField jTFCXCSP;
     private javax.swing.JTextField jTFCXPChanca;
